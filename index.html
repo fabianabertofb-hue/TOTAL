@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CRM Vendas</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f8f9fb;
+    --white: #ffffff;
+    --border: #e8eaef;
+    --text: #1a1d27;
+    --text-muted: #8b90a0;
+    --text-light: #b0b5c3;
+    --primary: #4f46e5;
+    --primary-light: #eef2ff;
+    --green: #10b981;
+    --green-light: #d1fae5;
+    --orange: #f59e0b;
+    --orange-light: #fef3c7;
+    --red: #ef4444;
+    --red-light: #fee2e2;
+    --blue: #3b82f6;
+    --blue-light: #dbeafe;
+    --purple: #8b5cf6;
+    --purple-light: #ede9fe;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+    --shadow: 0 4px 12px rgba(0,0,0,0.08);
+    --shadow-lg: 0 8px 24px rgba(0,0,0,0.10);
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* NAVBAR */
+  .navbar {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+    height: 58px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .navbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--text);
+    margin-right: auto;
+  }
+  .brand-icon {
+    width: 34px; height: 34px;
+    background: var(--primary);
+    border-radius: 9px;
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-size: 16px;
+  }
+  .nav-tabs {
+    display: flex;
+    gap: 4px;
+  }
+  .nav-tab {
+    padding: 7px 16px;
+    border-radius: 8px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.15s;
+  }
+  .nav-tab:hover { background: var(--bg); color: var(--text); }
+  .nav-tab.active { background: var(--primary); color: white; }
+  .badge {
+    background: rgba(255,255,255,0.25);
+    padding: 1px 7px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .badge-red { background: var(--red); color: white; }
+  .btn-primary {
+    padding: 8px 18px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    margin-left: 8px;
+    white-space: nowrap;
+  }
+  .btn-primary:hover { background: #4338ca; transform: translateY(-1px); }
+  .btn-green {
+    padding: 8px 18px;
+    background: var(--green);
+    color: white;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn-green:hover { background: #059669; }
+
+  /* PAGE */
+  .page { display: none; padding: 24px; }
+  .page.active { display: block; }
+
+  /* CARDS MÉTRICAS */
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+  .metric-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    box-shadow: var(--shadow-sm);
+  }
+  .metric-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+  }
+  .metric-value {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .metric-value.green { color: var(--green); }
+  .metric-value.orange { color: var(--orange); }
+  .metric-value.purple { color: var(--purple); }
+
+  /* FUNIL */
+  .funnel-board {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+  }
+  .funnel-col {
+    min-width: 200px;
+    flex: 1;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px;
+    box-shadow: var(--shadow-sm);
+  }
+  .funnel-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+    font-weight: 600;
+    font-size: 13px;
+  }
+  .dot {
+    width: 9px; height: 9px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .dot-gray { background: #94a3b8; }
+  .dot-blue { background: var(--blue); }
+  .dot-orange { background: var(--orange); }
+  .dot-purple { background: var(--purple); }
+  .dot-green { background: var(--green); }
+  .dot-red { background: var(--red); }
+  .col-count {
+    margin-left: auto;
+    background: var(--bg);
+    padding: 1px 8px;
+    border-radius: 20px;
+    font-size: 11px;
+    color: var(--text-muted);
+    font-weight: 600;
+  }
+  .funnel-empty {
+    border: 1.5px dashed var(--border);
+    border-radius: var(--radius-sm);
+    padding: 20px;
+    text-align: center;
+    color: var(--text-light);
+    font-size: 12px;
+    min-height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .lead-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 12px;
+    margin-bottom: 8px;
+    cursor: grab;
+    transition: all 0.15s;
+  }
+  .lead-card:hover { box-shadow: var(--shadow); transform: translateY(-1px); }
+  .lead-card.dragging { opacity: 0.5; }
+  .btn-edit-lead {
+    background: none; border: none; cursor: pointer;
+    font-size: 13px; padding: 1px 3px; opacity: 0.4;
+    transition: opacity 0.15s; line-height: 1;
+  }
+  .lead-card:hover .btn-edit-lead { opacity: 1; }
+  .lead-name { font-weight: 600; font-size: 13px; margin-bottom: 4px; }
+  .lead-value { color: var(--purple); font-weight: 700; font-size: 13px; font-family: 'DM Mono', monospace; }
+  .lead-tag {
+    display: inline-block;
+    padding: 2px 7px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 600;
+    margin-top: 4px;
+  }
+
+  /* MODAL */
+  .modal-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.35);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--white);
+    border-radius: 16px;
+    padding: 28px;
+    width: 480px;
+    max-width: 95vw;
+    box-shadow: var(--shadow-lg);
+  }
+  .modal h2 { font-size: 17px; font-weight: 700; margin-bottom: 20px; }
+  .form-row { display: flex; gap: 10px; margin-bottom: 12px; }
+  .form-group { flex: 1; display: flex; flex-direction: column; gap: 5px; }
+  .form-group label { font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; }
+  .form-group input, .form-group select, .form-group textarea {
+    padding: 9px 12px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13.5px;
+    color: var(--text);
+    background: var(--white);
+    outline: none;
+    transition: border 0.15s;
+    width: 100%;
+  }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--primary); }
+  .modal-actions { display: flex; gap: 10px; margin-top: 20px; justify-content: flex-end; }
+  .btn-cancel {
+    padding: 9px 18px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13.5px;
+    font-weight: 500;
+    cursor: pointer;
+  }
+
+  /* VENDAS */
+  .section-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 22px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow-sm);
+    max-width: 700px;
+    margin-left: auto; margin-right: auto;
+  }
+  .section-card h3 { font-size: 15px; font-weight: 700; margin-bottom: 16px; }
+  .input-row { display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap; }
+  .input-row .form-group { min-width: 120px; }
+  .total-bar {
+    background: var(--green);
+    color: white;
+    border-radius: var(--radius-sm);
+    padding: 16px 22px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    max-width: 700px;
+    margin-left: auto; margin-right: auto;
+  }
+  .total-bar .label { font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; opacity: 0.85; }
+  .total-bar .amount { font-family: 'DM Mono', monospace; font-size: 22px; font-weight: 700; }
+  .sales-list { max-width: 700px; margin: 0 auto; }
+  .date-group { margin-bottom: 20px; }
+  .date-header {
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 13px; font-weight: 600; color: var(--text-muted);
+    margin-bottom: 8px; padding: 0 2px;
+  }
+  .date-header .date-total { font-family: 'DM Mono', monospace; color: var(--green); font-weight: 700; }
+  .sale-item {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 13px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 6px;
+    transition: all 0.15s;
+  }
+  .sale-item:hover { box-shadow: var(--shadow-sm); }
+  .sale-info { flex: 1; }
+  .sale-name { font-size: 13.5px; font-weight: 600; }
+  .sale-meta { display: flex; gap: 8px; margin-top: 3px; flex-wrap: wrap; }
+  .sale-tag {
+    font-size: 10.5px; font-weight: 600; padding: 2px 8px;
+    border-radius: 4px;
+    text-transform: uppercase; letter-spacing: 0.03em;
+  }
+  .tag-venda { background: var(--blue-light); color: var(--blue); }
+  .tag-locacao { background: var(--purple-light); color: var(--purple); }
+  .tag-manutencao { background: var(--orange-light); color: var(--orange); }
+  .tag-pix { background: var(--green-light); color: var(--green); }
+  .tag-boleto { background: #f0f9ff; color: #0369a1; }
+  .tag-cartao { background: #fdf4ff; color: #9333ea; }
+  .tag-dinheiro { background: #f0fdf4; color: #15803d; }
+  .tag-transferencia { background: #eff6ff; color: #2563eb; }
+  .sale-value { font-family: 'DM Mono', monospace; font-weight: 700; color: var(--green); font-size: 14px; }
+  .btn-remove {
+    background: none; border: none; color: var(--text-light);
+    cursor: pointer; font-size: 16px; padding: 2px 4px;
+    transition: color 0.1s;
+  }
+  .btn-remove:hover { color: var(--red); }
+
+  /* PENDÊNCIAS */
+  .pending-section { max-width: 700px; margin: 0 auto; }
+  .priority-group { margin-bottom: 24px; }
+  .priority-header {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 12px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.06em; margin-bottom: 10px; padding: 0 2px;
+    color: var(--text-muted);
+  }
+  .pending-item {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 6px;
+    transition: all 0.15s;
+  }
+  .pending-item.done { opacity: 0.55; }
+  .pending-item.done .pend-name { text-decoration: line-through; color: var(--text-muted); }
+  .pending-check {
+    width: 17px; height: 17px; min-width: 17px;
+    border: 2px solid var(--border);
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    margin-top: 2px;
+    transition: all 0.15s;
+  }
+  .pending-check.checked { background: var(--red); border-color: var(--red); }
+  .pending-check.checked::after { content: '✓'; color: white; font-size: 10px; font-weight: 700; }
+  .pend-info { flex: 1; }
+  .pend-name { font-size: 13.5px; font-weight: 500; }
+  .pend-meta { display: flex; gap: 8px; margin-top: 3px; flex-wrap: wrap; align-items: center; }
+  .pend-category {
+    font-size: 10.5px; font-weight: 600; padding: 2px 7px;
+    border-radius: 4px; text-transform: uppercase;
+  }
+  .cat-manutencao { background: var(--orange-light); color: var(--orange); }
+  .cat-pedido { background: var(--blue-light); color: var(--blue); }
+  .cat-orcamento { background: var(--purple-light); color: var(--purple); }
+  .cat-financeiro { background: var(--green-light); color: var(--green); }
+  .cat-outro { background: var(--bg); color: var(--text-muted); }
+  .pend-date { font-size: 11px; color: var(--text-light); font-family: 'DM Mono', monospace; }
+
+  /* MANUTENÇÃO — PLANILHA BRANCA */
+  #page-manutencao {
+    background: var(--bg);
+    min-height: calc(100vh - 58px);
+    padding: 24px;
+  }
+  .mn-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  .mn-title { font-size: 17px; font-weight: 700; color: var(--text); }
+  .mn-title span { color: var(--primary); }
+
+  .btn-novo-atend {
+    padding: 9px 18px; background: var(--primary); color: white;
+    border: none; border-radius: 8px;
+    font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600;
+    cursor: pointer; white-space: nowrap; transition: all 0.15s;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .btn-novo-atend:hover { background: #4338ca; transform: translateY(-1px); }
+
+  /* PLANILHA */
+  .mn-sheet-wrap {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    overflow-x: auto;
+  }
+  .mn-sheet {
+    width: 100%; border-collapse: collapse; min-width: 900px;
+  }
+  .mn-sheet thead tr {
+    background: #f1f3f8;
+    border-bottom: 2px solid var(--border);
+  }
+  .mn-sheet th {
+    font-size: 10.5px; font-weight: 700; color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: 0.06em;
+    padding: 11px 12px; text-align: left; white-space: nowrap;
+    border-right: 1px solid var(--border);
+  }
+  .mn-sheet th:last-child { border-right: none; }
+  .mn-sheet th.th-num { width: 36px; text-align: center; color: var(--text-light); }
+  .mn-sheet tbody tr { border-bottom: 1px solid #f0f1f5; transition: background 0.1s; }
+  .mn-sheet tbody tr:last-child { border-bottom: none; }
+  .mn-sheet tbody tr:hover { background: #fafbff; }
+  .mn-sheet td {
+    padding: 0; vertical-align: middle;
+    border-right: 1px solid #f0f1f5;
+  }
+  .mn-sheet td:last-child { border-right: none; }
+  .mn-sheet td.td-num {
+    text-align: center; font-size: 11px;
+    color: var(--text-light); font-family: 'DM Mono', monospace;
+    padding: 10px 4px; width: 36px;
+  }
+
+  /* CÉLULAS EDITÁVEIS */
+  .cell-input {
+    width: 100%; border: none; outline: none; background: transparent;
+    font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--text);
+    padding: 10px 12px; transition: background 0.1s;
+    min-width: 0;
+  }
+  .cell-input:focus { background: #eef2ff; }
+  .cell-input::placeholder { color: var(--text-light); font-style: italic; }
+  .cell-input[type="date"] { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--text-muted); }
+  .cell-input[type="date"]:focus { color: var(--text); }
+
+  /* LINHA NOVA (destacada) */
+  .mn-sheet tbody tr.row-new { background: #f9feff; }
+  .mn-sheet tbody tr.row-new .cell-input::placeholder { color: #c8cfe0; }
+
+  /* BOTÃO REMOVER LINHA */
+  .mn-row-del {
+    width: 28px; height: 28px; border-radius: 5px; border: none;
+    background: none; color: var(--text-light);
+    cursor: pointer; font-size: 15px; display: flex; align-items: center; justify-content: center;
+    margin: 0 4px; transition: all 0.1s; flex-shrink: 0;
+  }
+  .mn-row-del:hover { background: var(--red-light); color: var(--red); }
+
+  /* BARRA INFERIOR ADD */
+  .mn-add-row {
+    display: flex; align-items: center; gap: 8px;
+    padding: 10px 14px;
+    border-top: 1px dashed var(--border);
+    background: #fafbff;
+    border-radius: 0 0 var(--radius) var(--radius);
+    cursor: pointer; color: var(--primary); font-size: 13px; font-weight: 600;
+    transition: background 0.1s;
+  }
+  .mn-add-row:hover { background: var(--primary-light); }
+
+  /* STATUS PILL */
+  .mn-status-pill {
+    display: inline-block; padding: 3px 9px; border-radius: 20px;
+    font-size: 10.5px; font-weight: 700; white-space: nowrap;
+  }
+  .pill-ok { background: var(--green-light); color: var(--green); }
+  .pill-pend { background: var(--orange-light); color: var(--orange); }
+  .pill-empty { background: var(--bg); color: var(--text-light); }
+
+  /* UTILS */
+  .empty-state {
+    text-align: center; color: var(--text-light);
+    padding: 32px; font-size: 13px;
+  }
+  .page-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 20px;
+    max-width: 900px; margin-left: auto; margin-right: auto;
+  }
+  .page-header h2 { font-size: 17px; font-weight: 700; }
+  select, input[type="text"], input[type="number"], input[type="date"] {
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  /* DRAG OVER */
+  .funnel-col.drag-over { border-color: var(--primary); background: var(--primary-light); }
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="navbar-brand">
+    <div class="brand-icon">📊</div>
+    CRM Vendas
+  </div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showTab('funil')">🗂 Funil</button>
+    <button class="nav-tab" onclick="showTab('vendas')">💰 Vendas</button>
+    <button class="nav-tab" id="tab-pendencias" onclick="showTab('pendencias')">📋 Pendências <span class="badge" id="badge-count">0</span></button>
+    <button class="nav-tab" onclick="showTab('manutencao')">🔧 Manutenção</button>
+  </div>
+  <button class="btn-primary" onclick="openModal()">+ Novo Lead</button>
+</nav>
+
+<!-- =================== FUNIL =================== -->
+<div class="page active" id="page-funil">
+  <div class="metrics-grid">
+    <div class="metric-card">
+      <div class="metric-label">Total de Leads</div>
+      <div class="metric-value" id="m-total">0</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Fechados</div>
+      <div class="metric-value green" id="m-fechados">0</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Em Andamento</div>
+      <div class="metric-value orange" id="m-andamento">0</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Receita Fechada</div>
+      <div class="metric-value purple" id="m-receita">R$ 0,00</div>
+    </div>
+  </div>
+  <div class="funnel-board" id="funnel-board">
+    <!-- colunas geradas via JS -->
+  </div>
+</div>
+
+<!-- =================== VENDAS =================== -->
+<div class="page" id="page-vendas">
+  <div class="section-card">
+    <h3>Registrar Venda</h3>
+    <div class="input-row">
+      <div class="form-group" style="flex:2">
+        <label>Descrição</label>
+        <input type="text" id="sale-desc" placeholder="Descrição da venda...">
+      </div>
+      <div class="form-group">
+        <label>Valor (R$)</label>
+        <input type="number" id="sale-value" placeholder="0,00" min="0" step="0.01">
+      </div>
+      <div class="form-group">
+        <label>Tipo</label>
+        <select id="sale-type">
+          <option value="Venda">Venda</option>
+          <option value="Locação">Locação</option>
+          <option value="Manutenção">Manutenção</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Pagamento</label>
+        <select id="sale-payment">
+          <option value="Pix">Pix</option>
+          <option value="Boleto">Boleto</option>
+          <option value="Cartão">Cartão</option>
+          <option value="Dinheiro">Dinheiro</option>
+          <option value="Transferência">Transferência</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Data</label>
+        <input type="date" id="sale-date">
+      </div>
+      <button class="btn-green" onclick="addSale()">+ Add</button>
+    </div>
+  </div>
+
+  <div class="total-bar">
+    <span class="label">Total Geral</span>
+    <span class="amount" id="sales-total">R$ 0,00</span>
+  </div>
+
+  <div class="sales-list" id="sales-list"></div>
+</div>
+
+<!-- =================== PENDÊNCIAS =================== -->
+<div class="page" id="page-pendencias">
+  <div class="pending-section">
+    <div class="section-card">
+      <h3>Nova Pendência</h3>
+      <div class="input-row">
+        <div class="form-group" style="flex:2">
+          <label>Descrição</label>
+          <input type="text" id="pend-desc" placeholder="Descreva a pendência...">
+        </div>
+        <div class="form-group">
+          <label>Categoria</label>
+          <select id="pend-category">
+            <option value="Manutenção">Manutenção</option>
+            <option value="Pedido">Pedido</option>
+            <option value="Orçamento">Orçamento</option>
+            <option value="Financeiro">Financeiro</option>
+            <option value="Outro">Outro</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Prioridade</label>
+          <select id="pend-priority">
+            <option value="Alta">Alta</option>
+            <option value="Média">Média</option>
+            <option value="Baixa">Baixa</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Data</label>
+          <input type="date" id="pend-date">
+        </div>
+        <button class="btn-primary" onclick="addPending()">+ Add</button>
+      </div>
+    </div>
+    <div id="pending-list"></div>
+  </div>
+</div>
+
+<!-- =================== MANUTENÇÃO =================== -->
+<div class="page" id="page-manutencao">
+  <div class="mn-header">
+    <div class="mn-title">🔧 Manutenção — <span>Planilha</span></div>
+    <button class="btn-novo-atend" onclick="addManutRow()">＋ Nova Linha</button>
+  </div>
+
+  <div class="mn-sheet-wrap">
+    <table class="mn-sheet">
+      <thead>
+        <tr>
+          <th class="th-num">#</th>
+          <th style="min-width:180px">Condomínio / Cliente</th>
+          <th style="min-width:130px">Dt. Preventiva</th>
+          <th style="min-width:130px">Dt. Corretiva</th>
+          <th style="min-width:200px">Observação</th>
+          <th style="min-width:130px">Nº Proposta</th>
+          <th style="min-width:140px">Dt. Envio Relatório</th>
+          <th style="width:36px"></th>
+        </tr>
+      </thead>
+      <tbody id="manut-list"></tbody>
+    </table>
+    <div class="mn-add-row" onclick="addManutRow()">
+      <span style="font-size:16px;line-height:1">＋</span> Adicionar linha
+    </div>
+  </div>
+</div>
+
+<!-- MODAL LEAD (Novo / Editar) -->
+<div class="modal-overlay" id="modal-lead">
+  <div class="modal" style="width:520px">
+    <h2 id="modal-lead-title">Novo Lead</h2>
+    <input type="hidden" id="l-edit-id">
+    <div class="form-row">
+      <div class="form-group" style="flex:2">
+        <label>Nome / Condomínio</label>
+        <input type="text" id="l-name" placeholder="Nome do lead">
+      </div>
+      <div class="form-group">
+        <label>Valor (R$)</label>
+        <input type="number" id="l-value" placeholder="0,00" min="0" step="0.01">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Etapa</label>
+        <select id="l-stage">
+          <option value="Prospecção">Prospecção</option>
+          <option value="Em Contato">Em Contato</option>
+          <option value="Proposta">Proposta</option>
+          <option value="Negociação">Negociação</option>
+          <option value="Fechado">Fechado</option>
+          <option value="Perdido">Perdido</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Tipo</label>
+        <select id="l-type">
+          <option value="Venda">Venda</option>
+          <option value="Locação">Locação</option>
+          <option value="Manutenção">Manutenção</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Data de Início</label>
+        <input type="date" id="l-inicio">
+      </div>
+      <div class="form-group">
+        <label>Próximo Follow-up</label>
+        <input type="date" id="l-followup">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Observações / Negociação</label>
+        <textarea id="l-obs" rows="3" placeholder="Detalhes da negociação, últimas atualizações..." style="resize:vertical"></textarea>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal()">Cancelar</button>
+      <button class="btn-primary" id="modal-lead-btn" onclick="saveLead()">Adicionar Lead</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===== STATE =====
+let leads = JSON.parse(localStorage.getItem('crm_leads') || '[]');
+let sales = JSON.parse(localStorage.getItem('crm_sales') || '[]');
+let pendings = JSON.parse(localStorage.getItem('crm_pendings') || '[]');
+let manuts = JSON.parse(localStorage.getItem('crm_manuts') || '[]');
+
+const STAGES = [
+  { id: 'Prospecção', dot: 'dot-gray' },
+  { id: 'Em Contato', dot: 'dot-blue' },
+  { id: 'Proposta', dot: 'dot-orange' },
+  { id: 'Negociação', dot: 'dot-purple' },
+  { id: 'Fechado', dot: 'dot-green', label: 'Fechado ✓' },
+  { id: 'Perdido', dot: 'dot-red', label: 'Perdido ✗' },
+];
+
+function save() {
+  localStorage.setItem('crm_leads', JSON.stringify(leads));
+  localStorage.setItem('crm_sales', JSON.stringify(sales));
+  localStorage.setItem('crm_pendings', JSON.stringify(pendings));
+  localStorage.setItem('crm_manuts', JSON.stringify(manuts));
+}
+
+function fmt(v) {
+  return 'R$ ' + Number(v).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+function fmtDate(d) {
+  if (!d) return '—';
+  const [y,m,day] = d.split('-');
+  return `${day}/${m}/${y}`;
+}
+
+// ===== TABS =====
+function showTab(tab) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('page-' + tab).classList.add('active');
+  const tabs = ['funil','vendas','pendencias','manutencao'];
+  document.querySelectorAll('.nav-tab')[tabs.indexOf(tab)].classList.add('active');
+  if (tab === 'funil') renderFunil();
+  if (tab === 'vendas') renderSales();
+  if (tab === 'pendencias') renderPendings();
+  if (tab === 'manutencao') renderManut();
+}
+
+// ===== FUNIL =====
+let dragLeadId = null;
+
+function renderFunil() {
+  const board = document.getElementById('funnel-board');
+  board.innerHTML = '';
+  const fechados = leads.filter(l => l.stage === 'Fechado');
+  const andamento = leads.filter(l => !['Fechado','Perdido'].includes(l.stage));
+  const receita = fechados.reduce((s, l) => s + Number(l.value || 0), 0);
+  document.getElementById('m-total').textContent = leads.length;
+  document.getElementById('m-fechados').textContent = fechados.length;
+  document.getElementById('m-andamento').textContent = andamento.length;
+  document.getElementById('m-receita').textContent = fmt(receita);
+
+  STAGES.forEach(stage => {
+    const col = document.createElement('div');
+    col.className = 'funnel-col';
+    col.dataset.stage = stage.id;
+    const stageLeads = leads.filter(l => l.stage === stage.id);
+    col.innerHTML = `
+      <div class="funnel-header">
+        <span class="dot ${stage.dot}"></span>
+        <span>${stage.label || stage.id}</span>
+        <span class="col-count">${stageLeads.length}</span>
+      </div>
+    `;
+    if (stageLeads.length === 0) {
+      col.innerHTML += `<div class="funnel-empty">Arraste um lead aqui</div>`;
+    } else {
+      stageLeads.forEach(lead => {
+        const card = document.createElement('div');
+        card.className = 'lead-card';
+        card.draggable = true;
+        card.dataset.id = lead.id;
+        const tagClass = lead.type === 'Locação' ? 'tag-locacao' : lead.type === 'Manutenção' ? 'tag-manutencao' : 'tag-venda';
+        const followupStr = lead.followup ? `<div style="font-size:11px;color:var(--blue);margin-top:4px;font-weight:600">📅 Follow-up: ${fmtDate(lead.followup)}</div>` : '';
+        const obsStr = lead.obs ? `<div style="font-size:11px;color:var(--text-muted);margin-top:3px;font-style:italic;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${lead.obs}">${lead.obs}</div>` : '';
+        card.innerHTML = `
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:4px">
+            <div class="lead-name" style="flex:1">${lead.name}</div>
+            <button class="btn-edit-lead" onclick="editLead('${lead.id}')" title="Editar">✏️</button>
+            <button class="btn-remove" onclick="removeLead('${lead.id}')">×</button>
+          </div>
+          <div class="lead-value">${fmt(lead.value || 0)}</div>
+          <span class="lead-tag ${tagClass}">${lead.type || 'Venda'}</span>
+          ${followupStr}
+          ${obsStr}
+        `;
+        card.addEventListener('dragstart', e => { dragLeadId = lead.id; card.classList.add('dragging'); });
+        card.addEventListener('dragend', () => card.classList.remove('dragging'));
+        col.appendChild(card);
+      });
+    }
+    col.addEventListener('dragover', e => { e.preventDefault(); col.classList.add('drag-over'); });
+    col.addEventListener('dragleave', () => col.classList.remove('drag-over'));
+    col.addEventListener('drop', e => {
+      e.preventDefault(); col.classList.remove('drag-over');
+      const lead = leads.find(l => l.id === dragLeadId);
+      if (lead) { lead.stage = stage.id; save(); renderFunil(); }
+    });
+    board.appendChild(col);
+  });
+}
+
+function openModal() {
+  document.getElementById('l-edit-id').value = '';
+  document.getElementById('modal-lead-title').textContent = 'Novo Lead';
+  document.getElementById('modal-lead-btn').textContent = 'Adicionar Lead';
+  ['l-name','l-obs'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('l-value').value = '';
+  document.getElementById('l-stage').value = 'Prospecção';
+  document.getElementById('l-type').value = 'Venda';
+  document.getElementById('l-inicio').value = new Date().toISOString().slice(0,10);
+  document.getElementById('l-followup').value = '';
+  document.getElementById('modal-lead').classList.add('open');
+}
+function closeModal() { document.getElementById('modal-lead').classList.remove('open'); }
+
+function editLead(id) {
+  const lead = leads.find(l => l.id === id);
+  if (!lead) return;
+  document.getElementById('l-edit-id').value = id;
+  document.getElementById('modal-lead-title').textContent = 'Editar Lead';
+  document.getElementById('modal-lead-btn').textContent = 'Salvar Alterações';
+  document.getElementById('l-name').value = lead.name || '';
+  document.getElementById('l-value').value = lead.value || '';
+  document.getElementById('l-stage').value = lead.stage || 'Prospecção';
+  document.getElementById('l-type').value = lead.type || 'Venda';
+  document.getElementById('l-inicio').value = lead.inicio || '';
+  document.getElementById('l-followup').value = lead.followup || '';
+  document.getElementById('l-obs').value = lead.obs || '';
+  document.getElementById('modal-lead').classList.add('open');
+}
+
+function saveLead() {
+  const name = document.getElementById('l-name').value.trim();
+  if (!name) return;
+  const id = document.getElementById('l-edit-id').value;
+  const data = {
+    name,
+    value: document.getElementById('l-value').value,
+    stage: document.getElementById('l-stage').value,
+    type: document.getElementById('l-type').value,
+    inicio: document.getElementById('l-inicio').value,
+    followup: document.getElementById('l-followup').value,
+    obs: document.getElementById('l-obs').value.trim(),
+  };
+  if (id) {
+    const idx = leads.findIndex(l => l.id === id);
+    if (idx >= 0) leads[idx] = { ...leads[idx], ...data };
+  } else {
+    leads.push({ id: Date.now().toString(), ...data });
+  }
+  save(); closeModal(); renderFunil();
+}
+
+function removeLead(id) {
+  leads = leads.filter(l => l.id !== id);
+  save(); renderFunil();
+}
+
+// ===== VENDAS =====
+function addSale() {
+  const desc = document.getElementById('sale-desc').value.trim();
+  const value = parseFloat(document.getElementById('sale-value').value) || 0;
+  const type = document.getElementById('sale-type').value;
+  const payment = document.getElementById('sale-payment').value;
+  const date = document.getElementById('sale-date').value;
+  if (!desc) return;
+  sales.push({ id: Date.now().toString(), desc, value, type, payment, date: date || new Date().toISOString().slice(0,10) });
+  save(); renderSales();
+  document.getElementById('sale-desc').value = '';
+  document.getElementById('sale-value').value = '';
+}
+
+function removeSale(id) {
+  sales = sales.filter(s => s.id !== id);
+  save(); renderSales();
+}
+
+function renderSales() {
+  const total = sales.reduce((s, x) => s + Number(x.value), 0);
+  document.getElementById('sales-total').textContent = fmt(total);
+  const list = document.getElementById('sales-list');
+  if (sales.length === 0) { list.innerHTML = '<div class="empty-state">Nenhuma venda registrada</div>'; return; }
+  const groups = {};
+  sales.forEach(s => { if (!groups[s.date]) groups[s.date] = []; groups[s.date].push(s); });
+  const sortedDates = Object.keys(groups).sort((a,b) => b.localeCompare(a));
+  list.innerHTML = sortedDates.map(date => {
+    const dayTotal = groups[date].reduce((s,x) => s + Number(x.value), 0);
+    const items = groups[date].map(s => {
+      const tClass = s.type === 'Locação' ? 'tag-locacao' : s.type === 'Manutenção' ? 'tag-manutencao' : 'tag-venda';
+      const pClass = s.payment === 'Pix' ? 'tag-pix' : s.payment === 'Boleto' ? 'tag-boleto' : s.payment === 'Cartão' ? 'tag-cartao' : s.payment === 'Dinheiro' ? 'tag-dinheiro' : 'tag-transferencia';
+      return `<div class="sale-item">
+        <span>💰</span>
+        <div class="sale-info">
+          <div class="sale-name">${s.desc}</div>
+          <div class="sale-meta">
+            <span class="sale-tag ${tClass}">${s.type}</span>
+            <span class="sale-tag ${pClass}">${s.payment}</span>
+          </div>
+        </div>
+        <div class="sale-value">${fmt(s.value)}</div>
+        <button class="btn-remove" onclick="removeSale('${s.id}')">×</button>
+      </div>`;
+    }).join('');
+    return `<div class="date-group">
+      <div class="date-header"><span>${fmtDate(date)}</span><span class="date-total">${fmt(dayTotal)}</span></div>
+      ${items}
+    </div>`;
+  }).join('');
+}
+
+// ===== PENDÊNCIAS =====
+function addPending() {
+  const desc = document.getElementById('pend-desc').value.trim();
+  const category = document.getElementById('pend-category').value;
+  const priority = document.getElementById('pend-priority').value;
+  const date = document.getElementById('pend-date').value;
+  if (!desc) return;
+  pendings.push({ id: Date.now().toString(), desc, category, priority, date: date || new Date().toISOString().slice(0,10), done: false });
+  save(); renderPendings();
+  document.getElementById('pend-desc').value = '';
+}
+
+function togglePending(id) {
+  const p = pendings.find(x => x.id === id);
+  if (p) { p.done = !p.done; save(); renderPendings(); }
+}
+
+function removePending(id) {
+  pendings = pendings.filter(x => x.id !== id);
+  save(); renderPendings();
+}
+
+function renderPendings() {
+  const open = pendings.filter(p => !p.done).length;
+  document.getElementById('badge-count').textContent = open;
+  document.getElementById('tab-pendencias').querySelector('.badge').textContent = open;
+
+  const list = document.getElementById('pending-list');
+  const priorities = ['Alta','Média','Baixa'];
+  const dotColors = { Alta: 'dot-red', Média: 'dot-orange', Baixa: 'dot-blue' };
+  list.innerHTML = priorities.map(prio => {
+    const items = pendings.filter(p => p.priority === prio);
+    const openCount = items.filter(p => !p.done).length;
+    const catClass = c => c === 'Manutenção' ? 'cat-manutencao' : c === 'Pedido' ? 'cat-pedido' : c === 'Orçamento' ? 'cat-orcamento' : c === 'Financeiro' ? 'cat-financeiro' : 'cat-outro';
+    return `<div class="priority-group">
+      <div class="priority-header">
+        <span class="dot ${dotColors[prio]}"></span>
+        Prioridade ${prio} <span style="color:var(--text-light);font-weight:500">(${openCount} abertas)</span>
+      </div>
+      ${items.length === 0 ? '<div class="empty-state" style="padding:12px">Nenhuma pendência</div>' :
+        items.map(p => `<div class="pending-item ${p.done ? 'done' : ''}">
+          <div class="pending-check ${p.done ? 'checked' : ''}" onclick="togglePending('${p.id}')"></div>
+          <div class="pend-info">
+            <div class="pend-name">${p.desc}</div>
+            <div class="pend-meta">
+              <span class="pend-category ${catClass(p.category)}">${p.category}</span>
+              <span class="pend-date">${fmtDate(p.date)}</span>
+            </div>
+          </div>
+          <button class="btn-remove" onclick="removePending('${p.id}')">×</button>
+        </div>`).join('')
+      }
+    </div>`;
+  }).join('');
+}
+
+// ===== MANUTENÇÃO — PLANILHA =====
+function addManutRow() {
+  manuts.push({ id: Date.now().toString(), cliente:'', preventiva:'', corretiva:'', obs:'', proposta:'', relatorio:'' });
+  save(); renderManut();
+  // foca o último campo cliente
+  setTimeout(() => {
+    const inputs = document.querySelectorAll('#manut-list .cell-cliente');
+    if (inputs.length) inputs[inputs.length-1].focus();
+  }, 50);
+}
+
+function updateManut(id, field, val) {
+  const m = manuts.find(x => x.id === id);
+  if (m) { m[field] = val; save(); }
+}
+
+function removeManut(id) {
+  manuts = manuts.filter(x => x.id !== id);
+  save(); renderManut();
+}
+
+function renderManut() {
+  const tbody = document.getElementById('manut-list');
+  if (manuts.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;color:var(--text-light);padding:32px;font-size:13px">Clique em "Nova Linha" para começar</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = manuts.map((m, i) => `
+    <tr>
+      <td class="td-num">${i+1}</td>
+      <td><input class="cell-input cell-cliente" value="${esc(m.cliente)}" placeholder="Nome do condomínio..." oninput="updateManut('${m.id}','cliente',this.value)"></td>
+      <td><input class="cell-input" type="date" value="${m.preventiva||''}" oninput="updateManut('${m.id}','preventiva',this.value)"></td>
+      <td><input class="cell-input" type="date" value="${m.corretiva||''}" oninput="updateManut('${m.id}','corretiva',this.value)"></td>
+      <td><input class="cell-input" value="${esc(m.obs)}" placeholder="Observações..." oninput="updateManut('${m.id}','obs',this.value)"></td>
+      <td><input class="cell-input" value="${esc(m.proposta)}" placeholder="Ex: 2495" oninput="updateManut('${m.id}','proposta',this.value)"></td>
+      <td><input class="cell-input" type="date" value="${m.relatorio||''}" oninput="updateManut('${m.id}','relatorio',this.value)"></td>
+      <td style="padding:0 4px">
+        <button class="mn-row-del" onclick="removeManut('${m.id}')" title="Remover linha">×</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function esc(s) { return (s||'').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
+
+// ===== INIT =====
+const today = new Date().toISOString().slice(0,10);
+document.getElementById('sale-date').value = today;
+document.getElementById('pend-date').value = today;
+renderFunil();
+updateBadge();
+function updateBadge() {
+  const open = pendings.filter(p => !p.done).length;
+  document.getElementById('badge-count').textContent = open;
+}
+
+document.getElementById('modal-lead').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+</script>
+</body>
+</html>
