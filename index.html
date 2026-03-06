@@ -1275,9 +1275,9 @@ function renderManut() {
             style="${m.obs ? 'background:transparent;' : ''}"
             oninput="updateManut('${m.id}','obs',this.value)"
             onblur="renderManut()"></td>
-      <td style="${['concluído','concluido'].includes((m.proposta||'').trim().toLowerCase()) ? 'background:#dcfce7;' : ''}"><input class="cell-input" value="${esc(m.proposta)}"
+      <td style="${/(conclu[ií]do)/i.test(m.proposta||'') ? 'background:#dcfce7;' : ''}"><input class="cell-input" value="${esc(m.proposta)}"
             placeholder="Ex: 2495"
-            style="${['concluído','concluido'].includes((m.proposta||'').trim().toLowerCase()) ? 'background:transparent;color:#15803d;font-weight:700;' : ''}"
+            style="${/(conclu[ií]do)/i.test(m.proposta||'') ? 'background:transparent;color:#15803d;font-weight:700;' : ''}"
             oninput="updateManut('${m.id}','proposta',this.value)"
             onblur="renderManut()"></td>
       <td><input class="cell-input" type="date" value="${m.relatorio || ''}"
@@ -1312,40 +1312,6 @@ document.getElementById('modal-lead').addEventListener('click', function(e) {
 </body>
 </html>
 
-
- 
-
- 
-
-
-
-
-
-
-   
-
-
-       
-      
- 
-   
-        
-         
-  
-
-       
-
-    
-     
-       
-      
-   
- 
-
-
- 
- 
-      
          
    
 
