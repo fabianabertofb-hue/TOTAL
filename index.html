@@ -796,11 +796,18 @@
     <span class="mn-search-count" id="mn-search-count" style="display:none"></span>
   </div>
 
-  <!-- Legenda de cores -->
   <div class="mn-legend">
     <div class="legend-item">
       <div class="legend-dot legend-done"></div>
       Preventiva realizada
+    </div>
+    <div class="legend-item">
+      <div class="legend-dot" style="background:#bbf7d0;"></div>
+      Proposta concluída
+    </div>
+    <div class="legend-item">
+      <div class="legend-dot" style="background:#fde047;"></div>
+      Observação preenchida
     </div>
     <div class="legend-item">
       <div class="legend-dot legend-none"></div>
@@ -1177,8 +1184,8 @@ function addManutRow() {
 function updateManut(id, field, val) {
   const m = manuts.find(x => x.id === id);
   if (m) { m[field] = val; save();
-    // re-render só para atualizar a cor da linha ao vivo
-    if (field === 'preventiva') renderManut();
+    // re-render para atualizar cores ao vivo
+    if (field === 'preventiva' || field === 'proposta' || field === 'obs') renderManut();
   }
 }
 
@@ -1263,11 +1270,13 @@ function renderManut() {
       </td>
       <td><input class="cell-input" type="date" value="${m.corretiva || ''}"
             oninput="updateManut('${m.id}','corretiva',this.value)"></td>
-      <td><input class="cell-input" value="${esc(m.obs)}"
+      <td style="${m.obs ? 'background:#fde047;' : ''}"><input class="cell-input" value="${esc(m.obs)}"
             placeholder="Observações..."
+            style="${m.obs ? 'background:transparent;' : ''}"
             oninput="updateManut('${m.id}','obs',this.value)"></td>
-      <td><input class="cell-input" value="${esc(m.proposta)}"
+      <td style="${['concluído','concluido'].includes((m.proposta||'').trim().toLowerCase()) ? 'background:#dcfce7;' : ''}"><input class="cell-input" value="${esc(m.proposta)}"
             placeholder="Ex: 2495"
+            style="${['concluído','concluido'].includes((m.proposta||'').trim().toLowerCase()) ? 'background:transparent;color:#15803d;font-weight:700;' : ''}"
             oninput="updateManut('${m.id}','proposta',this.value)"></td>
       <td><input class="cell-input" type="date" value="${m.relatorio || ''}"
             oninput="updateManut('${m.id}','relatorio',this.value)"></td>
@@ -1300,6 +1309,7 @@ document.getElementById('modal-lead').addEventListener('click', function(e) {
 </script>
 </body>
 </html>
+
 
 
     
