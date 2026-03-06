@@ -187,17 +187,13 @@
     font-weight: 600;
     font-size: 13px;
   }
-  .dot {
-    width: 9px; height: 9px;
-    border-radius: 50%;
-    flex-shrink: 0;
-  }
-  .dot-gray { background: #94a3b8; }
-  .dot-blue { background: var(--blue); }
+  .dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+  .dot-gray   { background: #94a3b8; }
+  .dot-blue   { background: var(--blue); }
   .dot-orange { background: var(--orange); }
   .dot-purple { background: var(--purple); }
-  .dot-green { background: var(--green); }
-  .dot-red { background: var(--red); }
+  .dot-green  { background: var(--green); }
+  .dot-red    { background: var(--red); }
   .col-count {
     margin-left: auto;
     background: var(--bg);
@@ -236,7 +232,7 @@
     transition: opacity 0.15s; line-height: 1;
   }
   .lead-card:hover .btn-edit-lead { opacity: 1; }
-  .lead-name { font-weight: 600; font-size: 13px; margin-bottom: 4px; }
+  .lead-name  { font-weight: 600; font-size: 13px; margin-bottom: 4px; }
   .lead-value { color: var(--purple); font-weight: 700; font-size: 13px; font-family: 'DM Mono', monospace; }
   .lead-tag {
     display: inline-block;
@@ -266,7 +262,7 @@
     box-shadow: var(--shadow-lg);
   }
   .modal h2 { font-size: 17px; font-weight: 700; margin-bottom: 20px; }
-  .form-row { display: flex; gap: 10px; margin-bottom: 12px; }
+  .form-row  { display: flex; gap: 10px; margin-bottom: 12px; }
   .form-group { flex: 1; display: flex; flex-direction: column; gap: 5px; }
   .form-group label { font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; }
   .form-group input, .form-group select, .form-group textarea {
@@ -320,7 +316,7 @@
     max-width: 700px;
     margin-left: auto; margin-right: auto;
   }
-  .total-bar .label { font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; opacity: 0.85; }
+  .total-bar .label  { font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; opacity: 0.85; }
   .total-bar .amount { font-family: 'DM Mono', monospace; font-size: 22px; font-weight: 700; }
   .sales-list { max-width: 700px; margin: 0 auto; }
   .date-group { margin-bottom: 20px; }
@@ -350,13 +346,13 @@
     border-radius: 4px;
     text-transform: uppercase; letter-spacing: 0.03em;
   }
-  .tag-venda { background: var(--blue-light); color: var(--blue); }
-  .tag-locacao { background: var(--purple-light); color: var(--purple); }
-  .tag-manutencao { background: var(--orange-light); color: var(--orange); }
-  .tag-pix { background: var(--green-light); color: var(--green); }
-  .tag-boleto { background: #f0f9ff; color: #0369a1; }
-  .tag-cartao { background: #fdf4ff; color: #9333ea; }
-  .tag-dinheiro { background: #f0fdf4; color: #15803d; }
+  .tag-venda       { background: var(--blue-light);   color: var(--blue); }
+  .tag-locacao     { background: var(--purple-light);  color: var(--purple); }
+  .tag-manutencao  { background: var(--orange-light);  color: var(--orange); }
+  .tag-pix         { background: var(--green-light);   color: var(--green); }
+  .tag-boleto      { background: #f0f9ff; color: #0369a1; }
+  .tag-cartao      { background: #fdf4ff; color: #9333ea; }
+  .tag-dinheiro    { background: #f0fdf4; color: #15803d; }
   .tag-transferencia { background: #eff6ff; color: #2563eb; }
   .sale-value { font-family: 'DM Mono', monospace; font-weight: 700; color: var(--green); font-size: 14px; }
   .btn-remove {
@@ -368,7 +364,7 @@
 
   /* PENDÊNCIAS */
   .pending-section { max-width: 700px; margin: 0 auto; }
-  .priority-group { margin-bottom: 24px; }
+  .priority-group  { margin-bottom: 24px; }
   .priority-header {
     display: flex; align-items: center; gap: 8px;
     font-size: 12px; font-weight: 700; text-transform: uppercase;
@@ -406,14 +402,14 @@
     font-size: 10.5px; font-weight: 600; padding: 2px 7px;
     border-radius: 4px; text-transform: uppercase;
   }
-  .cat-manutencao { background: var(--orange-light); color: var(--orange); }
-  .cat-pedido { background: var(--blue-light); color: var(--blue); }
-  .cat-orcamento { background: var(--purple-light); color: var(--purple); }
-  .cat-financeiro { background: var(--green-light); color: var(--green); }
-  .cat-outro { background: var(--bg); color: var(--text-muted); }
+  .cat-manutencao  { background: var(--orange-light); color: var(--orange); }
+  .cat-pedido      { background: var(--blue-light);   color: var(--blue); }
+  .cat-orcamento   { background: var(--purple-light);  color: var(--purple); }
+  .cat-financeiro  { background: var(--green-light);   color: var(--green); }
+  .cat-outro       { background: var(--bg);            color: var(--text-muted); }
   .pend-date { font-size: 11px; color: var(--text-light); font-family: 'DM Mono', monospace; }
 
-  /* MANUTENÇÃO — PLANILHA BRANCA */
+  /* MANUTENÇÃO */
   #page-manutencao {
     background: var(--bg);
     min-height: calc(100vh - 58px);
@@ -421,10 +417,86 @@
   }
   .mn-header {
     display: flex; align-items: center; justify-content: space-between;
-    margin-bottom: 20px;
+    margin-bottom: 16px; gap: 12px; flex-wrap: wrap;
   }
   .mn-title { font-size: 17px; font-weight: 700; color: var(--text); }
   .mn-title span { color: var(--primary); }
+
+  /* ── BARRA DE CONTROLES (busca + ordenar) ── */
+  .mn-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+  }
+  .mn-search-wrap {
+    position: relative;
+    flex: 1;
+    min-width: 200px;
+    max-width: 360px;
+  }
+  .mn-search-wrap .search-icon {
+    position: absolute;
+    left: 11px; top: 50%;
+    transform: translateY(-50%);
+    font-size: 15px;
+    pointer-events: none;
+    color: var(--text-muted);
+  }
+  .mn-search {
+    width: 100%;
+    padding: 8px 12px 8px 34px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    color: var(--text);
+    background: var(--white);
+    outline: none;
+    transition: border 0.15s, box-shadow 0.15s;
+  }
+  .mn-search:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(79,70,229,0.1);
+  }
+  .mn-search::placeholder { color: var(--text-light); }
+
+  /* Botão ordenar A→Z */
+  .btn-sort {
+    padding: 8px 14px;
+    background: var(--white);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--text-muted);
+    cursor: pointer;
+    display: flex; align-items: center; gap: 6px;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .btn-sort:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
+  .btn-sort.active { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
+
+  /* legenda de cores */
+  .mn-legend {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+  .legend-item {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 11.5px; color: var(--text-muted); font-weight: 500;
+  }
+  .legend-dot {
+    width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0;
+  }
+  .legend-done { background: #bbf7d0; }
+  .legend-none { background: #f1f3f8; border: 1px solid var(--border); }
 
   .btn-novo-atend {
     padding: 9px 18px; background: var(--primary); color: white;
@@ -443,9 +515,7 @@
     box-shadow: var(--shadow-sm);
     overflow-x: auto;
   }
-  .mn-sheet {
-    width: 100%; border-collapse: collapse; min-width: 900px;
-  }
+  .mn-sheet { width: 100%; border-collapse: collapse; min-width: 900px; }
   .mn-sheet thead tr {
     background: #f1f3f8;
     border-bottom: 2px solid var(--border);
@@ -454,13 +524,27 @@
     font-size: 10.5px; font-weight: 700; color: var(--text-muted);
     text-transform: uppercase; letter-spacing: 0.06em;
     padding: 11px 12px; text-align: left; white-space: nowrap;
-    border-right: 1px solid var(--border);
+    border-right: 1px solid var(--border); cursor: default;
   }
   .mn-sheet th:last-child { border-right: none; }
   .mn-sheet th.th-num { width: 36px; text-align: center; color: var(--text-light); }
   .mn-sheet tbody tr { border-bottom: 1px solid #f0f1f5; transition: background 0.1s; }
   .mn-sheet tbody tr:last-child { border-bottom: none; }
   .mn-sheet tbody tr:hover { background: #fafbff; }
+
+  /* ── DESTAQUE: preventiva realizada ── */
+  .mn-sheet tbody tr.row-preventiva-ok {
+    background: #f0fdf4 !important;       /* verde bem suave */
+    border-left: 3px solid #10b981;       /* barra verde lateral */
+  }
+  .mn-sheet tbody tr.row-preventiva-ok:hover {
+    background: #e6faf1 !important;
+  }
+  .mn-sheet tbody tr.row-preventiva-ok .td-num {
+    color: var(--green);
+    font-weight: 700;
+  }
+
   .mn-sheet td {
     padding: 0; vertical-align: middle;
     border-right: 1px solid #f0f1f5;
@@ -484,11 +568,19 @@
   .cell-input[type="date"] { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--text-muted); }
   .cell-input[type="date"]:focus { color: var(--text); }
 
-  /* LINHA NOVA (destacada) */
+  /* badge de realizado na célula de data preventiva */
+  .mn-sheet tbody tr.row-preventiva-ok .cell-prev-wrap::after {
+    content: '✓';
+    font-size: 11px;
+    color: var(--green);
+    font-weight: 700;
+    margin-left: 4px;
+    pointer-events: none;
+  }
+
   .mn-sheet tbody tr.row-new { background: #f9feff; }
   .mn-sheet tbody tr.row-new .cell-input::placeholder { color: #c8cfe0; }
 
-  /* BOTÃO REMOVER LINHA */
   .mn-row-del {
     width: 28px; height: 28px; border-radius: 5px; border: none;
     background: none; color: var(--text-light);
@@ -497,7 +589,6 @@
   }
   .mn-row-del:hover { background: var(--red-light); color: var(--red); }
 
-  /* BARRA INFERIOR ADD */
   .mn-add-row {
     display: flex; align-items: center; gap: 8px;
     padding: 10px 14px;
@@ -509,14 +600,33 @@
   }
   .mn-add-row:hover { background: var(--primary-light); }
 
+  /* contador de resultados da busca */
+  .mn-search-count {
+    font-size: 12px;
+    color: var(--text-muted);
+    padding: 4px 8px;
+    background: var(--bg);
+    border-radius: 20px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  /* sem resultados */
+  .mn-no-results {
+    text-align: center;
+    padding: 28px;
+    color: var(--text-light);
+    font-size: 13px;
+  }
+
   /* STATUS PILL */
   .mn-status-pill {
     display: inline-block; padding: 3px 9px; border-radius: 20px;
     font-size: 10.5px; font-weight: 700; white-space: nowrap;
   }
-  .pill-ok { background: var(--green-light); color: var(--green); }
-  .pill-pend { background: var(--orange-light); color: var(--orange); }
-  .pill-empty { background: var(--bg); color: var(--text-light); }
+  .pill-ok    { background: var(--green-light);  color: var(--green); }
+  .pill-pend  { background: var(--orange-light); color: var(--orange); }
+  .pill-empty { background: var(--bg);           color: var(--text-light); }
 
   /* UTILS */
   .empty-state {
@@ -574,9 +684,7 @@
       <div class="metric-value purple" id="m-receita">R$ 0,00</div>
     </div>
   </div>
-  <div class="funnel-board" id="funnel-board">
-    <!-- colunas geradas via JS -->
-  </div>
+  <div class="funnel-board" id="funnel-board"></div>
 </div>
 
 <!-- =================== VENDAS =================== -->
@@ -617,12 +725,10 @@
       <button class="btn-green" onclick="addSale()">+ Add</button>
     </div>
   </div>
-
   <div class="total-bar">
     <span class="label">Total Geral</span>
     <span class="amount" id="sales-total">R$ 0,00</span>
   </div>
-
   <div class="sales-list" id="sales-list"></div>
 </div>
 
@@ -672,6 +778,36 @@
     <button class="btn-novo-atend" onclick="addManutRow()">＋ Nova Linha</button>
   </div>
 
+  <!-- CONTROLES: busca + ordenar + legenda -->
+  <div class="mn-controls">
+    <div class="mn-search-wrap">
+      <span class="search-icon">🔍</span>
+      <input
+        class="mn-search"
+        id="mn-search-input"
+        type="text"
+        placeholder="Buscar condomínio ou cliente..."
+        oninput="renderManut()"
+      >
+    </div>
+    <button class="btn-sort" id="btn-sort-az" onclick="toggleSort()" title="Ordenar A→Z / Z→A">
+      <span id="sort-icon">A→Z</span> Ordenar
+    </button>
+    <span class="mn-search-count" id="mn-search-count" style="display:none"></span>
+  </div>
+
+  <!-- Legenda de cores -->
+  <div class="mn-legend">
+    <div class="legend-item">
+      <div class="legend-dot legend-done"></div>
+      Preventiva realizada
+    </div>
+    <div class="legend-item">
+      <div class="legend-dot legend-none"></div>
+      Sem data de preventiva
+    </div>
+  </div>
+
   <div class="mn-sheet-wrap">
     <table class="mn-sheet">
       <thead>
@@ -694,7 +830,7 @@
   </div>
 </div>
 
-<!-- MODAL LEAD (Novo / Editar) -->
+<!-- MODAL LEAD -->
 <div class="modal-overlay" id="modal-lead">
   <div class="modal" style="width:520px">
     <h2 id="modal-lead-title">Novo Lead</h2>
@@ -755,25 +891,28 @@
 
 <script>
 // ===== STATE =====
-let leads = JSON.parse(localStorage.getItem('crm_leads') || '[]');
-let sales = JSON.parse(localStorage.getItem('crm_sales') || '[]');
+let leads    = JSON.parse(localStorage.getItem('crm_leads')    || '[]');
+let sales    = JSON.parse(localStorage.getItem('crm_sales')    || '[]');
 let pendings = JSON.parse(localStorage.getItem('crm_pendings') || '[]');
-let manuts = JSON.parse(localStorage.getItem('crm_manuts') || '[]');
+let manuts   = JSON.parse(localStorage.getItem('crm_manuts')   || '[]');
+
+// estado de ordenação da aba manutenção
+let manutSortAZ = false; // false = ordem de inserção, true = A→Z
 
 const STAGES = [
-  { id: 'Prospecção', dot: 'dot-gray' },
-  { id: 'Em Contato', dot: 'dot-blue' },
-  { id: 'Proposta', dot: 'dot-orange' },
-  { id: 'Negociação', dot: 'dot-purple' },
-  { id: 'Fechado', dot: 'dot-green', label: 'Fechado ✓' },
-  { id: 'Perdido', dot: 'dot-red', label: 'Perdido ✗' },
+  { id: 'Prospecção',  dot: 'dot-gray' },
+  { id: 'Em Contato',  dot: 'dot-blue' },
+  { id: 'Proposta',    dot: 'dot-orange' },
+  { id: 'Negociação',  dot: 'dot-purple' },
+  { id: 'Fechado',     dot: 'dot-green', label: 'Fechado ✓' },
+  { id: 'Perdido',     dot: 'dot-red',   label: 'Perdido ✗' },
 ];
 
 function save() {
-  localStorage.setItem('crm_leads', JSON.stringify(leads));
-  localStorage.setItem('crm_sales', JSON.stringify(sales));
+  localStorage.setItem('crm_leads',    JSON.stringify(leads));
+  localStorage.setItem('crm_sales',    JSON.stringify(sales));
   localStorage.setItem('crm_pendings', JSON.stringify(pendings));
-  localStorage.setItem('crm_manuts', JSON.stringify(manuts));
+  localStorage.setItem('crm_manuts',   JSON.stringify(manuts));
 }
 
 function fmt(v) {
@@ -792,10 +931,10 @@ function showTab(tab) {
   document.getElementById('page-' + tab).classList.add('active');
   const tabs = ['funil','vendas','pendencias','manutencao'];
   document.querySelectorAll('.nav-tab')[tabs.indexOf(tab)].classList.add('active');
-  if (tab === 'funil') renderFunil();
-  if (tab === 'vendas') renderSales();
-  if (tab === 'pendencias') renderPendings();
-  if (tab === 'manutencao') renderManut();
+  if (tab === 'funil')       renderFunil();
+  if (tab === 'vendas')      renderSales();
+  if (tab === 'pendencias')  renderPendings();
+  if (tab === 'manutencao')  renderManut();
 }
 
 // ===== FUNIL =====
@@ -804,13 +943,13 @@ let dragLeadId = null;
 function renderFunil() {
   const board = document.getElementById('funnel-board');
   board.innerHTML = '';
-  const fechados = leads.filter(l => l.stage === 'Fechado');
+  const fechados  = leads.filter(l => l.stage === 'Fechado');
   const andamento = leads.filter(l => !['Fechado','Perdido'].includes(l.stage));
-  const receita = fechados.reduce((s, l) => s + Number(l.value || 0), 0);
-  document.getElementById('m-total').textContent = leads.length;
-  document.getElementById('m-fechados').textContent = fechados.length;
+  const receita   = fechados.reduce((s, l) => s + Number(l.value || 0), 0);
+  document.getElementById('m-total').textContent    = leads.length;
+  document.getElementById('m-fechados').textContent  = fechados.length;
   document.getElementById('m-andamento').textContent = andamento.length;
-  document.getElementById('m-receita').textContent = fmt(receita);
+  document.getElementById('m-receita').textContent   = fmt(receita);
 
   STAGES.forEach(stage => {
     const col = document.createElement('div');
@@ -822,8 +961,7 @@ function renderFunil() {
         <span class="dot ${stage.dot}"></span>
         <span>${stage.label || stage.id}</span>
         <span class="col-count">${stageLeads.length}</span>
-      </div>
-    `;
+      </div>`;
     if (stageLeads.length === 0) {
       col.innerHTML += `<div class="funnel-empty">Arraste um lead aqui</div>`;
     } else {
@@ -832,27 +970,25 @@ function renderFunil() {
         card.className = 'lead-card';
         card.draggable = true;
         card.dataset.id = lead.id;
-        const tagClass = lead.type === 'Locação' ? 'tag-locacao' : lead.type === 'Manutenção' ? 'tag-manutencao' : 'tag-venda';
+        const tagClass   = lead.type === 'Locação' ? 'tag-locacao' : lead.type === 'Manutenção' ? 'tag-manutencao' : 'tag-venda';
         const followupStr = lead.followup ? `<div style="font-size:11px;color:var(--blue);margin-top:4px;font-weight:600">📅 Follow-up: ${fmtDate(lead.followup)}</div>` : '';
-        const obsStr = lead.obs ? `<div style="font-size:11px;color:var(--text-muted);margin-top:3px;font-style:italic;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${lead.obs}">${lead.obs}</div>` : '';
+        const obsStr      = lead.obs ? `<div style="font-size:11px;color:var(--text-muted);margin-top:3px;font-style:italic;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${lead.obs}">${lead.obs}</div>` : '';
         card.innerHTML = `
           <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:4px">
             <div class="lead-name" style="flex:1">${lead.name}</div>
             <button class="btn-edit-lead" onclick="editLead('${lead.id}')" title="Editar">✏️</button>
-            <button class="btn-remove" onclick="removeLead('${lead.id}')">×</button>
+            <button class="btn-remove"    onclick="removeLead('${lead.id}')">×</button>
           </div>
           <div class="lead-value">${fmt(lead.value || 0)}</div>
           <span class="lead-tag ${tagClass}">${lead.type || 'Venda'}</span>
-          ${followupStr}
-          ${obsStr}
-        `;
-        card.addEventListener('dragstart', e => { dragLeadId = lead.id; card.classList.add('dragging'); });
-        card.addEventListener('dragend', () => card.classList.remove('dragging'));
+          ${followupStr}${obsStr}`;
+        card.addEventListener('dragstart', () => { dragLeadId = lead.id; card.classList.add('dragging'); });
+        card.addEventListener('dragend',   () => card.classList.remove('dragging'));
         col.appendChild(card);
       });
     }
-    col.addEventListener('dragover', e => { e.preventDefault(); col.classList.add('drag-over'); });
-    col.addEventListener('dragleave', () => col.classList.remove('drag-over'));
+    col.addEventListener('dragover',  e => { e.preventDefault(); col.classList.add('drag-over'); });
+    col.addEventListener('dragleave', ()  => col.classList.remove('drag-over'));
     col.addEventListener('drop', e => {
       e.preventDefault(); col.classList.remove('drag-over');
       const lead = leads.find(l => l.id === dragLeadId);
@@ -865,12 +1001,12 @@ function renderFunil() {
 function openModal() {
   document.getElementById('l-edit-id').value = '';
   document.getElementById('modal-lead-title').textContent = 'Novo Lead';
-  document.getElementById('modal-lead-btn').textContent = 'Adicionar Lead';
+  document.getElementById('modal-lead-btn').textContent   = 'Adicionar Lead';
   ['l-name','l-obs'].forEach(id => document.getElementById(id).value = '');
-  document.getElementById('l-value').value = '';
-  document.getElementById('l-stage').value = 'Prospecção';
-  document.getElementById('l-type').value = 'Venda';
-  document.getElementById('l-inicio').value = new Date().toISOString().slice(0,10);
+  document.getElementById('l-value').value   = '';
+  document.getElementById('l-stage').value   = 'Prospecção';
+  document.getElementById('l-type').value    = 'Venda';
+  document.getElementById('l-inicio').value  = new Date().toISOString().slice(0,10);
   document.getElementById('l-followup').value = '';
   document.getElementById('modal-lead').classList.add('open');
 }
@@ -879,31 +1015,31 @@ function closeModal() { document.getElementById('modal-lead').classList.remove('
 function editLead(id) {
   const lead = leads.find(l => l.id === id);
   if (!lead) return;
-  document.getElementById('l-edit-id').value = id;
+  document.getElementById('l-edit-id').value   = id;
   document.getElementById('modal-lead-title').textContent = 'Editar Lead';
-  document.getElementById('modal-lead-btn').textContent = 'Salvar Alterações';
-  document.getElementById('l-name').value = lead.name || '';
-  document.getElementById('l-value').value = lead.value || '';
-  document.getElementById('l-stage').value = lead.stage || 'Prospecção';
-  document.getElementById('l-type').value = lead.type || 'Venda';
-  document.getElementById('l-inicio').value = lead.inicio || '';
+  document.getElementById('modal-lead-btn').textContent   = 'Salvar Alterações';
+  document.getElementById('l-name').value     = lead.name     || '';
+  document.getElementById('l-value').value    = lead.value    || '';
+  document.getElementById('l-stage').value    = lead.stage    || 'Prospecção';
+  document.getElementById('l-type').value     = lead.type     || 'Venda';
+  document.getElementById('l-inicio').value   = lead.inicio   || '';
   document.getElementById('l-followup').value = lead.followup || '';
-  document.getElementById('l-obs').value = lead.obs || '';
+  document.getElementById('l-obs').value      = lead.obs      || '';
   document.getElementById('modal-lead').classList.add('open');
 }
 
 function saveLead() {
   const name = document.getElementById('l-name').value.trim();
   if (!name) return;
-  const id = document.getElementById('l-edit-id').value;
+  const id   = document.getElementById('l-edit-id').value;
   const data = {
     name,
-    value: document.getElementById('l-value').value,
-    stage: document.getElementById('l-stage').value,
-    type: document.getElementById('l-type').value,
-    inicio: document.getElementById('l-inicio').value,
+    value:    document.getElementById('l-value').value,
+    stage:    document.getElementById('l-stage').value,
+    type:     document.getElementById('l-type').value,
+    inicio:   document.getElementById('l-inicio').value,
     followup: document.getElementById('l-followup').value,
-    obs: document.getElementById('l-obs').value.trim(),
+    obs:      document.getElementById('l-obs').value.trim(),
   };
   if (id) {
     const idx = leads.findIndex(l => l.id === id);
@@ -921,15 +1057,15 @@ function removeLead(id) {
 
 // ===== VENDAS =====
 function addSale() {
-  const desc = document.getElementById('sale-desc').value.trim();
-  const value = parseFloat(document.getElementById('sale-value').value) || 0;
-  const type = document.getElementById('sale-type').value;
+  const desc    = document.getElementById('sale-desc').value.trim();
+  const value   = parseFloat(document.getElementById('sale-value').value) || 0;
+  const type    = document.getElementById('sale-type').value;
   const payment = document.getElementById('sale-payment').value;
-  const date = document.getElementById('sale-date').value;
+  const date    = document.getElementById('sale-date').value;
   if (!desc) return;
   sales.push({ id: Date.now().toString(), desc, value, type, payment, date: date || new Date().toISOString().slice(0,10) });
   save(); renderSales();
-  document.getElementById('sale-desc').value = '';
+  document.getElementById('sale-desc').value  = '';
   document.getElementById('sale-value').value = '';
 }
 
@@ -973,10 +1109,10 @@ function renderSales() {
 
 // ===== PENDÊNCIAS =====
 function addPending() {
-  const desc = document.getElementById('pend-desc').value.trim();
+  const desc     = document.getElementById('pend-desc').value.trim();
   const category = document.getElementById('pend-category').value;
   const priority = document.getElementById('pend-priority').value;
-  const date = document.getElementById('pend-date').value;
+  const date     = document.getElementById('pend-date').value;
   if (!desc) return;
   pendings.push({ id: Date.now().toString(), desc, category, priority, date: date || new Date().toISOString().slice(0,10), done: false });
   save(); renderPendings();
@@ -997,50 +1133,53 @@ function renderPendings() {
   const open = pendings.filter(p => !p.done).length;
   document.getElementById('badge-count').textContent = open;
   document.getElementById('tab-pendencias').querySelector('.badge').textContent = open;
-
   const list = document.getElementById('pending-list');
   const priorities = ['Alta','Média','Baixa'];
-  const dotColors = { Alta: 'dot-red', Média: 'dot-orange', Baixa: 'dot-blue' };
+  const dotColors  = { Alta: 'dot-red', Média: 'dot-orange', Baixa: 'dot-blue' };
   list.innerHTML = priorities.map(prio => {
-    const items = pendings.filter(p => p.priority === prio);
+    const items     = pendings.filter(p => p.priority === prio);
     const openCount = items.filter(p => !p.done).length;
-    const catClass = c => c === 'Manutenção' ? 'cat-manutencao' : c === 'Pedido' ? 'cat-pedido' : c === 'Orçamento' ? 'cat-orcamento' : c === 'Financeiro' ? 'cat-financeiro' : 'cat-outro';
+    const catClass  = c => c === 'Manutenção' ? 'cat-manutencao' : c === 'Pedido' ? 'cat-pedido' : c === 'Orçamento' ? 'cat-orcamento' : c === 'Financeiro' ? 'cat-financeiro' : 'cat-outro';
     return `<div class="priority-group">
       <div class="priority-header">
         <span class="dot ${dotColors[prio]}"></span>
         Prioridade ${prio} <span style="color:var(--text-light);font-weight:500">(${openCount} abertas)</span>
       </div>
-      ${items.length === 0 ? '<div class="empty-state" style="padding:12px">Nenhuma pendência</div>' :
-        items.map(p => `<div class="pending-item ${p.done ? 'done' : ''}">
-          <div class="pending-check ${p.done ? 'checked' : ''}" onclick="togglePending('${p.id}')"></div>
-          <div class="pend-info">
-            <div class="pend-name">${p.desc}</div>
-            <div class="pend-meta">
-              <span class="pend-category ${catClass(p.category)}">${p.category}</span>
-              <span class="pend-date">${fmtDate(p.date)}</span>
+      ${items.length === 0
+        ? '<div class="empty-state" style="padding:12px">Nenhuma pendência</div>'
+        : items.map(p => `<div class="pending-item ${p.done ? 'done' : ''}">
+            <div class="pending-check ${p.done ? 'checked' : ''}" onclick="togglePending('${p.id}')"></div>
+            <div class="pend-info">
+              <div class="pend-name">${p.desc}</div>
+              <div class="pend-meta">
+                <span class="pend-category ${catClass(p.category)}">${p.category}</span>
+                <span class="pend-date">${fmtDate(p.date)}</span>
+              </div>
             </div>
-          </div>
-          <button class="btn-remove" onclick="removePending('${p.id}')">×</button>
-        </div>`).join('')
+            <button class="btn-remove" onclick="removePending('${p.id}')">×</button>
+          </div>`).join('')
       }
     </div>`;
   }).join('');
 }
 
-// ===== MANUTENÇÃO — PLANILHA =====
+// ===== MANUTENÇÃO — com busca, cor e ordenação =====
+
 function addManutRow() {
   manuts.push({ id: Date.now().toString(), cliente:'', preventiva:'', corretiva:'', obs:'', proposta:'', relatorio:'' });
   save(); renderManut();
-  // foca o último campo cliente
   setTimeout(() => {
     const inputs = document.querySelectorAll('#manut-list .cell-cliente');
-    if (inputs.length) inputs[inputs.length-1].focus();
+    if (inputs.length) inputs[inputs.length - 1].focus();
   }, 50);
 }
 
 function updateManut(id, field, val) {
   const m = manuts.find(x => x.id === id);
-  if (m) { m[field] = val; save(); }
+  if (m) { m[field] = val; save();
+    // re-render só para atualizar a cor da linha ao vivo
+    if (field === 'preventiva') renderManut();
+  }
 }
 
 function removeManut(id) {
@@ -1048,29 +1187,100 @@ function removeManut(id) {
   save(); renderManut();
 }
 
+// Alterna ordenação A→Z / voltar à ordem de inserção
+function toggleSort() {
+  manutSortAZ = !manutSortAZ;
+  const btn  = document.getElementById('btn-sort-az');
+  const icon = document.getElementById('sort-icon');
+  if (manutSortAZ) {
+    btn.classList.add('active');
+    icon.textContent = 'Z→A';
+  } else {
+    btn.classList.remove('active');
+    icon.textContent = 'A→Z';
+  }
+  renderManut();
+}
+
 function renderManut() {
-  const tbody = document.getElementById('manut-list');
+  const tbody     = document.getElementById('manut-list');
+  const searchEl  = document.getElementById('mn-search-input');
+  const countEl   = document.getElementById('mn-search-count');
+  const query     = searchEl ? searchEl.value.trim().toLowerCase() : '';
+
+  // 1. Filtrar pelo texto de busca
+  let lista = manuts.filter(m =>
+    !query || (m.cliente || '').toLowerCase().includes(query)
+  );
+
+  // 2. Ordenar se ativado
+  if (manutSortAZ) {
+    lista = [...lista].sort((a, b) =>
+      (a.cliente || '').localeCompare(b.cliente || '', 'pt-BR', { sensitivity: 'base' })
+    );
+  }
+
+  // Contador de resultados da busca
+  if (query) {
+    countEl.style.display = 'inline-block';
+    countEl.textContent   = `${lista.length} resultado${lista.length !== 1 ? 's' : ''}`;
+  } else {
+    countEl.style.display = 'none';
+  }
+
+  // 3. Sem dados
   if (manuts.length === 0) {
     tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;color:var(--text-light);padding:32px;font-size:13px">Clique em "Nova Linha" para começar</td></tr>`;
     return;
   }
-  tbody.innerHTML = manuts.map((m, i) => `
-    <tr>
-      <td class="td-num">${i+1}</td>
-      <td><input class="cell-input cell-cliente" value="${esc(m.cliente)}" placeholder="Nome do condomínio..." oninput="updateManut('${m.id}','cliente',this.value)"></td>
-      <td><input class="cell-input" type="date" value="${m.preventiva||''}" oninput="updateManut('${m.id}','preventiva',this.value)"></td>
-      <td><input class="cell-input" type="date" value="${m.corretiva||''}" oninput="updateManut('${m.id}','corretiva',this.value)"></td>
-      <td><input class="cell-input" value="${esc(m.obs)}" placeholder="Observações..." oninput="updateManut('${m.id}','obs',this.value)"></td>
-      <td><input class="cell-input" value="${esc(m.proposta)}" placeholder="Ex: 2495" oninput="updateManut('${m.id}','proposta',this.value)"></td>
-      <td><input class="cell-input" type="date" value="${m.relatorio||''}" oninput="updateManut('${m.id}','relatorio',this.value)"></td>
+
+  // 4. Sem resultados na busca
+  if (lista.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="8"><div class="mn-no-results">🔍 Nenhum resultado para "<strong>${esc(query)}</strong>"</div></td></tr>`;
+    return;
+  }
+
+  // 5. Renderizar linhas
+  tbody.innerHTML = lista.map((m, i) => {
+    // Linha fica verde quando tem data de preventiva preenchida
+    const rowClass = m.preventiva ? 'row-preventiva-ok' : '';
+    return `
+    <tr class="${rowClass}">
+      <td class="td-num">${i + 1}</td>
+      <td><input class="cell-input cell-cliente"
+            value="${esc(m.cliente)}"
+            placeholder="Nome do condomínio..."
+            oninput="updateManut('${m.id}','cliente',this.value)"></td>
+      <td>
+        <div style="display:flex;align-items:center">
+          <input class="cell-input cell-prev-input"
+                 type="date"
+                 value="${m.preventiva || ''}"
+                 oninput="updateManut('${m.id}','preventiva',this.value)"
+                 title="${m.preventiva ? 'Preventiva realizada em ' + fmtDate(m.preventiva) : 'Sem data'}">
+          ${m.preventiva ? '<span style="color:var(--green);font-size:13px;padding-right:8px;flex-shrink:0" title="Preventiva realizada">✓</span>' : ''}
+        </div>
+      </td>
+      <td><input class="cell-input" type="date" value="${m.corretiva || ''}"
+            oninput="updateManut('${m.id}','corretiva',this.value)"></td>
+      <td><input class="cell-input" value="${esc(m.obs)}"
+            placeholder="Observações..."
+            oninput="updateManut('${m.id}','obs',this.value)"></td>
+      <td><input class="cell-input" value="${esc(m.proposta)}"
+            placeholder="Ex: 2495"
+            oninput="updateManut('${m.id}','proposta',this.value)"></td>
+      <td><input class="cell-input" type="date" value="${m.relatorio || ''}"
+            oninput="updateManut('${m.id}','relatorio',this.value)"></td>
       <td style="padding:0 4px">
         <button class="mn-row-del" onclick="removeManut('${m.id}')" title="Remover linha">×</button>
       </td>
-    </tr>
-  `).join('');
+    </tr>`;
+  }).join('');
 }
 
-function esc(s) { return (s||'').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
+function esc(s) {
+  return (s || '').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
 
 // ===== INIT =====
 const today = new Date().toISOString().slice(0,10);
@@ -1078,6 +1288,7 @@ document.getElementById('sale-date').value = today;
 document.getElementById('pend-date').value = today;
 renderFunil();
 updateBadge();
+
 function updateBadge() {
   const open = pendings.filter(p => !p.done).length;
   document.getElementById('badge-count').textContent = open;
@@ -1089,3 +1300,54 @@ document.getElementById('modal-lead').addEventListener('click', function(e) {
 </script>
 </body>
 </html>
+
+
+    
+
+
+
+ 
+
+  
+
+
+ 
+
+ 
+
+
+
+
+
+
+   
+
+
+       
+      
+ 
+   
+        
+         
+  
+
+       
+
+    
+     
+       
+      
+   
+ 
+
+
+ 
+ 
+      
+         
+   
+
+   
+
+
+
