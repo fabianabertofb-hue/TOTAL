@@ -1184,8 +1184,8 @@ function addManutRow() {
 function updateManut(id, field, val) {
   const m = manuts.find(x => x.id === id);
   if (m) { m[field] = val; save();
-    // re-render para atualizar cores ao vivo
-    if (field === 'preventiva' || field === 'proposta' || field === 'obs') renderManut();
+    // re-render só quando sai do campo (blur) — evita travar digitação
+    if (field === 'preventiva') renderManut();
   }
 }
 
@@ -1273,11 +1273,13 @@ function renderManut() {
       <td style="${m.obs ? 'background:#fde047;' : ''}"><input class="cell-input" value="${esc(m.obs)}"
             placeholder="Observações..."
             style="${m.obs ? 'background:transparent;' : ''}"
-            oninput="updateManut('${m.id}','obs',this.value)"></td>
+            oninput="updateManut('${m.id}','obs',this.value)"
+            onblur="renderManut()"></td>
       <td style="${['concluído','concluido'].includes((m.proposta||'').trim().toLowerCase()) ? 'background:#dcfce7;' : ''}"><input class="cell-input" value="${esc(m.proposta)}"
             placeholder="Ex: 2495"
             style="${['concluído','concluido'].includes((m.proposta||'').trim().toLowerCase()) ? 'background:transparent;color:#15803d;font-weight:700;' : ''}"
-            oninput="updateManut('${m.id}','proposta',this.value)"></td>
+            oninput="updateManut('${m.id}','proposta',this.value)"
+            onblur="renderManut()"></td>
       <td><input class="cell-input" type="date" value="${m.relatorio || ''}"
             oninput="updateManut('${m.id}','relatorio',this.value)"></td>
       <td style="padding:0 4px">
@@ -1309,10 +1311,6 @@ document.getElementById('modal-lead').addEventListener('click', function(e) {
 </script>
 </body>
 </html>
-
-
-
-    
 
 
 
