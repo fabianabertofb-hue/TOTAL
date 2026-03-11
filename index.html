@@ -532,18 +532,47 @@
   .mn-sheet tbody tr:last-child { border-bottom: none; }
   .mn-sheet tbody tr:hover { background: #fafbff; }
 
-  /* ── DESTAQUE: preventiva realizada ── */
-  .mn-sheet tbody tr.row-preventiva-ok {
-    background: #f0fdf4 !important;       /* verde bem suave */
-    border-left: 3px solid #10b981;       /* barra verde lateral */
+  /* ── DESTAQUE: só nome do condomínio fica verde quando preventiva feita ── */
+  .cell-cliente-ok {
+    background: #bbf7d0 !important;
+    color: #15803d !important;
+    font-weight: 700 !important;
   }
-  .mn-sheet tbody tr.row-preventiva-ok:hover {
-    background: #e6faf1 !important;
+  /* ── DESTAQUE: data de relatório em verde ── */
+  .td-relatorio-ok { background: #bbf7d0 !important; }
+  .td-relatorio-ok .cell-input {
+    color: #15803d !important;
+    font-weight: 700 !important;
+    background: transparent !important;
   }
-  .mn-sheet tbody tr.row-preventiva-ok .td-num {
-    color: var(--green);
-    font-weight: 700;
+  /* ── ABAS DOS MESES ── */
+  .mn-meses-wrap {
+    overflow-x: auto;
+    margin-bottom: 14px;
+    padding-bottom: 2px;
   }
+  .mn-meses {
+    display: flex;
+    gap: 4px;
+    min-width: max-content;
+  }
+  .mn-mes-tab {
+    padding: 6px 14px;
+    border-radius: 7px;
+    border: 1.5px solid var(--border);
+    background: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .mn-mes-tab:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
+  .mn-mes-tab.active { background: var(--primary); color: white; border-color: var(--primary); }
+  .mn-mes-tab.tem-dados { border-color: var(--green); color: var(--green); }
+  .mn-mes-tab.tem-dados.active { background: var(--green); color: white; border-color: var(--green); }
 
   .mn-sheet td {
     padding: 0; vertical-align: middle;
@@ -774,21 +803,21 @@
 <!-- =================== MANUTENÇÃO =================== -->
 <div class="page" id="page-manutencao">
   <div class="mn-header">
-    <div class="mn-title">🔧 Manutenção — <span>Planilha</span></div>
+    <div class="mn-title">🔧 Manutenção — <span id="mn-mes-titulo">Janeiro</span></div>
     <button class="btn-novo-atend" onclick="addManutRow()">＋ Nova Linha</button>
   </div>
 
-  <!-- CONTROLES: busca + ordenar + legenda -->
+  <!-- ABAS DOS MESES -->
+  <div class="mn-meses-wrap">
+    <div class="mn-meses" id="mn-meses"></div>
+  </div>
+
+  <!-- CONTROLES: busca + ordenar -->
   <div class="mn-controls">
     <div class="mn-search-wrap">
       <span class="search-icon">🔍</span>
-      <input
-        class="mn-search"
-        id="mn-search-input"
-        type="text"
-        placeholder="Buscar condomínio ou cliente..."
-        oninput="renderManut()"
-      >
+      <input class="mn-search" id="mn-search-input" type="text"
+        placeholder="Buscar condomínio ou cliente..." oninput="renderManut()">
     </div>
     <button class="btn-sort" id="btn-sort-az" onclick="toggleSort()" title="Ordenar A→Z / Z→A">
       <span id="sort-icon">A→Z</span> Ordenar
@@ -796,23 +825,12 @@
     <span class="mn-search-count" id="mn-search-count" style="display:none"></span>
   </div>
 
+  <!-- LEGENDA -->
   <div class="mn-legend">
-    <div class="legend-item">
-      <div class="legend-dot legend-done"></div>
-      Preventiva realizada
-    </div>
-    <div class="legend-item">
-      <div class="legend-dot" style="background:#bbf7d0;"></div>
-      Proposta concluída
-    </div>
-    <div class="legend-item">
-      <div class="legend-dot" style="background:#fde047;"></div>
-      Observação preenchida
-    </div>
-    <div class="legend-item">
-      <div class="legend-dot legend-none"></div>
-      Sem data de preventiva
-    </div>
+    <div class="legend-item"><div class="legend-dot" style="background:#bbf7d0;border:1px solid #86efac"></div> Nome verde = preventiva feita</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#bbf7d0;border:1px solid #86efac"></div> Relatório verde = entregue</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#bbf7d0;border:1px solid #86efac"></div> Proposta concluída</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#fde047;"></div> Observação preenchida</div>
   </div>
 
   <div class="mn-sheet-wrap">
@@ -901,7 +919,17 @@
 let leads    = JSON.parse(localStorage.getItem('crm_leads')    || '[]');
 let sales    = JSON.parse(localStorage.getItem('crm_sales')    || '[]');
 let pendings = JSON.parse(localStorage.getItem('crm_pendings') || '[]');
-let manuts   = JSON.parse(localStorage.getItem('crm_manuts')   || '[]');
+// manuts agora é objeto indexado por mês: { 0: [...], 1: [...], ... }
+let manuts = (function() {
+  const raw = localStorage.getItem('crm_manuts');
+  if (!raw) return {};
+  try {
+    const parsed = JSON.parse(raw);
+    // migração: se era array antigo, move tudo para mês 0
+    if (Array.isArray(parsed)) return parsed.length ? { 0: parsed } : {};
+    return parsed;
+  } catch(e) { return {}; }
+})();
 
 // estado de ordenação da aba manutenção
 let manutSortAZ = false; // false = ordem de inserção, true = A→Z
@@ -941,7 +969,7 @@ function showTab(tab) {
   if (tab === 'funil')       renderFunil();
   if (tab === 'vendas')      renderSales();
   if (tab === 'pendencias')  renderPendings();
-  if (tab === 'manutencao')  renderManut();
+  if (tab === 'manutencao')  { buildMesesTabs(); renderManut(); }
 }
 
 // ===== FUNIL =====
@@ -1170,10 +1198,40 @@ function renderPendings() {
   }).join('');
 }
 
-// ===== MANUTENÇÃO — com busca, cor e ordenação =====
+// ===== MANUTENÇÃO — abas por mês, cores, obs automática =====
+
+const MESES = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho',
+               'Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+
+// manutSortAZ já declarado acima
+let manutMesAtivo = new Date().getMonth(); // 0=Jan … 11=Dez
+
+// Garante que cada mês tem seu array no objeto manuts
+function getManutsMes(m) {
+  if (!manuts[m]) manuts[m] = [];
+  return manuts[m];
+}
+
+function buildMesesTabs() {
+  const wrap = document.getElementById('mn-meses');
+  wrap.innerHTML = MESES.map((nome, i) => {
+    const temDados = manuts[i] && manuts[i].length > 0;
+    const ativo    = i === manutMesAtivo ? 'active' : '';
+    const dados    = temDados && !ativo ? 'tem-dados' : '';
+    return `<button class="mn-mes-tab ${ativo} ${dados}" onclick="switchMes(${i})">${nome}</button>`;
+  }).join('');
+  document.getElementById('mn-mes-titulo').textContent = MESES[manutMesAtivo];
+}
+
+function switchMes(idx) {
+  manutMesAtivo = idx;
+  buildMesesTabs();
+  renderManut();
+}
 
 function addManutRow() {
-  manuts.push({ id: Date.now().toString(), cliente:'', preventiva:'', corretiva:'', obs:'', proposta:'', relatorio:'' });
+  const lista = getManutsMes(manutMesAtivo);
+  lista.push({ id: Date.now().toString(), cliente:'', preventiva:'', corretiva:'', obs:'', proposta:'', relatorio:'' });
   save(); renderManut();
   setTimeout(() => {
     const inputs = document.querySelectorAll('#manut-list .cell-cliente');
@@ -1182,19 +1240,50 @@ function addManutRow() {
 }
 
 function updateManut(id, field, val) {
-  const m = manuts.find(x => x.id === id);
-  if (m) { m[field] = val; save();
-    // re-render só quando sai do campo (blur) — evita travar digitação
-    if (field === 'preventiva') renderManut();
+  const lista = getManutsMes(manutMesAtivo);
+  const m = lista.find(x => x.id === id);
+  if (m) {
+    m[field] = val;
+    save();
+    // Se for obs, propaga automaticamente para o próximo mês
+    if (field === 'obs' && val.trim()) {
+      propagarObs(m, manutMesAtivo);
+    }
+    if (field === 'preventiva' || field === 'relatorio') renderManut();
   }
 }
 
-function removeManut(id) {
-  manuts = manuts.filter(x => x.id !== id);
-  save(); renderManut();
+// Propaga a observação para o mês seguinte (cria entrada se não existir)
+function propagarObs(original, mesAtual) {
+  const proximo = (mesAtual + 1) % 12;
+  const listaProx = getManutsMes(proximo);
+  // Verifica se já existe entrada com mesmo cliente no próximo mês
+  let entrada = listaProx.find(x => x.cliente && x.cliente === original.cliente);
+  if (!entrada) {
+    // Cria nova entrada no próximo mês com mesmo cliente e obs
+    entrada = {
+      id: 'prop_' + Date.now() + '_' + Math.random().toString(36).slice(2),
+      cliente: original.cliente,
+      preventiva: '', corretiva: '',
+      obs: '⬆️ ' + original.obs,
+      proposta: '', relatorio: ''
+    };
+    listaProx.push(entrada);
+  } else if (!entrada.obs) {
+    // Se entrada existe mas sem obs, preenche
+    entrada.obs = '⬆️ ' + original.obs;
+  }
+  save();
+  buildMesesTabs(); // atualiza indicador de dados no mês seguinte
 }
 
-// Alterna ordenação A→Z / voltar à ordem de inserção
+function removeManut(id) {
+  const lista = getManutsMes(manutMesAtivo);
+  manuts[manutMesAtivo] = lista.filter(x => x.id !== id);
+  save(); buildMesesTabs(); renderManut();
+}
+
+// Alterna ordenação A→Z
 function toggleSort() {
   manutSortAZ = !manutSortAZ;
   const btn  = document.getElementById('btn-sort-az');
@@ -1210,24 +1299,21 @@ function toggleSort() {
 }
 
 function renderManut() {
-  const tbody     = document.getElementById('manut-list');
-  const searchEl  = document.getElementById('mn-search-input');
-  const countEl   = document.getElementById('mn-search-count');
-  const query     = searchEl ? searchEl.value.trim().toLowerCase() : '';
+  const tbody    = document.getElementById('manut-list');
+  const searchEl = document.getElementById('mn-search-input');
+  const countEl  = document.getElementById('mn-search-count');
+  const query    = searchEl ? searchEl.value.trim().toLowerCase() : '';
+  let lista      = [...getManutsMes(manutMesAtivo)];
 
-  // 1. Filtrar pelo texto de busca
-  let lista = manuts.filter(m =>
-    !query || (m.cliente || '').toLowerCase().includes(query)
-  );
+  // 1. Filtrar busca
+  if (query) lista = lista.filter(m => (m.cliente || '').toLowerCase().includes(query));
 
-  // 2. Ordenar se ativado
+  // 2. Ordenar
   if (manutSortAZ) {
-    lista = [...lista].sort((a, b) =>
-      (a.cliente || '').localeCompare(b.cliente || '', 'pt-BR', { sensitivity: 'base' })
-    );
+    lista.sort((a, b) => (a.cliente || '').localeCompare(b.cliente || '', 'pt-BR', { sensitivity: 'base' }));
   }
 
-  // Contador de resultados da busca
+  // Contador busca
   if (query) {
     countEl.style.display = 'inline-block';
     countEl.textContent   = `${lista.length} resultado${lista.length !== 1 ? 's' : ''}`;
@@ -1235,9 +1321,11 @@ function renderManut() {
     countEl.style.display = 'none';
   }
 
+  const total = getManutsMes(manutMesAtivo).length;
+
   // 3. Sem dados
-  if (manuts.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;color:var(--text-light);padding:32px;font-size:13px">Clique em "Nova Linha" para começar</td></tr>`;
+  if (total === 0) {
+    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;color:var(--text-light);padding:32px;font-size:13px">Clique em "Nova Linha" para começar em ${MESES[manutMesAtivo]}</td></tr>`;
     return;
   }
 
@@ -1249,38 +1337,41 @@ function renderManut() {
 
   // 5. Renderizar linhas
   tbody.innerHTML = lista.map((m, i) => {
-    // Linha fica verde quando tem data de preventiva preenchida
-    const rowClass = m.preventiva ? 'row-preventiva-ok' : '';
+    const clienteOk  = m.preventiva ? 'cell-cliente-ok' : '';
+    const relatorioOk = m.relatorio ? 'td-relatorio-ok' : '';
     return `
-    <tr class="${rowClass}">
+    <tr>
       <td class="td-num">${i + 1}</td>
-      <td><input class="cell-input cell-cliente"
+      <td><input class="cell-input cell-cliente ${clienteOk}"
             value="${esc(m.cliente)}"
             placeholder="Nome do condomínio..."
             oninput="updateManut('${m.id}','cliente',this.value)"></td>
       <td>
         <div style="display:flex;align-items:center">
-          <input class="cell-input cell-prev-input"
+          <input class="cell-input"
                  type="date"
                  value="${m.preventiva || ''}"
                  oninput="updateManut('${m.id}','preventiva',this.value)"
                  title="${m.preventiva ? 'Preventiva realizada em ' + fmtDate(m.preventiva) : 'Sem data'}">
-          ${m.preventiva ? '<span style="color:var(--green);font-size:13px;padding-right:8px;flex-shrink:0" title="Preventiva realizada">✓</span>' : ''}
+          ${m.preventiva ? '<span style="color:var(--green);font-size:13px;padding-right:8px;flex-shrink:0">✓</span>' : ''}
         </div>
       </td>
       <td><input class="cell-input" type="date" value="${m.corretiva || ''}"
             oninput="updateManut('${m.id}','corretiva',this.value)"></td>
-      <td style="${m.obs ? 'background:#fde047;' : ''}"><input class="cell-input" value="${esc(m.obs)}"
+      <td style="${m.obs ? 'background:#fde047;' : ''}">
+        <input class="cell-input" value="${esc(m.obs)}"
             placeholder="Observações..."
             style="${m.obs ? 'background:transparent;' : ''}"
             oninput="updateManut('${m.id}','obs',this.value)"
             onblur="renderManut()"></td>
-      <td style="${/(conclu[ií]do)/i.test(m.proposta||'') ? 'background:#dcfce7;' : ''}"><input class="cell-input" value="${esc(m.proposta)}"
+      <td style="${/(conclu[ií]do)/i.test(m.proposta||'') ? 'background:#dcfce7;' : ''}">
+        <input class="cell-input" value="${esc(m.proposta)}"
             placeholder="Ex: 2495"
             style="${/(conclu[ií]do)/i.test(m.proposta||'') ? 'background:transparent;color:#15803d;font-weight:700;' : ''}"
             oninput="updateManut('${m.id}','proposta',this.value)"
             onblur="renderManut()"></td>
-      <td><input class="cell-input" type="date" value="${m.relatorio || ''}"
+      <td class="${relatorioOk}">
+        <input class="cell-input" type="date" value="${m.relatorio || ''}"
             oninput="updateManut('${m.id}','relatorio',this.value)"></td>
       <td style="padding:0 4px">
         <button class="mn-row-del" onclick="removeManut('${m.id}')" title="Remover linha">×</button>
@@ -1299,6 +1390,7 @@ document.getElementById('sale-date').value = today;
 document.getElementById('pend-date').value = today;
 renderFunil();
 updateBadge();
+buildMesesTabs();
 
 function updateBadge() {
   const open = pendings.filter(p => !p.done).length;
@@ -1311,4 +1403,3 @@ document.getElementById('modal-lead').addEventListener('click', function(e) {
 </script>
 </body>
 </html>
-
