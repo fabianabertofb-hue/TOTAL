@@ -93,18 +93,90 @@
   .nav-tab.active { background: var(--primary); color: white; }
 
   /* ── ABA ATENDIMENTOS ── */
-  #page-atendimentos {
-    padding: 0;
-    height: calc(100vh - 58px);
-    display: none;
+  #page-atendimentos { background: var(--bg); min-height: calc(100vh - 58px); padding: 24px; }
+
+  .at-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; flex-wrap:wrap; gap:12px; }
+  .at-title { font-size:17px; font-weight:700; color:var(--text); }
+  .at-title span { color:var(--primary); }
+
+  /* filtros */
+  .at-filters { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:18px; align-items:center; }
+  .at-filter-btn {
+    padding:5px 12px; border-radius:20px; border:1.5px solid var(--border);
+    background:var(--white); font-family:'DM Sans',sans-serif; font-size:12px;
+    font-weight:600; color:var(--text-muted); cursor:pointer; transition:all 0.15s;
   }
-  #page-atendimentos.active { display: block; }
-  #frame-atendimentos {
-    width: 100%;
-    height: 100%;
-    border: none;
-    display: block;
+  .at-filter-btn:hover { border-color:var(--primary); color:var(--primary); }
+  .at-filter-btn.active { background:var(--primary); color:white; border-color:var(--primary); }
+  .at-filter-btn.urg-alta.active  { background:#ef4444; border-color:#ef4444; }
+  .at-filter-btn.urg-media.active { background:#f59e0b; border-color:#f59e0b; }
+  .at-filter-btn.urg-baixa.active { background:#10b981; border-color:#10b981; }
+  .at-search-wrap { position:relative; flex:1; min-width:200px; max-width:320px; }
+  .at-search-wrap .search-icon { position:absolute; left:11px; top:50%; transform:translateY(-50%); font-size:14px; pointer-events:none; color:var(--text-muted); }
+  .at-search { width:100%; padding:7px 12px 7px 32px; border:1.5px solid var(--border); border-radius:20px; font-family:'DM Sans',sans-serif; font-size:13px; color:var(--text); background:var(--white); outline:none; transition:border 0.15s; }
+  .at-search:focus { border-color:var(--primary); }
+
+  /* cards */
+  .at-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); gap:14px; }
+  .at-card {
+    background:var(--white); border:1px solid var(--border);
+    border-radius:var(--radius); box-shadow:var(--shadow-sm);
+    padding:16px 18px; cursor:pointer; transition:box-shadow 0.15s, transform 0.15s;
+    border-left:4px solid var(--border);
   }
+  .at-card:hover { box-shadow:var(--shadow); transform:translateY(-2px); }
+  .at-card.urg-alta   { border-left-color:#ef4444; }
+  .at-card.urg-media  { border-left-color:#f59e0b; }
+  .at-card.urg-baixa  { border-left-color:#10b981; }
+  .at-card-top { display:flex; align-items:flex-start; justify-content:space-between; gap:8px; margin-bottom:8px; }
+  .at-card-nome { font-size:14px; font-weight:700; color:var(--text); }
+  .at-card-equip { font-size:12px; color:var(--text-muted); margin-top:2px; }
+  .at-card-assunto { font-size:13px; color:var(--text); margin-bottom:10px; line-height:1.4; }
+  .at-card-footer { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .at-badge {
+    padding:3px 9px; border-radius:20px; font-size:11px; font-weight:700;
+    white-space:nowrap;
+  }
+  .at-badge-alta   { background:#fee2e2; color:#b91c1c; }
+  .at-badge-media  { background:#fef3c7; color:#92400e; }
+  .at-badge-baixa  { background:#d1fae5; color:#065f46; }
+  .at-badge-solicitacao  { background:#dbeafe; color:#1e40af; }
+  .at-badge-andamento    { background:#ede9fe; color:#5b21b6; }
+  .at-badge-orcamento    { background:#fef3c7; color:#92400e; }
+  .at-badge-peca         { background:#ffedd5; color:#9a3412; }
+  .at-badge-concluido    { background:#d1fae5; color:#065f46; }
+  .at-card-date { font-size:11px; color:var(--text-light); margin-left:auto; }
+  .at-card-del { background:none; border:none; color:var(--text-light); cursor:pointer; font-size:16px; padding:0 2px; transition:color 0.15s; flex-shrink:0; }
+  .at-card-del:hover { color:var(--red); }
+  .at-empty { text-align:center; color:var(--text-light); padding:48px; font-size:14px; }
+  .at-obs-tag { font-size:11px; color:var(--green); font-weight:600; background:var(--green-light); padding:2px 8px; border-radius:20px; }
+
+  /* modal atendimento */
+  .at-modal-overlay {
+    position:fixed; inset:0; background:rgba(0,0,0,0.4);
+    z-index:1000; display:flex; align-items:center; justify-content:center;
+    padding:16px;
+  }
+  .at-modal-overlay.hidden { display:none; }
+  .at-modal {
+    background:var(--white); border-radius:var(--radius);
+    box-shadow:var(--shadow-lg); width:100%; max-width:520px;
+    max-height:90vh; overflow-y:auto; padding:28px;
+  }
+  .at-modal h3 { font-size:16px; font-weight:700; margin-bottom:20px; color:var(--text); }
+  .at-form-group { margin-bottom:14px; }
+  .at-form-group label { display:block; font-size:12px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:6px; }
+  .at-form-group input, .at-form-group textarea, .at-form-group select {
+    width:100%; padding:9px 12px; border:1.5px solid var(--border);
+    border-radius:var(--radius-sm); font-family:'DM Sans',sans-serif;
+    font-size:13px; color:var(--text); background:var(--white); outline:none;
+    transition:border 0.15s;
+  }
+  .at-form-group input:focus, .at-form-group textarea:focus, .at-form-group select:focus { border-color:var(--primary); }
+  .at-form-group textarea { resize:vertical; min-height:80px; }
+  .at-form-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .at-modal-footer { display:flex; gap:10px; justify-content:flex-end; margin-top:20px; }
+  .at-sync-info { font-size:12px; color:var(--green); background:var(--green-light); border-radius:8px; padding:8px 12px; margin-top:12px; display:none; }
   .badge {
     background: rgba(255,255,255,0.25);
     padding: 1px 7px;
@@ -1034,13 +1106,80 @@
 
 <!-- =================== ATENDIMENTOS =================== -->
 <div class="page" id="page-atendimentos">
-  <iframe
-    id="frame-atendimentos"
-    src="https://fabianabertofb-hue.github.io/manut/"
-    title="CRM Atendimentos"
-    loading="lazy"
-    allowfullscreen>
-  </iframe>
+  <div class="at-header">
+    <div class="at-title">🛠 Atendimentos — <span id="at-count">0 registros</span></div>
+    <button class="btn-novo-atend" onclick="abrirAtModal()">＋ Novo Atendimento</button>
+  </div>
+
+  <!-- FILTROS + BUSCA -->
+  <div class="at-filters">
+    <div class="at-search-wrap">
+      <span class="search-icon">🔍</span>
+      <input class="at-search" id="at-search" type="text" placeholder="Buscar cliente, equipamento..." oninput="renderAt()">
+    </div>
+    <button class="at-filter-btn active" onclick="setAtFilter('urgencia','todas')">Todas urgências</button>
+    <button class="at-filter-btn urg-alta"  onclick="setAtFilter('urgencia','Alta')">🔴 Alta</button>
+    <button class="at-filter-btn urg-media" onclick="setAtFilter('urgencia','Média')">🟡 Média</button>
+    <button class="at-filter-btn urg-baixa" onclick="setAtFilter('urgencia','Baixa')">🟢 Baixa</button>
+    <button class="at-filter-btn active" onclick="setAtFilter('status','todos')" style="margin-left:8px">Todos status</button>
+    <button class="at-filter-btn" onclick="setAtFilter('status','Solicitação')">📥 Solicitação</button>
+    <button class="at-filter-btn" onclick="setAtFilter('status','Em andamento')">🔧 Em andamento</button>
+    <button class="at-filter-btn" onclick="setAtFilter('status','Concluído')">✅ Concluído</button>
+  </div>
+
+  <div class="at-grid" id="at-grid"></div>
+</div>
+
+<!-- MODAL ATENDIMENTO -->
+<div class="at-modal-overlay hidden" id="at-modal-overlay" onclick="fecharAtModal(event)">
+  <div class="at-modal">
+    <h3 id="at-modal-titulo">Novo Atendimento</h3>
+    <div class="at-form-row">
+      <div class="at-form-group">
+        <label>Condomínio / Cliente *</label>
+        <input id="at-f-cliente" placeholder="Nome do condomínio..." oninput="verificarCliente()">
+      </div>
+      <div class="at-form-group">
+        <label>Equipamento</label>
+        <input id="at-f-equip" placeholder="Ex: Esteira #2">
+      </div>
+    </div>
+    <div class="at-form-group">
+      <label>Problema / Assunto *</label>
+      <textarea id="at-f-assunto" placeholder="Descreva o problema..."></textarea>
+    </div>
+    <div class="at-form-group">
+      <label>Observação interna</label>
+      <textarea id="at-f-obs" placeholder="Observações adicionais..." rows="2"></textarea>
+    </div>
+    <div class="at-form-row">
+      <div class="at-form-group">
+        <label>Urgência</label>
+        <select id="at-f-urgencia">
+          <option value="Média">🟡 Média</option>
+          <option value="Alta">🔴 Alta</option>
+          <option value="Baixa">🟢 Baixa</option>
+        </select>
+      </div>
+      <div class="at-form-group">
+        <label>Status</label>
+        <select id="at-f-status">
+          <option value="Solicitação">📥 Solicitação</option>
+          <option value="Em andamento">🔧 Em andamento</option>
+          <option value="Em orçamento">📋 Em orçamento</option>
+          <option value="Pedido de peça">📦 Pedido de peça</option>
+          <option value="Concluído">✅ Concluído</option>
+        </select>
+      </div>
+    </div>
+    <div class="at-sync-info" id="at-sync-info">
+      ✅ Condomínio encontrado na aba Manutenção — observação será sincronizada automaticamente!
+    </div>
+    <div class="at-modal-footer">
+      <button class="btn-secondary" onclick="fecharAtModal()">Cancelar</button>
+      <button class="btn-primary" onclick="salvarAt()">Salvar atendimento</button>
+    </div>
+  </div>
 </div>
 
 <!-- MODAL LEAD -->
@@ -1176,6 +1315,7 @@ function showTab(tab) {
   if (tab === 'vendas')      { buildVdTabs(); renderSales(); }
   if (tab === 'pendencias')  renderPendings();
   if (tab === 'manutencao')  { buildMesesTabs(); renderManut(); }
+  if (tab === 'atendimentos') renderAt();
 }
 
 // ===== FUNIL =====
@@ -1752,6 +1892,167 @@ function esc(s) {
   return (s || '').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
+// ===== ATENDIMENTOS =====
+
+let atendimentos = JSON.parse(localStorage.getItem('crm_atendimentos') || '[]');
+let atEditId = null;
+let atFiltros = { urgencia: 'todas', status: 'todos' };
+
+function saveAt() { localStorage.setItem('crm_atendimentos', JSON.stringify(atendimentos)); }
+
+function setAtFilter(tipo, val) {
+  atFiltros[tipo] = val;
+  // atualizar botões ativos
+  const grupos = { urgencia: ['todas','Alta','Média','Baixa'], status: ['todos','Solicitação','Em andamento','Concluído'] };
+  document.querySelectorAll('.at-filter-btn').forEach(btn => {
+    const txt = btn.textContent.replace(/[🔴🟡🟢📥🔧✅📋📦]/g,'').trim();
+    if (grupos[tipo].some(v => txt === v || txt === v.replace(/[^a-zA-ZÀ-ú ]/g,''))) {
+      btn.classList.toggle('active', txt === val || (val === 'todas' && txt === 'Todas urgências') || (val === 'todos' && txt === 'Todos status'));
+    }
+  });
+  renderAt();
+}
+
+function abrirAtModal(id) {
+  atEditId = id || null;
+  const overlay = document.getElementById('at-modal-overlay');
+  overlay.classList.remove('hidden');
+  document.getElementById('at-modal-titulo').textContent = id ? 'Editar Atendimento' : 'Novo Atendimento';
+  if (id) {
+    const a = atendimentos.find(x => x.id === id);
+    if (a) {
+      document.getElementById('at-f-cliente').value  = a.cliente || '';
+      document.getElementById('at-f-equip').value    = a.equip || '';
+      document.getElementById('at-f-assunto').value  = a.assunto || '';
+      document.getElementById('at-f-obs').value      = a.obs || '';
+      document.getElementById('at-f-urgencia').value = a.urgencia || 'Média';
+      document.getElementById('at-f-status').value   = a.status || 'Solicitação';
+    }
+  } else {
+    ['at-f-cliente','at-f-equip','at-f-assunto','at-f-obs'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('at-f-urgencia').value = 'Média';
+    document.getElementById('at-f-status').value   = 'Solicitação';
+  }
+  verificarCliente();
+}
+
+function fecharAtModal(e) {
+  if (e && e.target !== document.getElementById('at-modal-overlay')) return;
+  document.getElementById('at-modal-overlay').classList.add('hidden');
+  atEditId = null;
+}
+
+function verificarCliente() {
+  const nome = document.getElementById('at-f-cliente').value.trim().toLowerCase();
+  const syncInfo = document.getElementById('at-sync-info');
+  if (!nome) { syncInfo.style.display = 'none'; return; }
+  // busca em todos os meses de manutenção
+  const encontrado = Object.values(manuts).flat().some(m =>
+    m.cliente && m.cliente.toLowerCase().includes(nome)
+  );
+  syncInfo.style.display = encontrado ? 'block' : 'none';
+}
+
+function sincronizarComManut(atend) {
+  // busca o condomínio no mês ativo de manutenção
+  const nomeBusca = (atend.cliente || '').toLowerCase();
+  if (!nomeBusca) return;
+  for (let mes = 0; mes < 12; mes++) {
+    if (!manuts[mes]) continue;
+    const entry = manuts[mes].find(m => m.cliente && m.cliente.toLowerCase().includes(nomeBusca));
+    if (entry) {
+      const obsNova = `🛠 ${atend.assunto}${atend.equip ? ' — ' + atend.equip : ''} [${atend.status}]`;
+      entry.obs = obsNova;
+      save();
+      break;
+    }
+  }
+}
+
+function salvarAt() {
+  const cliente = document.getElementById('at-f-cliente').value.trim();
+  const assunto = document.getElementById('at-f-assunto').value.trim();
+  if (!cliente || !assunto) { alert('Preencha cliente e assunto!'); return; }
+  const atend = {
+    id:       atEditId || Date.now().toString(),
+    cliente,
+    equip:    document.getElementById('at-f-equip').value.trim(),
+    assunto,
+    obs:      document.getElementById('at-f-obs').value.trim(),
+    urgencia: document.getElementById('at-f-urgencia').value,
+    status:   document.getElementById('at-f-status').value,
+    data:     new Date().toISOString().slice(0,10),
+  };
+  if (atEditId) {
+    const idx = atendimentos.findIndex(x => x.id === atEditId);
+    if (idx !== -1) atendimentos[idx] = atend;
+  } else {
+    atendimentos.unshift(atend);
+  }
+  saveAt();
+  sincronizarComManut(atend);
+  document.getElementById('at-modal-overlay').classList.add('hidden');
+  atEditId = null;
+  renderAt();
+}
+
+function removerAt(id) {
+  if (!confirm('Remover este atendimento?')) return;
+  atendimentos = atendimentos.filter(x => x.id !== id);
+  saveAt(); renderAt();
+}
+
+function renderAt() {
+  const grid    = document.getElementById('at-grid');
+  const query   = (document.getElementById('at-search')?.value || '').toLowerCase().trim();
+  const urgFilt = atFiltros.urgencia;
+  const stFilt  = atFiltros.status;
+
+  let lista = atendimentos.filter(a => {
+    const matchUrg = urgFilt === 'todas' || a.urgencia === urgFilt;
+    const matchSt  = stFilt  === 'todos' || a.status   === stFilt;
+    const matchQ   = !query  || (a.cliente+a.equip+a.assunto).toLowerCase().includes(query);
+    return matchUrg && matchSt && matchQ;
+  });
+
+  document.getElementById('at-count').textContent = `${lista.length} registro${lista.length !== 1 ? 's' : ''}`;
+
+  if (lista.length === 0) {
+    grid.innerHTML = `<div class="at-empty">Nenhum atendimento encontrado</div>`;
+    return;
+  }
+
+  const urgClass  = { 'Alta':'urg-alta', 'Média':'urg-media', 'Baixa':'urg-baixa' };
+  const urgBadge  = { 'Alta':'at-badge-alta', 'Média':'at-badge-media', 'Baixa':'at-badge-baixa' };
+  const stBadge   = {
+    'Solicitação':'at-badge-solicitacao', 'Em andamento':'at-badge-andamento',
+    'Em orçamento':'at-badge-orcamento', 'Pedido de peça':'at-badge-peca', 'Concluído':'at-badge-concluido'
+  };
+
+  grid.innerHTML = lista.map(a => {
+    const uc = urgClass[a.urgencia] || '';
+    const ub = urgBadge[a.urgencia] || '';
+    const sb = stBadge[a.status]    || '';
+    const temObs = a.obs ? `<span class="at-obs-tag">obs</span>` : '';
+    return `<div class="at-card ${uc}" onclick="abrirAtModal('${a.id}')">
+      <div class="at-card-top">
+        <div>
+          <div class="at-card-nome">${esc(a.cliente)}</div>
+          ${a.equip ? `<div class="at-card-equip">🔩 ${esc(a.equip)}</div>` : ''}
+        </div>
+        <button class="at-card-del" onclick="event.stopPropagation();removerAt('${a.id}')" title="Remover">×</button>
+      </div>
+      <div class="at-card-assunto">${esc(a.assunto)}</div>
+      <div class="at-card-footer">
+        <span class="at-badge ${ub}">${a.urgencia}</span>
+        <span class="at-badge ${sb}">${a.status}</span>
+        ${temObs}
+        <span class="at-card-date">${fmtDate(a.data)}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
 // ===== INIT =====
 const today = new Date().toISOString().slice(0,10);
 document.getElementById('sale-date').value = today;
@@ -1762,6 +2063,7 @@ buildMesesTabs();
 buildVdTabs();
 renderGrafico();
 atualizarMeta();
+renderAt();
 
 function updateBadge() {
   const open = pendings.filter(p => !p.done).length;
