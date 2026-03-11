@@ -1,4 +1,4 @@
-!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
@@ -312,6 +312,79 @@
   .vd-search::placeholder { color:var(--text-light); }
   .vd-search-count { font-size:12px; color:var(--text-muted); background:var(--primary-light); color:var(--primary); padding:4px 10px; border-radius:20px; font-weight:600; white-space:nowrap; }
   .vd-total-mes { font-size:13px; font-weight:700; color:var(--green); background:#f0fdf4; border:1px solid #bbf7d0; border-radius:8px; padding:6px 14px; white-space:nowrap; }
+
+  /* ── ALERTA VENCIMENTO ── */
+  .cell-cliente-vencido {
+    background: #fee2e2 !important;
+    color: #b91c1c !important;
+    font-weight: 700 !important;
+  }
+  .alerta-icon { font-size:13px; margin-right:2px; }
+
+  /* ── GRÁFICO MENSAL ── */
+  .vd-grafico-card {
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: var(--radius); box-shadow: var(--shadow-sm);
+    padding: 20px 24px; margin-bottom: 18px; max-width: 100%;
+  }
+  .vd-grafico-titulo {
+    font-size: 13px; font-weight: 700; color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 16px;
+  }
+  .vd-grafico-barras {
+    display: flex; align-items: flex-end; gap: 8px;
+    height: 120px; padding-bottom: 24px; position: relative;
+  }
+  .vd-barra-wrap {
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; gap: 4px; position: relative;
+    cursor: pointer;
+  }
+  .vd-barra {
+    width: 100%; border-radius: 5px 5px 0 0;
+    background: var(--primary); opacity: 0.7;
+    transition: opacity 0.15s, transform 0.15s;
+    min-height: 4px;
+  }
+  .vd-barra-wrap:hover .vd-barra { opacity: 1; transform: scaleY(1.03); transform-origin: bottom; }
+  .vd-barra-wrap.ativo .vd-barra { opacity: 1; background: var(--green); }
+  .vd-barra-label {
+    font-size: 10px; font-weight: 600; color: var(--text-muted);
+    position: absolute; bottom: -20px; white-space: nowrap;
+  }
+  .vd-barra-valor {
+    font-size: 9px; color: var(--text-muted); font-weight: 600;
+    position: absolute; top: -16px; white-space: nowrap;
+  }
+  .vd-barra-wrap.ativo .vd-barra-label { color: var(--green); }
+
+  /* ── META MENSAL ── */
+  .vd-meta-card {
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: var(--radius); box-shadow: var(--shadow-sm);
+    padding: 16px 24px; margin-bottom: 18px;
+    display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+  }
+  .vd-meta-label { font-size: 13px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; white-space: nowrap; }
+  .vd-meta-input-wrap { display: flex; align-items: center; gap: 8px; }
+  .vd-meta-input {
+    width: 140px; padding: 6px 10px;
+    border: 1.5px solid var(--border); border-radius: 7px;
+    font-family: 'DM Sans', sans-serif; font-size: 13px;
+    color: var(--text); outline: none; transition: border 0.15s;
+  }
+  .vd-meta-input:focus { border-color: var(--primary); }
+  .vd-meta-barra-wrap { flex: 1; min-width: 200px; }
+  .vd-meta-barra-bg {
+    height: 10px; background: #f1f3f8; border-radius: 99px; overflow: hidden;
+  }
+  .vd-meta-barra-fill {
+    height: 100%; border-radius: 99px; transition: width 0.4s ease;
+    background: var(--primary);
+  }
+  .vd-meta-barra-fill.atingida { background: var(--green); }
+  .vd-meta-pct { font-size: 13px; font-weight: 700; color: var(--text); white-space: nowrap; }
+  .vd-meta-pct.atingida { color: var(--green); }
   .section-card {
     background: var(--white);
     border: 1px solid var(--border);
@@ -820,6 +893,28 @@
     <span class="vd-total-mes" id="vd-total-mes">Total: R$ 0,00</span>
   </div>
 
+  <!-- GRÁFICO MENSAL -->
+  <div class="vd-grafico-card">
+    <div class="vd-grafico-titulo">📊 Faturamento por mês</div>
+    <div class="vd-grafico-barras" id="vd-grafico"></div>
+  </div>
+
+  <!-- META MENSAL -->
+  <div class="vd-meta-card">
+    <span class="vd-meta-label">🎯 Meta do mês</span>
+    <div class="vd-meta-input-wrap">
+      <span style="font-size:13px;color:var(--text-muted)">R$</span>
+      <input class="vd-meta-input" id="vd-meta-input" type="number" min="0" step="100"
+        placeholder="Ex: 20000" oninput="salvarMeta()" onchange="salvarMeta()">
+    </div>
+    <div class="vd-meta-barra-wrap">
+      <div class="vd-meta-barra-bg">
+        <div class="vd-meta-barra-fill" id="vd-meta-fill" style="width:0%"></div>
+      </div>
+    </div>
+    <span class="vd-meta-pct" id="vd-meta-pct">—</span>
+  </div>
+
   <div class="total-bar">
     <span class="label">Total Geral (todos os meses)</span>
     <span class="amount" id="sales-total">R$ 0,00</span>
@@ -897,6 +992,7 @@
     <div class="legend-item"><div class="legend-dot" style="background:#bbf7d0;border:1px solid #86efac"></div> Relatório verde = entregue</div>
     <div class="legend-item"><div class="legend-dot" style="background:#bbf7d0;border:1px solid #86efac"></div> Proposta concluída</div>
     <div class="legend-item"><div class="legend-dot" style="background:#fde047;"></div> Observação preenchida</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#fee2e2;border:1px solid #fca5a5"></div> ⚠️ +30 dias sem preventiva</div>
   </div>
 
   <div class="mn-sheet-wrap">
@@ -1204,6 +1300,8 @@ function switchSalesMes(idx) {
   salesMesAtivo = idx;
   buildVdTabs();
   renderSales();
+  renderGrafico();
+  atualizarMeta();
 }
 
 function addSale() {
@@ -1226,6 +1324,51 @@ function removeSale(id) {
   const lista = getSalesMes(salesMesAtivo);
   sales[salesMesAtivo] = lista.filter(s => s.id !== id);
   save(); buildVdTabs(); renderSales();
+}
+
+function renderGrafico() {
+  const wrap = document.getElementById('vd-grafico');
+  if (!wrap) return;
+  // calcula totais por mês
+  const totais = MESES.map((_, i) => {
+    if (!sales[i]) return 0;
+    return sales[i].reduce((s, x) => s + Number(x.value), 0);
+  });
+  const max = Math.max(...totais, 1);
+  wrap.innerHTML = totais.map((val, i) => {
+    const h = Math.round((val / max) * 100);
+    const ativo = i === salesMesAtivo ? 'ativo' : '';
+    const valStr = val > 0 ? (val >= 1000 ? 'R$' + (val/1000).toFixed(1) + 'k' : 'R$' + val.toFixed(0)) : '';
+    return `<div class="vd-barra-wrap ${ativo}" onclick="switchSalesMes(${i})" title="${MESES[i]}: ${fmt(val)}">
+      ${val > 0 ? `<span class="vd-barra-valor">${valStr}</span>` : ''}
+      <div class="vd-barra" style="height:${Math.max(h,2)}%"></div>
+      <span class="vd-barra-label">${MESES[i].slice(0,3)}</span>
+    </div>`;
+  }).join('');
+}
+
+function salvarMeta() {
+  const val = document.getElementById('vd-meta-input').value;
+  localStorage.setItem('crm_meta_mes_' + salesMesAtivo, val);
+  atualizarMeta();
+}
+
+function atualizarMeta() {
+  const metaEl  = document.getElementById('vd-meta-input');
+  const fillEl  = document.getElementById('vd-meta-fill');
+  const pctEl   = document.getElementById('vd-meta-pct');
+  if (!metaEl) return;
+  // carregar meta salva do mês ativo
+  const salva = localStorage.getItem('crm_meta_mes_' + salesMesAtivo) || '';
+  metaEl.value = salva;
+  const meta = parseFloat(salva) || 0;
+  const totalMes = (sales[salesMesAtivo] || []).reduce((s,x) => s + Number(x.value), 0);
+  if (meta <= 0) { fillEl.style.width = '0%'; pctEl.textContent = '—'; pctEl.className = 'vd-meta-pct'; return; }
+  const pct = Math.min(Math.round((totalMes / meta) * 100), 100);
+  fillEl.style.width = pct + '%';
+  fillEl.className = 'vd-meta-barra-fill' + (pct >= 100 ? ' atingida' : '');
+  pctEl.textContent = pct + '% ' + (pct >= 100 ? '🎉' : 'da meta');
+  pctEl.className = 'vd-meta-pct' + (pct >= 100 ? ' atingida' : '');
 }
 
 function renderSales() {
@@ -1251,6 +1394,9 @@ function renderSales() {
   } else if (countEl) {
     countEl.style.display = 'none';
   }
+
+  renderGrafico();
+  atualizarMeta();
 
   if (getSalesMes(salesMesAtivo).length === 0) {
     list.innerHTML = `<div class="empty-state">Nenhuma venda em ${MESES[salesMesAtivo]}</div>`;
@@ -1520,14 +1666,22 @@ function renderManut() {
   // 5. Renderizar linhas
   tbody.innerHTML = lista.map((m, i) => {
     const clienteOk  = m.preventiva ? 'cell-cliente-ok' : '';
+    // alerta vermelho se preventiva há mais de 30 dias ou sem data
+    const hoje = new Date(); hoje.setHours(0,0,0,0);
+    const diasSemPrev = m.preventiva
+      ? Math.floor((hoje - new Date(m.preventiva + 'T00:00:00')) / 86400000)
+      : 999;
+    const alertaVenc = (!m.preventiva || diasSemPrev > 30) && m.cliente ? 'cell-cliente-vencido' : '';
+    const alertaVencFinal = clienteOk ? '' : alertaVenc; // se já tem preventiva ok, não alerta
     const relatorioOk = m.relatorio ? 'td-relatorio-ok' : '';
     return `
     <tr>
       <td class="td-num">${i + 1}</td>
-      <td><input class="cell-input cell-cliente ${clienteOk}"
-            value="${esc(m.cliente)}"
+      <td><input class="cell-input cell-cliente ${clienteOk} ${alertaVencFinal}"
+            value="${alertaVencFinal ? '⚠️ ' + esc(m.cliente) : esc(m.cliente)}"
             placeholder="Nome do condomínio..."
-            oninput="updateManut('${m.id}','cliente',this.value)"></td>
+            title="${alertaVencFinal ? 'Atenção: mais de 30 dias sem preventiva!' : ''}"
+            oninput="updateManut('${m.id}','cliente',this.value.replace(/^⚠️\s*/,''))"></td>
       <td>
         <div style="display:flex;align-items:center">
           <input class="cell-input"
@@ -1580,6 +1734,8 @@ renderFunil();
 updateBadge();
 buildMesesTabs();
 buildVdTabs();
+renderGrafico();
+atualizarMeta();
 
 function updateBadge() {
   const open = pendings.filter(p => !p.done).length;
@@ -1593,5 +1749,4 @@ document.getElementById('modal-lead').addEventListener('click', function(e) {
 </body>
 </html>
 
- 
 
