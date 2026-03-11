@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
@@ -291,6 +291,27 @@
   }
 
   /* VENDAS */
+  .vd-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; flex-wrap:wrap; gap:10px; }
+  .vd-meses-wrap { overflow-x:auto; margin-bottom:12px; padding-bottom:2px; }
+  .vd-meses { display:flex; gap:4px; min-width:max-content; }
+  .vd-mes-tab {
+    padding: 6px 14px; border-radius: 7px;
+    border: 1.5px solid var(--border); background: var(--white);
+    font-family: 'DM Sans', sans-serif; font-size: 12.5px; font-weight: 600;
+    color: var(--text-muted); cursor: pointer; transition: all 0.15s; white-space: nowrap;
+  }
+  .vd-mes-tab:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
+  .vd-mes-tab.active { background: var(--primary); color: white; border-color: var(--primary); }
+  .vd-mes-tab.tem-dados { border-color: var(--green); color: var(--green); }
+  .vd-mes-tab.tem-dados.active { background: var(--green); color: white; border-color: var(--green); }
+  .vd-controls { display:flex; align-items:center; gap:10px; margin-bottom:14px; flex-wrap:wrap; }
+  .vd-search-wrap { position:relative; flex:1; min-width:200px; max-width:360px; }
+  .vd-search-wrap .search-icon { position:absolute; left:11px; top:50%; transform:translateY(-50%); font-size:15px; pointer-events:none; color:var(--text-muted); }
+  .vd-search { width:100%; padding:8px 12px 8px 34px; border:1.5px solid var(--border); border-radius:var(--radius-sm); font-family:'DM Sans',sans-serif; font-size:13px; color:var(--text); background:var(--white); outline:none; transition:border 0.15s,box-shadow 0.15s; }
+  .vd-search:focus { border-color:var(--primary); box-shadow:0 0 0 3px rgba(79,70,229,0.1); }
+  .vd-search::placeholder { color:var(--text-light); }
+  .vd-search-count { font-size:12px; color:var(--text-muted); background:var(--primary-light); color:var(--primary); padding:4px 10px; border-radius:20px; font-weight:600; white-space:nowrap; }
+  .vd-total-mes { font-size:13px; font-weight:700; color:var(--green); background:#f0fdf4; border:1px solid #bbf7d0; border-radius:8px; padding:6px 14px; white-space:nowrap; }
   .section-card {
     background: var(--white);
     border: 1px solid var(--border);
@@ -545,6 +566,34 @@
     font-weight: 700 !important;
     background: transparent !important;
   }
+  /* ── MOVER PARA MÊS ── */
+  .mn-move-wrap { position: relative; display: inline-block; }
+  .mn-move-btn {
+    background: none; border: 1px solid var(--border);
+    border-radius: 5px; padding: 3px 7px;
+    font-size: 11px; color: var(--text-muted);
+    cursor: pointer; transition: all 0.15s;
+    font-family: 'DM Sans', sans-serif;
+    white-space: nowrap;
+  }
+  .mn-move-btn:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
+  .mn-move-dropdown {
+    position: absolute; right: 0; top: 110%;
+    background: var(--white); border: 1.5px solid var(--border);
+    border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    z-index: 999; min-width: 140px; overflow: hidden;
+    animation: fadeIn 0.1s ease;
+  }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(-4px); } to { opacity:1; transform:translateY(0); } }
+  .mn-move-dropdown button {
+    display: block; width: 100%; text-align: left;
+    padding: 8px 14px; border: none; background: none;
+    font-family: 'DM Sans', sans-serif; font-size: 13px;
+    color: var(--text); cursor: pointer; transition: background 0.1s;
+  }
+  .mn-move-dropdown button:hover { background: var(--primary-light); color: var(--primary); }
+  .mn-move-dropdown button.active-mes { font-weight: 700; color: var(--primary); }
+
   /* ── ABAS DOS MESES ── */
   .mn-meses-wrap {
     overflow-x: auto;
@@ -754,8 +803,25 @@
       <button class="btn-green" onclick="addSale()">+ Add</button>
     </div>
   </div>
+
+  <!-- ABAS DOS MESES -->
+  <div class="vd-meses-wrap">
+    <div class="vd-meses" id="vd-meses"></div>
+  </div>
+
+  <!-- BUSCA + TOTAL DO MÊS -->
+  <div class="vd-controls">
+    <div class="vd-search-wrap">
+      <span class="search-icon">🔍</span>
+      <input class="vd-search" id="vd-search-input" type="text"
+        placeholder="Buscar descrição..." oninput="renderSales()">
+    </div>
+    <span class="vd-search-count" id="vd-search-count" style="display:none"></span>
+    <span class="vd-total-mes" id="vd-total-mes">Total: R$ 0,00</span>
+  </div>
+
   <div class="total-bar">
-    <span class="label">Total Geral</span>
+    <span class="label">Total Geral (todos os meses)</span>
     <span class="amount" id="sales-total">R$ 0,00</span>
   </div>
   <div class="sales-list" id="sales-list"></div>
@@ -917,7 +983,25 @@
 <script>
 // ===== STATE =====
 let leads    = JSON.parse(localStorage.getItem('crm_leads')    || '[]');
-let sales    = JSON.parse(localStorage.getItem('crm_sales')    || '[]');
+// sales agora é objeto indexado por mês: { 0: [...], 1: [...], ... }
+let sales = (function() {
+  const raw = localStorage.getItem('crm_sales');
+  if (!raw) return {};
+  try {
+    const parsed = JSON.parse(raw);
+    // migração: se era array antigo, move tudo para o mês da data de cada venda
+    if (Array.isArray(parsed)) {
+      const obj = {};
+      parsed.forEach(s => {
+        const mes = s.date ? parseInt(s.date.split('-')[1]) - 1 : new Date().getMonth();
+        if (!obj[mes]) obj[mes] = [];
+        obj[mes].push(s);
+      });
+      return obj;
+    }
+    return parsed;
+  } catch(e) { return {}; }
+})();
 let pendings = JSON.parse(localStorage.getItem('crm_pendings') || '[]');
 // manuts agora é objeto indexado por mês: { 0: [...], 1: [...], ... }
 let manuts = (function() {
@@ -967,7 +1051,7 @@ function showTab(tab) {
   const tabs = ['funil','vendas','pendencias','manutencao'];
   document.querySelectorAll('.nav-tab')[tabs.indexOf(tab)].classList.add('active');
   if (tab === 'funil')       renderFunil();
-  if (tab === 'vendas')      renderSales();
+  if (tab === 'vendas')      { buildVdTabs(); renderSales(); }
   if (tab === 'pendencias')  renderPendings();
   if (tab === 'manutencao')  { buildMesesTabs(); renderManut(); }
 }
@@ -1090,7 +1174,38 @@ function removeLead(id) {
   save(); renderFunil();
 }
 
-// ===== VENDAS =====
+// ===== VENDAS — abas por mês + busca =====
+
+let salesMesAtivo = new Date().getMonth(); // 0=Jan…11=Dez
+
+function getSalesMes(m) {
+  if (!sales[m]) sales[m] = [];
+  return sales[m];
+}
+
+function buildVdTabs() {
+  const wrap = document.getElementById('vd-meses');
+  if (!wrap) return;
+  wrap.innerHTML = MESES.map((nome, i) => {
+    const temDados = sales[i] && sales[i].length > 0;
+    const ativo    = i === salesMesAtivo ? 'active' : '';
+    const dados    = temDados && !ativo ? 'tem-dados' : '';
+    return `<button class="vd-mes-tab ${ativo} ${dados}" onclick="switchSalesMes(${i})">${nome}</button>`;
+  }).join('');
+  // total geral de todos os meses
+  let totalGeral = 0;
+  for (let i = 0; i < 12; i++) {
+    if (sales[i]) totalGeral += sales[i].reduce((s,x) => s + Number(x.value), 0);
+  }
+  document.getElementById('sales-total').textContent = fmt(totalGeral);
+}
+
+function switchSalesMes(idx) {
+  salesMesAtivo = idx;
+  buildVdTabs();
+  renderSales();
+}
+
 function addSale() {
   const desc    = document.getElementById('sale-desc').value.trim();
   const value   = parseFloat(document.getElementById('sale-value').value) || 0;
@@ -1098,24 +1213,56 @@ function addSale() {
   const payment = document.getElementById('sale-payment').value;
   const date    = document.getElementById('sale-date').value;
   if (!desc) return;
-  sales.push({ id: Date.now().toString(), desc, value, type, payment, date: date || new Date().toISOString().slice(0,10) });
-  save(); renderSales();
+  // deduz o mês da data selecionada, ou usa mês ativo
+  let mes = salesMesAtivo;
+  if (date) mes = parseInt(date.split('-')[1]) - 1;
+  getSalesMes(mes).push({ id: Date.now().toString(), desc, value, type, payment, date: date || new Date().toISOString().slice(0,10) });
+  save(); buildVdTabs(); renderSales();
   document.getElementById('sale-desc').value  = '';
   document.getElementById('sale-value').value = '';
 }
 
 function removeSale(id) {
-  sales = sales.filter(s => s.id !== id);
-  save(); renderSales();
+  const lista = getSalesMes(salesMesAtivo);
+  sales[salesMesAtivo] = lista.filter(s => s.id !== id);
+  save(); buildVdTabs(); renderSales();
 }
 
 function renderSales() {
-  const total = sales.reduce((s, x) => s + Number(x.value), 0);
-  document.getElementById('sales-total').textContent = fmt(total);
-  const list = document.getElementById('sales-list');
-  if (sales.length === 0) { list.innerHTML = '<div class="empty-state">Nenhuma venda registrada</div>'; return; }
+  const searchEl = document.getElementById('vd-search-input');
+  const countEl  = document.getElementById('vd-search-count');
+  const totalMesEl = document.getElementById('vd-total-mes');
+  const query    = searchEl ? searchEl.value.trim().toLowerCase() : '';
+  const list     = document.getElementById('sales-list');
+
+  let lista = [...getSalesMes(salesMesAtivo)];
+
+  // total do mês (sem filtro de busca)
+  const totalMes = lista.reduce((s,x) => s + Number(x.value), 0);
+  if (totalMesEl) totalMesEl.textContent = 'Total ' + MESES[salesMesAtivo] + ': ' + fmt(totalMes);
+
+  // filtrar por busca
+  if (query) lista = lista.filter(s => (s.desc || '').toLowerCase().includes(query));
+
+  // contador busca
+  if (query && countEl) {
+    countEl.style.display = 'inline-block';
+    countEl.textContent   = `${lista.length} resultado${lista.length !== 1 ? 's' : ''}`;
+  } else if (countEl) {
+    countEl.style.display = 'none';
+  }
+
+  if (getSalesMes(salesMesAtivo).length === 0) {
+    list.innerHTML = `<div class="empty-state">Nenhuma venda em ${MESES[salesMesAtivo]}</div>`;
+    return;
+  }
+  if (lista.length === 0) {
+    list.innerHTML = `<div class="empty-state">🔍 Nenhum resultado para "${esc(query)}"</div>`;
+    return;
+  }
+
   const groups = {};
-  sales.forEach(s => { if (!groups[s.date]) groups[s.date] = []; groups[s.date].push(s); });
+  lista.forEach(s => { if (!groups[s.date]) groups[s.date] = []; groups[s.date].push(s); });
   const sortedDates = Object.keys(groups).sort((a,b) => b.localeCompare(a));
   list.innerHTML = sortedDates.map(date => {
     const dayTotal = groups[date].reduce((s,x) => s + Number(x.value), 0);
@@ -1125,7 +1272,7 @@ function renderSales() {
       return `<div class="sale-item">
         <span>💰</span>
         <div class="sale-info">
-          <div class="sale-name">${s.desc}</div>
+          <div class="sale-name">${esc(s.desc)}</div>
           <div class="sale-meta">
             <span class="sale-tag ${tClass}">${s.type}</span>
             <span class="sale-tag ${pClass}">${s.payment}</span>
@@ -1277,6 +1424,41 @@ function propagarObs(original, mesAtual) {
   buildMesesTabs(); // atualiza indicador de dados no mês seguinte
 }
 
+function toggleMoveMenu(id, btn) {
+  // fecha todos os outros abertos
+  document.querySelectorAll('.mn-move-dropdown').forEach(d => {
+    if (d.id !== 'move-menu-' + id) d.style.display = 'none';
+  });
+  const menu = document.getElementById('move-menu-' + id);
+  if (menu) menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+  // fechar ao clicar fora
+  setTimeout(() => {
+    document.addEventListener('click', function handler(e) {
+      if (!e.target.closest('.mn-move-wrap')) {
+        document.querySelectorAll('.mn-move-dropdown').forEach(d => d.style.display = 'none');
+        document.removeEventListener('click', handler);
+      }
+    });
+  }, 10);
+}
+
+function moverParaMes(id, mesDestino) {
+  if (mesDestino === manutMesAtivo) {
+    document.querySelectorAll('.mn-move-dropdown').forEach(d => d.style.display = 'none');
+    return;
+  }
+  const listaAtual = getManutsMes(manutMesAtivo);
+  const idx = listaAtual.findIndex(x => x.id === id);
+  if (idx === -1) return;
+  const [item] = listaAtual.splice(idx, 1);
+  manuts[manutMesAtivo] = listaAtual;
+  getManutsMes(mesDestino).push(item);
+  save();
+  buildMesesTabs();
+  renderManut();
+  document.querySelectorAll('.mn-move-dropdown').forEach(d => d.style.display = 'none');
+}
+
 function removeManut(id) {
   const lista = getManutsMes(manutMesAtivo);
   manuts[manutMesAtivo] = lista.filter(x => x.id !== id);
@@ -1373,7 +1555,13 @@ function renderManut() {
       <td class="${relatorioOk}">
         <input class="cell-input" type="date" value="${m.relatorio || ''}"
             oninput="updateManut('${m.id}','relatorio',this.value)"></td>
-      <td style="padding:0 4px">
+      <td style="padding:0 4px;display:flex;align-items:center;gap:3px;min-height:38px">
+        <div class="mn-move-wrap">
+          <button class="mn-move-btn" onclick="toggleMoveMenu('${m.id}',this)" title="Mover para outro mês">↗ Mês</button>
+          <div class="mn-move-dropdown" id="move-menu-${m.id}" style="display:none">
+            ${MESES.map((nm,idx) => `<button class="${idx===manutMesAtivo?'active-mes':''}" onclick="moverParaMes('${m.id}',${idx})">${nm}</button>`).join('')}
+          </div>
+        </div>
         <button class="mn-row-del" onclick="removeManut('${m.id}')" title="Remover linha">×</button>
       </td>
     </tr>`;
@@ -1391,6 +1579,7 @@ document.getElementById('pend-date').value = today;
 renderFunil();
 updateBadge();
 buildMesesTabs();
+buildVdTabs();
 
 function updateBadge() {
   const open = pendings.filter(p => !p.done).length;
@@ -1403,3 +1592,6 @@ document.getElementById('modal-lead').addEventListener('click', function(e) {
 </script>
 </body>
 </html>
+
+ 
+
