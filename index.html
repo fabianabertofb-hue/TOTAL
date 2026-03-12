@@ -1671,11 +1671,13 @@ function renderSales() {
       const tClass = s.type === 'Locação' ? 'tag-locacao' : s.type === 'Manutenção' ? 'tag-manutencao' : 'tag-venda';
       const pClass = s.payment === 'Pix' ? 'tag-pix' : s.payment === 'Boleto' ? 'tag-boleto' : s.payment === 'Cartão' ? 'tag-cartao' : s.payment === 'Dinheiro' ? 'tag-dinheiro' : 'tag-transferencia';
       const hasPedidos = (pedidosDB['venda_'+s.id]||[]).length > 0;
+      const pedidosList = getPedidos('venda', s.id);
+      const pedidosNums = pedidosList.map(p => `<span style="font-family:'DM Mono',monospace;font-size:11px;font-weight:700;background:var(--primary-light);color:var(--primary);padding:2px 7px;border-radius:4px;white-space:nowrap">#${esc(p.num)}</span>`).join('');
       return `<div class="sale-item" style="flex-wrap:wrap">
         <div style="display:flex;align-items:center;gap:10px;width:100%">
           <span>💰</span>
           <div class="sale-info">
-            <div class="sale-name">${esc(s.desc)}</div>
+            <div class="sale-name" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">${esc(s.desc)}${pedidosNums}</div>
             <div class="sale-meta">
               <span class="sale-tag ${tClass}">${s.type}</span>
               <span class="sale-tag ${pClass}">${s.payment}</span>
@@ -2280,6 +2282,7 @@ document.getElementById('modal-lead').addEventListener('click', function(e) {
 </script>
 </body>
 </html>
+
 
 
 
