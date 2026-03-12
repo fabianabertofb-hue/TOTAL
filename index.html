@@ -967,6 +967,41 @@
   .fat-resumo-val { font-size:20px; font-weight:700; }
   .td-limpeza-ok { background: #bbf7d0 !important; }
   .td-limpeza-ok .cell-input { color: #15803d !important; font-weight: 700 !important; background: transparent !important; }
+
+  /* ===== DASHBOARD ===== */
+  .dash-wrap { max-width:1100px; margin:0 auto; padding:24px; }
+  .dash-title { font-size:18px; font-weight:700; margin-bottom:20px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; }
+  .dash-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:24px; }
+  @media(max-width:900px) { .dash-grid { grid-template-columns:repeat(2,1fr); } }
+  .dash-card { background:var(--white); border:1px solid var(--border); border-radius:var(--radius); padding:20px; box-shadow:var(--shadow-sm); }
+  .dash-card-label { font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:8px; }
+  .dash-card-val { font-size:26px; font-weight:700; }
+  .dash-card-sub { font-size:12px; color:var(--text-muted); margin-top:4px; }
+  .dash-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:20px; }
+  @media(max-width:700px) { .dash-row { grid-template-columns:1fr; } }
+  .dash-section { background:var(--white); border:1px solid var(--border); border-radius:var(--radius); padding:20px; box-shadow:var(--shadow-sm); }
+  .dash-section-title { font-size:13px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:14px; display:flex; align-items:center; justify-content:space-between; }
+  .dash-bar-row { display:flex; align-items:center; gap:10px; margin-bottom:8px; }
+  .dash-bar-label { font-size:12px; color:var(--text); min-width:60px; }
+  .dash-bar-bg { flex:1; height:10px; background:#f1f3f8; border-radius:99px; overflow:hidden; }
+  .dash-bar-fill { height:100%; border-radius:99px; background:var(--primary); transition:width 0.4s; }
+  .dash-bar-val { font-size:11px; font-weight:700; color:var(--text-muted); min-width:70px; text-align:right; font-family:'DM Mono',monospace; }
+  .dash-alert-item { display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid #f0f1f5; }
+  .dash-alert-item:last-child { border-bottom:none; }
+  .dash-alert-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+  .dash-alert-txt { flex:1; font-size:13px; color:var(--text); }
+  .dash-alert-badge { font-size:11px; font-weight:700; padding:2px 8px; border-radius:20px; white-space:nowrap; }
+  .dash-empty-small { font-size:13px; color:var(--text-light); text-align:center; padding:16px; }
+  .btn-pdf-dash { padding:7px 16px; background:var(--green); color:white; border:none; border-radius:8px; font-family:'DM Sans',sans-serif; font-size:13px; font-weight:600; cursor:pointer; transition:all 0.15s; }
+  .btn-pdf-dash:hover { background:#059669; }
+
+  .pend-vencida   { border-left:3px solid var(--red) !important; }
+  .pend-hoje      { border-left:3px solid var(--orange) !important; }
+  .pend-proxima   { border-left:3px solid var(--blue) !important; }
+  .prazo-badge    { font-size:10px; font-weight:700; padding:2px 7px; border-radius:20px; white-space:nowrap; }
+  .prazo-vencida  { background:#fee2e2; color:#b91c1c; }
+  .prazo-hoje     { background:#fef3c7; color:#92400e; }
+  .prazo-proxima  { background:#dbeafe; color:#1e40af; }
   /* DRAG OVER */
   .funnel-col.drag-over { border-color: var(--primary); background: var(--primary-light); }
 </style>
@@ -980,6 +1015,7 @@
     CRM Vendas
   </div>
   <div class="nav-tabs">
+    <button class="nav-tab" onclick="showTab('dashboard')">📊 Dashboard</button>
     <button class="nav-tab active" onclick="showTab('funil')">🗂 Funil</button>
     <button class="nav-tab" onclick="showTab('vendas')">💰 Vendas</button>
     <button class="nav-tab" id="tab-pendencias" onclick="showTab('pendencias')">📋 Pendências <span class="badge" id="badge-count">0</span></button>
@@ -989,6 +1025,64 @@
   </div>
   <button class="btn-primary" onclick="openModal()">+ Novo Lead</button>
 </nav>
+
+<!-- =================== DASHBOARD =================== -->
+<div class="page" id="page-dashboard">
+  <div class="dash-wrap">
+    <div class="dash-title">
+      📊 Dashboard
+      <button class="btn-pdf-dash" onclick="gerarPdfDashboard()">📄 Exportar PDF</button>
+    </div>
+
+    <!-- CARDS RESUMO -->
+    <div class="dash-grid">
+      <div class="dash-card">
+        <div class="dash-card-label">💰 Faturamento do Mês</div>
+        <div class="dash-card-val" id="dash-fat-mes" style="color:var(--green)">R$ 0,00</div>
+        <div class="dash-card-sub" id="dash-fat-mes-label">mês atual</div>
+      </div>
+      <div class="dash-card">
+        <div class="dash-card-label">📦 NFs Pendentes</div>
+        <div class="dash-card-val" id="dash-nf-pend" style="color:var(--orange)">0</div>
+        <div class="dash-card-sub" id="dash-nf-pend-val">aguardando emissão</div>
+      </div>
+      <div class="dash-card">
+        <div class="dash-card-label">🔧 Condomínios Ativos</div>
+        <div class="dash-card-val" id="dash-cond-ativos" style="color:var(--primary)">0</div>
+        <div class="dash-card-sub" id="dash-cond-label">no mês atual</div>
+      </div>
+      <div class="dash-card">
+        <div class="dash-card-label">⚠️ Pendências em Aberto</div>
+        <div class="dash-card-val" id="dash-pend-open" style="color:var(--red)">0</div>
+        <div class="dash-card-sub">não concluídas</div>
+      </div>
+    </div>
+
+    <!-- GRÁFICO + ALERTAS -->
+    <div class="dash-row">
+      <div class="dash-section">
+        <div class="dash-section-title">📈 Faturamento por Mês</div>
+        <div id="dash-grafico"></div>
+      </div>
+      <div class="dash-section">
+        <div class="dash-section-title">⚠️ Alertas</div>
+        <div id="dash-alertas"></div>
+      </div>
+    </div>
+
+    <!-- PENDÊNCIAS PRÓXIMAS + ATENDIMENTOS ABERTOS -->
+    <div class="dash-row">
+      <div class="dash-section">
+        <div class="dash-section-title">📋 Pendências com Prazo Próximo</div>
+        <div id="dash-pend-lista"></div>
+      </div>
+      <div class="dash-section">
+        <div class="dash-section-title">🛠 Atendimentos em Aberto</div>
+        <div id="dash-atend-lista"></div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- =================== FUNIL =================== -->
 <div class="page active" id="page-funil">
@@ -1514,14 +1608,173 @@ function showTab(tab) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
   document.getElementById('page-' + tab).classList.add('active');
-  const tabs = ['funil','vendas','pendencias','manutencao','atendimentos','faturamento'];
+  const tabs = ['dashboard','funil','vendas','pendencias','manutencao','atendimentos','faturamento'];
   document.querySelectorAll('.nav-tab')[tabs.indexOf(tab)].classList.add('active');
+  if (tab === 'dashboard')   renderDashboard();
   if (tab === 'funil')       renderFunil();
   if (tab === 'vendas')      { buildVdTabs(); renderSales(); }
   if (tab === 'pendencias')  renderPendings();
   if (tab === 'manutencao')  { buildMesesTabs(); renderManut(); }
   if (tab === 'atendimentos') renderAt();
   if (tab === 'faturamento') renderFaturamento();
+}
+
+// ===== DASHBOARD =====
+function renderDashboard() {
+  const mesAtual = new Date().getMonth();
+  const anoAtual = new Date().getFullYear();
+  const MESES_D  = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+  const MESES_FULL = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+
+  // --- Faturamento do mês ---
+  const fatMes = (sales[mesAtual] || []).reduce((s,x) => s + Number(x.value||0), 0);
+  const fatEl = document.getElementById('dash-fat-mes');
+  const fatLbEl = document.getElementById('dash-fat-mes-label');
+  if (fatEl) fatEl.textContent = fmt(fatMes);
+  if (fatLbEl) fatLbEl.textContent = MESES_FULL[mesAtual];
+
+  // --- NFs pendentes ---
+  const nfPend = (typeof faturamentos !== 'undefined' ? faturamentos : [])
+    .filter(f => (nfStatus[f.id]||'pendente') === 'pendente');
+  const nfPendEl = document.getElementById('dash-nf-pend');
+  const nfPendVal = document.getElementById('dash-nf-pend-val');
+  if (nfPendEl) nfPendEl.textContent = nfPend.length;
+  if (nfPendVal) nfPendVal.textContent = 'R$ ' + nfPend.reduce((s,f)=>s+Number(f.valor||0),0).toLocaleString('pt-BR',{minimumFractionDigits:2});
+
+  // --- Condomínios ativos ---
+  const condAtivos = new Set((getManutsMes(mesAtual)||[]).map(m => m.cliente).filter(Boolean)).size;
+  const condEl = document.getElementById('dash-cond-ativos');
+  if (condEl) condEl.textContent = condAtivos;
+
+  // --- Pendências em aberto ---
+  const pendOpen = pendings.filter(p => !p.done).length;
+  const pendEl = document.getElementById('dash-pend-open');
+  if (pendEl) pendEl.textContent = pendOpen;
+
+  // --- Gráfico de barras por mês ---
+  const graficoEl = document.getElementById('dash-grafico');
+  if (graficoEl) {
+    const vals = Array.from({length:12}, (_,i) => (sales[i]||[]).reduce((s,x)=>s+Number(x.value||0),0));
+    const max = Math.max(...vals, 1);
+    graficoEl.innerHTML = vals.map((v,i) => {
+      const pct = Math.round((v/max)*100);
+      const ativo = i === mesAtual ? 'style="background:var(--green)"' : '';
+      return `<div class="dash-bar-row">
+        <span class="dash-bar-label">${MESES_D[i]}</span>
+        <div class="dash-bar-bg"><div class="dash-bar-fill" ${ativo} style="width:${pct}%;${i===mesAtual?'background:var(--green)':''}"></div></div>
+        <span class="dash-bar-val">${fmt(v)}</span>
+      </div>`;
+    }).join('');
+  }
+
+  // --- Alertas ---
+  const alertasEl = document.getElementById('dash-alertas');
+  if (alertasEl) {
+    const alertas = [];
+    // pendências vencidas
+    const hoje = new Date().toISOString().slice(0,10);
+    const vencidas = pendings.filter(p => !p.done && p.date && p.date < hoje);
+    if (vencidas.length) alertas.push({ cor:'#ef4444', txt: `${vencidas.length} pendência${vencidas.length>1?'s':''} vencida${vencidas.length>1?'s':''}`, badge:'prazo-vencida', label:'Ver Pendências' });
+    // NFs pendentes
+    if (nfPend.length) alertas.push({ cor:'#f59e0b', txt: `${nfPend.length} NF${nfPend.length>1?'s':''} aguardando emissão`, badge:'prazo-hoje', label:'Ver Faturamento' });
+    // atendimentos em aberto
+    const atAbertos = atendimentos.filter(a => a.status !== 'Concluído').length;
+    if (atAbertos) alertas.push({ cor:'#3b82f6', txt: `${atAbertos} atendimento${atAbertos>1?'s':''} em aberto`, badge:'prazo-proxima', label:'Ver Atendimentos' });
+
+    alertasEl.innerHTML = alertas.length === 0
+      ? '<div class="dash-empty-small">✅ Tudo em ordem!</div>'
+      : alertas.map(a => `<div class="dash-alert-item">
+          <div class="dash-alert-dot" style="background:${a.cor}"></div>
+          <span class="dash-alert-txt">${a.txt}</span>
+          <span class="prazo-badge ${a.badge}">${a.label}</span>
+        </div>`).join('');
+  }
+
+  // --- Pendências com prazo próximo ---
+  const pendListEl = document.getElementById('dash-pend-lista');
+  if (pendListEl) {
+    const hoje2 = new Date().toISOString().slice(0,10);
+    const proximas = pendings.filter(p => !p.done && p.date)
+      .map(p => ({ ...p, diff: Math.ceil((new Date(p.date) - new Date(hoje2)) / 86400000) }))
+      .filter(p => p.diff <= 7)
+      .sort((a,b) => a.diff - b.diff)
+      .slice(0, 6);
+    pendListEl.innerHTML = proximas.length === 0
+      ? '<div class="dash-empty-small">Nenhuma pendência urgente</div>'
+      : proximas.map(p => {
+          const cor = p.diff < 0 ? '#ef4444' : p.diff === 0 ? '#f59e0b' : '#3b82f6';
+          const label = p.diff < 0 ? `Vencida há ${Math.abs(p.diff)}d` : p.diff === 0 ? 'Hoje!' : `${p.diff}d`;
+          return `<div class="dash-alert-item">
+            <div class="dash-alert-dot" style="background:${cor}"></div>
+            <span class="dash-alert-txt">${p.desc}</span>
+            <span class="prazo-badge" style="background:${p.diff<0?'#fee2e2':p.diff===0?'#fef3c7':'#dbeafe'};color:${p.diff<0?'#b91c1c':p.diff===0?'#92400e':'#1e40af'}">${label}</span>
+          </div>`;
+        }).join('');
+  }
+
+  // --- Atendimentos em aberto ---
+  const atListEl = document.getElementById('dash-atend-lista');
+  if (atListEl) {
+    const abertos = atendimentos.filter(a => a.status !== 'Concluído').slice(0, 6);
+    const urgColor = { 'Alta':'#ef4444', 'Média':'#f59e0b', 'Baixa':'#10b981' };
+    atListEl.innerHTML = abertos.length === 0
+      ? '<div class="dash-empty-small">Nenhum atendimento em aberto</div>'
+      : abertos.map(a => `<div class="dash-alert-item">
+          <div class="dash-alert-dot" style="background:${urgColor[a.urgencia]||'#94a3b8'}"></div>
+          <span class="dash-alert-txt"><strong>${a.cliente}</strong> — ${a.assunto?.slice(0,40)}${a.assunto?.length>40?'...':''}</span>
+          <span class="prazo-badge" style="background:#ede9fe;color:#5b21b6">${a.status}</span>
+        </div>`).join('');
+  }
+}
+
+function gerarPdfDashboard() {
+  const mesAtual = new Date().getMonth();
+  const MESES_FULL = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+  const fatMes = (sales[mesAtual]||[]).reduce((s,x)=>s+Number(x.value||0),0);
+  const fatAnual = Array.from({length:12},(_,i)=>(sales[i]||[]).reduce((s,x)=>s+Number(x.value||0),0)).reduce((a,b)=>a+b,0);
+  const nfPend = (typeof faturamentos!=='undefined'?faturamentos:[]).filter(f=>(nfStatus[f.id]||'pendente')==='pendente');
+  const pendOpen = pendings.filter(p=>!p.done);
+  const atAbertos = atendimentos.filter(a=>a.status!=='Concluído');
+  const hoje = new Date().toISOString().slice(0,10);
+  const vencidas = pendings.filter(p=>!p.done&&p.date&&p.date<hoje);
+
+  const pendRows = pendOpen.slice(0,10).map(p=>{
+    const diff = p.date ? Math.ceil((new Date(p.date)-new Date(hoje))/86400000) : null;
+    const prazo = diff===null?'—':diff<0?`Vencida há ${Math.abs(diff)}d`:diff===0?'Hoje!':diff+'d';
+    return `<tr><td>${p.desc}</td><td>${p.category}</td><td>${p.priority}</td><td>${prazo}</td></tr>`;
+  }).join('');
+
+  const atRows = atAbertos.slice(0,10).map(a=>`<tr><td>${a.cliente}</td><td>${a.assunto?.slice(0,50)||''}</td><td>${a.urgencia}</td><td>${a.status}</td></tr>`).join('');
+
+  const html = `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>Dashboard CRM</title>
+  <style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:Arial,sans-serif;font-size:12px;color:#1a1d27;padding:32px}
+  h1{font-size:20px;font-weight:700;margin-bottom:4px}h2{font-size:14px;font-weight:700;margin:24px 0 10px;color:#4f46e5;border-bottom:2px solid #4f46e5;padding-bottom:4px}
+  .sub{font-size:11px;color:#888;margin-bottom:24px}.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}
+  .card{border:1px solid #e8eaef;border-radius:8px;padding:14px}.card-label{font-size:10px;font-weight:700;color:#8b90a0;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+  .card-val{font-size:20px;font-weight:700}table{width:100%;border-collapse:collapse;margin-bottom:16px}
+  th{background:#4f46e5;color:white;padding:7px 10px;text-align:left;font-size:10px;text-transform:uppercase}
+  td{padding:7px 10px;border-bottom:1px solid #e8eaef}tr:nth-child(even) td{background:#f8f9fb}
+  .rodape{margin-top:24px;font-size:10px;color:#aaa;text-align:right}</style></head><body>
+  <h1>📊 Dashboard CRM</h1>
+  <div class="sub">Gerado em ${new Date().toLocaleDateString('pt-BR')} às ${new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}</div>
+  <div class="cards">
+    <div class="card"><div class="card-label">💰 Fat. ${MESES_FULL[mesAtual]}</div><div class="card-val" style="color:#10b981">${fmt(fatMes)}</div></div>
+    <div class="card"><div class="card-label">📅 Fat. Anual</div><div class="card-val" style="color:#10b981">${fmt(fatAnual)}</div></div>
+    <div class="card"><div class="card-label">📦 NFs Pendentes</div><div class="card-val" style="color:#f59e0b">${nfPend.length}</div></div>
+    <div class="card"><div class="card-label">⚠️ Pendências</div><div class="card-val" style="color:#ef4444">${pendOpen.length} (${vencidas.length} vencidas)</div></div>
+  </div>
+  <h2>📋 Pendências em Aberto</h2>
+  <table><thead><tr><th>Descrição</th><th>Categoria</th><th>Prioridade</th><th>Prazo</th></tr></thead><tbody>${pendRows||'<tr><td colspan=4 style=text-align:center>Nenhuma pendência em aberto</td></tr>'}</tbody></table>
+  <h2>🛠 Atendimentos em Aberto</h2>
+  <table><thead><tr><th>Cliente</th><th>Assunto</th><th>Urgência</th><th>Status</th></tr></thead><tbody>${atRows||'<tr><td colspan=4 style=text-align:center>Nenhum atendimento em aberto</td></tr>'}</tbody></table>
+  <div class="rodape">CRM Vendas — Relatório gerado automaticamente</div>
+  </body></html>`;
+
+  const win = window.open('','_blank');
+  win.document.write(html);
+  win.document.close();
+  win.focus();
+  setTimeout(()=>win.print(),500);
 }
 
 // ===== FUNIL =====
@@ -2121,7 +2374,16 @@ function renderPendings() {
       </div>
       ${items.length === 0
         ? '<div class="empty-state" style="padding:12px">Nenhuma pendência</div>'
-        : items.map(p => `<div class="pending-item ${p.done ? 'done' : ''}">
+        : items.map(p => {
+            const hoje = new Date().toISOString().slice(0,10);
+            const diff = p.date ? Math.ceil((new Date(p.date) - new Date(hoje)) / 86400000) : null;
+            let prazoClass = '', prazoBadge = '';
+            if (!p.done && diff !== null) {
+              if (diff < 0)      { prazoClass = 'pend-vencida'; prazoBadge = `<span class="prazo-badge prazo-vencida">⚠️ Vencida há ${Math.abs(diff)}d</span>`; }
+              else if (diff === 0) { prazoClass = 'pend-hoje';   prazoBadge = `<span class="prazo-badge prazo-hoje">🔔 Vence hoje!</span>`; }
+              else if (diff <= 3)  { prazoClass = 'pend-proxima'; prazoBadge = `<span class="prazo-badge prazo-proxima">📅 ${diff}d restantes</span>`; }
+            }
+            return `<div class="pending-item ${p.done ? 'done' : ''} ${prazoClass}">
             <div class="pending-check ${p.done ? 'checked' : ''}" onclick="togglePending('${p.id}')"></div>
             <div class="pend-info">
               <div class="pend-name">${p.desc}</div>
@@ -2130,8 +2392,10 @@ function renderPendings() {
                 <span class="pend-date">${fmtDate(p.date)}</span>
               </div>
             </div>
+            ${prazoBadge}
             <button class="btn-remove" onclick="removePending('${p.id}')">×</button>
-          </div>`).join('')
+          </div>`;
+          }).join('')
       }
     </div>`;
   }).join('');
@@ -2525,6 +2789,7 @@ function renderAt() {
     const ub = urgBadge[a.urgencia] || '';
     const sb = stBadge[a.status]    || '';
     const temObs = a.obs ? `<span class="at-obs-tag">obs</span>` : '';
+    const histCount = atendimentos.filter(x => x.cliente && a.cliente && x.cliente.toLowerCase() === a.cliente.toLowerCase()).length;
     return `<div class="at-card ${uc}" onclick="abrirAtModal('${a.id}')">
       <div class="at-card-top">
         <div>
@@ -2538,6 +2803,7 @@ function renderAt() {
         <span class="at-badge ${ub}">${a.urgencia}</span>
         <span class="at-badge ${sb}">${a.status}</span>
         ${temObs}
+        ${histCount > 1 ? `<span style="font-size:11px;color:var(--text-muted);background:var(--bg);padding:2px 8px;border-radius:20px;font-weight:600">📋 ${histCount} visitas</span>` : ''}
         <span class="at-card-date">${fmtDate(a.data)}</span>
       </div>
     </div>`;
@@ -2628,6 +2894,7 @@ buildVdTabs();
 renderGrafico();
 atualizarMeta();
 renderAt();
+renderDashboard();
 
 function updateBadge() {
   const open = pendings.filter(p => !p.done).length;
