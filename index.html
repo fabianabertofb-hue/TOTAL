@@ -763,13 +763,7 @@
   }
   /* ── DESTAQUE: data de relatório em verde ── */
   .td-relatorio-ok { background: #bbf7d0 !important; }
-  .td-limpeza-ok { background: #bbf7d0 !important; }
   .td-relatorio-ok .cell-input {
-    color: #15803d !important;
-    font-weight: 700 !important;
-    background: transparent !important;
-  }
-  .td-limpeza-ok .cell-input {
     color: #15803d !important;
     font-weight: 700 !important;
     background: transparent !important;
@@ -1139,7 +1133,7 @@
           <th class="th-num">#</th>
           <th style="min-width:180px">Condomínio / Cliente</th>
           <th style="min-width:130px">Dt. Preventiva</th>
-          <th style="min-width:130px">Dt. Corretiva</th>
+          <th style="min-width:150px">Dt. Corretiva</th>
           <th style="min-width:200px">Observação</th>
           <th style="min-width:130px">Nº Proposta</th>
           <th style="min-width:140px">Dt. Envio Relatório</th>
@@ -1180,6 +1174,38 @@
   </div>
 
   <div class="at-grid" id="at-grid"></div>
+</div>
+
+<!-- =================== FATURAMENTO =================== -->
+<div class="page" id="page-faturamento">
+  <div class="fat-wrap">
+    <div class="fat-header">
+      <div class="fat-title">🧾 Faturamento</div>
+      <div class="fat-controls">
+        <select class="fat-mes-sel" id="fat-mes-sel" onchange="renderFaturamento()"></select>
+        <span class="fat-total-badge" id="fat-total-badge">Total: R$ 0,00</span>
+      </div>
+    </div>
+    <div class="fat-resumo">
+      <div class="fat-resumo-card">
+        <div class="fat-resumo-label">📦 Total NFs</div>
+        <div class="fat-resumo-val" id="fat-cnt-total" style="color:var(--text)">0</div>
+      </div>
+      <div class="fat-resumo-card">
+        <div class="fat-resumo-label">⏳ Pendentes</div>
+        <div class="fat-resumo-val" id="fat-cnt-pend" style="color:var(--orange)">0</div>
+      </div>
+      <div class="fat-resumo-card">
+        <div class="fat-resumo-label">✅ Emitidas</div>
+        <div class="fat-resumo-val" id="fat-cnt-emit" style="color:var(--green)">0</div>
+      </div>
+      <div class="fat-resumo-card">
+        <div class="fat-resumo-label">💰 Valor Emitido</div>
+        <div class="fat-resumo-val" id="fat-val-emit" style="color:var(--green);font-size:15px">R$ 0,00</div>
+      </div>
+    </div>
+    <div id="fat-list"></div>
+  </div>
 </div>
 
 <!-- MODAL ATENDIMENTO -->
@@ -1413,6 +1439,7 @@ function showTab(tab) {
   if (tab === 'pendencias')  renderPendings();
   if (tab === 'manutencao')  { buildMesesTabs(); renderManut(); }
   if (tab === 'atendimentos') renderAt();
+renderFaturamento();
 }
 
 // ===== FUNIL =====
@@ -1673,17 +1700,20 @@ function renderSales() {
   const groups = {};
   lista.forEach(s => { if (!groups[s.date]) groups[s.date] = []; groups[s.date].push(s); });
   const sortedDates = Object.keys(groups).sort((a,b) => b.localeCompare(a));
+  const allSaleIds = [];
   list.innerHTML = sortedDates.map(date => {
     const dayTotal = groups[date].reduce((s,x) => s + Number(x.value), 0);
     const items = groups[date].map(s => {
+      allSaleIds.push(s.id);
       const tClass = s.type === 'Locação' ? 'tag-locacao' : s.type === 'Manutenção' ? 'tag-manutencao' : 'tag-venda';
       const pClass = s.payment === 'Pix' ? 'tag-pix' : s.payment === 'Boleto' ? 'tag-boleto' : s.payment === 'Cartão' ? 'tag-cartao' : s.payment === 'Dinheiro' ? 'tag-dinheiro' : 'tag-transferencia';
-      const hasPedidos = (pedidosDB['venda_'+s.id]||[]).length > 0;
+      const pedidosVenda = pedidosDB['venda_'+s.id] || [];
+      const pedidosNums = pedidosVenda.map(p => `<span style="font-family:'DM Mono',monospace;font-size:11px;font-weight:700;background:var(--primary-light);color:var(--primary);padding:1px 7px;border-radius:4px">#${esc(p.num)}</span>`).join(' ');
       return `<div class="sale-item" style="flex-wrap:wrap">
         <div style="display:flex;align-items:center;gap:10px;width:100%">
           <span>💰</span>
           <div class="sale-info">
-            <div class="sale-name">${esc(s.desc)}</div>
+            <div class="sale-name" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">${esc(s.desc)} ${pedidosNums}</div>
             <div class="sale-meta">
               <span class="sale-tag ${tClass}">${s.type}</span>
               <span class="sale-tag ${pClass}">${s.payment}</span>
@@ -1701,6 +1731,7 @@ function renderSales() {
       ${items}
     </div>`;
   }).join('');
+  allSaleIds.forEach(id => renderPedidos('venda', id));
 }
 
 // ===== EDIÇÃO DE VENDA =====
@@ -1764,7 +1795,17 @@ function addPedido(tipo, refId) {
 function togglePedidoStatus(tipo, refId, pedidoId) {
   const lista = getPedidos(tipo, refId);
   const p = lista.find(x => x.id === pedidoId);
-  if (p) { p.status = p.status === 'aguardando' ? 'recebido' : 'aguardando'; savePedidos(); renderPedidos(tipo, refId); }
+  if (!p) return;
+  const anterior = p.status;
+  p.status = p.status === 'aguardando' ? 'recebido' : 'aguardando';
+  savePedidos();
+  renderPedidos(tipo, refId);
+  if (tipo === 'manut' && p.status === 'recebido' && anterior === 'aguardando') {
+    adicionarAoFaturamento(refId, p);
+  }
+  if (tipo === 'manut' && p.status === 'aguardando' && anterior === 'recebido') {
+    removerDoFaturamento(p.id);
+  }
 }
 
 function removePedido(tipo, refId, pedidoId) {
@@ -1806,6 +1847,126 @@ function renderPedidos(tipo, refId) {
 
 function buildPedidosHTML(tipo, refId) {
   return `<div class="pedidos-wrap" id="pedidos-wrap-${refId}"></div>`;
+}
+
+// ===== FATURAMENTO =====
+const MESES_FAT = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho',
+                   'Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+
+let faturamentos = JSON.parse(localStorage.getItem('crm_faturamentos') || '[]');
+let nfStatus = JSON.parse(localStorage.getItem('crm_nf_status') || '{}');
+
+function saveFat() { localStorage.setItem('crm_faturamentos', JSON.stringify(faturamentos)); }
+function saveNfStatus() { localStorage.setItem('crm_nf_status', JSON.stringify(nfStatus)); }
+
+function adicionarAoFaturamento(manutId, pedido) {
+  if (faturamentos.find(f => f.pedidoId === pedido.id)) return;
+  let nome = '';
+  for (let m = 0; m < 12; m++) {
+    const row = (manuts[m] || []).find(r => r.id === manutId);
+    if (row) { nome = row.cliente || ''; break; }
+  }
+  const dataPedido = pedido.data || new Date().toISOString().slice(0,10);
+  faturamentos.unshift({
+    id: Date.now().toString(),
+    pedidoId: pedido.id,
+    manutId,
+    nome: nome || 'Condomínio',
+    numPedido: pedido.num,
+    valor: pedido.valor || 0,
+    data: dataPedido,
+    mes: new Date(dataPedido + 'T12:00:00').getMonth(),
+    ano: new Date(dataPedido + 'T12:00:00').getFullYear(),
+  });
+  saveFat();
+  renderFaturamento();
+}
+
+function removerDoFaturamento(pedidoId) {
+  faturamentos = faturamentos.filter(f => f.pedidoId !== pedidoId);
+  saveFat();
+  renderFaturamento();
+}
+
+function toggleNfStatus(fatId) {
+  nfStatus[fatId] = nfStatus[fatId] === 'emitida' ? 'pendente' : 'emitida';
+  saveNfStatus();
+  renderFaturamento();
+}
+
+function buildFatMesSel() {
+  const sel = document.getElementById('fat-mes-sel');
+  if (!sel || sel.options.length > 0) return;
+  const optAll = document.createElement('option');
+  optAll.value = '-1'; optAll.textContent = 'Todos os meses';
+  sel.appendChild(optAll);
+  MESES_FAT.forEach((m, i) => {
+    const opt = document.createElement('option');
+    opt.value = i; opt.textContent = m;
+    sel.appendChild(opt);
+  });
+  sel.value = new Date().getMonth();
+}
+
+function renderFaturamento() {
+  buildFatMesSel();
+  const sel  = document.getElementById('fat-mes-sel');
+  const list = document.getElementById('fat-list');
+  if (!sel || !list) return;
+  const mesSel = parseInt(sel.value);
+
+  let items = mesSel >= 0
+    ? faturamentos.filter(f => f.mes === mesSel)
+    : [...faturamentos];
+
+  items.sort((a,b) => (b.data||'').localeCompare(a.data||''));
+
+  const total    = items.reduce((s,f) => s + Number(f.valor||0), 0);
+  const pendList = items.filter(f => (nfStatus[f.id]||'pendente') === 'pendente');
+  const emitList = items.filter(f => (nfStatus[f.id]||'pendente') === 'emitida');
+  const valEmit  = emitList.reduce((s,f) => s + Number(f.valor||0), 0);
+
+  document.getElementById('fat-total-badge').textContent = 'Total: ' + fmt(total);
+  document.getElementById('fat-cnt-total').textContent = items.length;
+  document.getElementById('fat-cnt-pend').textContent  = pendList.length;
+  document.getElementById('fat-cnt-emit').textContent  = emitList.length;
+  document.getElementById('fat-val-emit').textContent  = fmt(valEmit);
+
+  if (items.length === 0) {
+    list.innerHTML = '<div class="fat-empty">Nenhum pedido aprovado neste período.<br><span style="font-size:12px;color:var(--text-light)">Pedidos marcados como ✅ Recebido na aba Manutenção aparecem aqui automaticamente.</span></div>';
+    return;
+  }
+
+  // agrupa por condomínio
+  const byNome = {};
+  items.forEach(f => {
+    const k = f.nome || 'Sem nome';
+    if (!byNome[k]) byNome[k] = [];
+    byNome[k].push(f);
+  });
+
+  list.innerHTML = Object.keys(byNome).sort().map(nome => {
+    const rows = byNome[nome];
+    const condTotal = rows.reduce((s,f) => s + Number(f.valor||0), 0);
+    const pedRows = rows.map(f => {
+      const st = nfStatus[f.id] || 'pendente';
+      return `<div class="fat-pedido-row">
+        <span class="fat-pedido-num">#${esc(f.numPedido)}</span>
+        <span class="fat-pedido-data">${fmtDate(f.data)}</span>
+        <span class="fat-pedido-val">${fmt(f.valor||0)}</span>
+        <button class="fat-nf-btn ${st}" onclick="toggleNfStatus('${f.id}')">
+          ${st === 'emitida' ? '✅ NF Emitida' : '⏳ Pendente'}
+        </button>
+      </div>`;
+    }).join('');
+    return `<div class="fat-cond-block">
+      <div class="fat-cond-header">
+        <span class="fat-cond-nome">🏢 ${esc(nome)}</span>
+        <span class="fat-cond-total">${fmt(condTotal)}</span>
+      </div>
+      ${pedRows}
+    </div>`;
+  }).join('');
 }
 
 // ===== PENDÊNCIAS =====
@@ -1897,7 +2058,7 @@ function switchMes(idx) {
 
 function addManutRow() {
   const lista = getManutsMes(manutMesAtivo);
-  lista.push({ id: Date.now().toString(), cliente:'', preventiva:'', corretiva:'', obs:'', proposta:'', relatorio:'', limpeza:'' });
+  lista.push({ id: Date.now().toString(), cliente:'', preventiva:'', corretiva:'', corretiva2:'', obs:'', proposta:'', relatorio:'', limpeza:'' });
   save(); renderManut();
   setTimeout(() => {
     const inputs = document.querySelectorAll('#manut-list .cell-cliente');
@@ -1930,7 +2091,7 @@ function propagarObs(original, mesAtual) {
     entrada = {
       id: 'prop_' + Date.now() + '_' + Math.random().toString(36).slice(2),
       cliente: original.cliente,
-      preventiva: '', corretiva: '',
+      preventiva: '', corretiva: '', corretiva2: '',
       obs: '⬆️ ' + original.obs,
       proposta: '', relatorio: '', limpeza: ''
     };
@@ -2065,8 +2226,17 @@ function renderManut() {
           ${m.preventiva ? '<span style="color:var(--green);font-size:13px;padding-right:8px;flex-shrink:0">✓</span>' : ''}
         </div>
       </td>
-      <td><input class="cell-input" type="date" value="${m.corretiva || ''}"
-            oninput="updateManut('${m.id}','corretiva',this.value)"></td>
+      <td>
+        <div style="display:flex;flex-direction:column;gap:0">
+          <input class="cell-input" type="date" value="${m.corretiva || ''}"
+                 title="Corretiva 1"
+                 style="border-bottom:1px solid var(--border)"
+                 oninput="updateManut('${m.id}','corretiva',this.value)">
+          <input class="cell-input" type="date" value="${m.corretiva2 || ''}"
+                 title="Corretiva 2"
+                 oninput="updateManut('${m.id}','corretiva2',this.value)">
+        </div>
+      </td>
       <td style="${m.obs ? 'background:#fde047;' : ''}">
         <input class="cell-input" value="${esc(m.obs)}"
             placeholder="Observações..."
