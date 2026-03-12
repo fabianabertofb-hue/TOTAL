@@ -926,18 +926,11 @@
 
   /* ===== FATURAMENTO ===== */
   .fat-wrap { max-width:860px; margin:0 auto; }
-  .fat-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; flex-wrap:wrap; gap:10px; }
+  .fat-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; flex-wrap:wrap; gap:10px; }
   .fat-title { font-size:17px; font-weight:700; }
   .fat-controls { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
   .fat-mes-sel { padding:7px 12px; border:1.5px solid var(--border); border-radius:8px; font-family:'DM Sans',sans-serif; font-size:13px; color:var(--text); outline:none; cursor:pointer; }
   .fat-total-badge { font-size:13px; font-weight:700; color:var(--green); background:#f0fdf4; border:1px solid #bbf7d0; border-radius:8px; padding:6px 16px; white-space:nowrap; }
-  .fat-form-card { background:var(--white); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow-sm); padding:18px 20px; margin-bottom:18px; }
-  .fat-form-card h4 { font-size:13px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:12px; }
-  .fat-form-row { display:flex; gap:8px; flex-wrap:wrap; align-items:flex-end; }
-  .fat-form-group { display:flex; flex-direction:column; gap:4px; }
-  .fat-form-group label { font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.04em; }
-  .fat-form-group input, .fat-form-group select { padding:7px 10px; border:1.5px solid var(--border); border-radius:7px; font-family:'DM Sans',sans-serif; font-size:13px; color:var(--text); outline:none; transition:border 0.15s; }
-  .fat-form-group input:focus, .fat-form-group select:focus { border-color:var(--primary); }
   .fat-cond-block { background:var(--white); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow-sm); margin-bottom:14px; overflow:hidden; }
   .fat-cond-header { display:flex; align-items:center; justify-content:space-between; padding:13px 18px; background:#f8f9fb; border-bottom:1px solid var(--border); }
   .fat-cond-nome { font-size:14px; font-weight:700; color:var(--text); }
@@ -947,19 +940,12 @@
   .fat-pedido-row:hover { background:#fafbff; }
   .fat-pedido-num { font-family:'DM Mono',monospace; font-size:12px; font-weight:700; color:var(--primary); background:var(--primary-light); padding:2px 8px; border-radius:4px; white-space:nowrap; }
   .fat-pedido-data { font-size:12px; color:var(--text-muted); white-space:nowrap; }
-  .fat-pedido-tipo { font-size:11px; font-weight:700; padding:2px 8px; border-radius:4px; white-space:nowrap; }
-  .fat-tipo-manut { background:var(--orange-light); color:var(--orange); }
-  .fat-tipo-venda { background:var(--blue-light); color:var(--blue); }
-  .fat-tipo-locacao { background:var(--purple-light); color:var(--purple); }
-  .fat-tipo-outro { background:var(--bg); color:var(--text-muted); }
   .fat-pedido-val { font-family:'DM Mono',monospace; font-size:13px; font-weight:700; color:var(--green); margin-left:auto; white-space:nowrap; }
   .fat-nf-btn { padding:4px 12px; border-radius:20px; border:none; font-family:'DM Sans',sans-serif; font-size:11px; font-weight:700; cursor:pointer; transition:all 0.15s; white-space:nowrap; }
   .fat-nf-btn.pendente { background:#fef3c7; color:#92400e; }
   .fat-nf-btn.pendente:hover { background:#fde68a; }
   .fat-nf-btn.emitida { background:var(--green-light); color:#065f46; }
   .fat-nf-btn.emitida:hover { background:#a7f3d0; }
-  .fat-del-btn { background:none; border:none; color:var(--text-light); cursor:pointer; font-size:16px; padding:0 2px; transition:color 0.15s; }
-  .fat-del-btn:hover { color:var(--red); }
   .fat-empty { text-align:center; color:var(--text-light); padding:60px; font-size:14px; }
   .fat-resumo { display:flex; gap:12px; margin-bottom:18px; flex-wrap:wrap; }
   .fat-resumo-card { background:var(--white); border:1px solid var(--border); border-radius:var(--radius); padding:14px 20px; flex:1; min-width:140px; box-shadow:var(--shadow-sm); }
@@ -1231,8 +1217,6 @@
         <span class="fat-total-badge" id="fat-total-badge">Total: R$ 0,00</span>
       </div>
     </div>
-
-    <!-- RESUMO -->
     <div class="fat-resumo">
       <div class="fat-resumo-card">
         <div class="fat-resumo-label">📦 Total NFs</div>
@@ -1251,40 +1235,6 @@
         <div class="fat-resumo-val" id="fat-val-emit" style="color:var(--green);font-size:15px">R$ 0,00</div>
       </div>
     </div>
-
-    <!-- FORMULÁRIO MANUAL -->
-    <div class="fat-form-card">
-      <h4>➕ Lançamento Manual</h4>
-      <div class="fat-form-row">
-        <div class="fat-form-group" style="flex:2;min-width:160px">
-          <label>Nome / Condomínio</label>
-          <input type="text" id="fat-f-nome" placeholder="Nome do cliente...">
-        </div>
-        <div class="fat-form-group" style="min-width:130px">
-          <label>Nº Pedido</label>
-          <input type="text" id="fat-f-num" placeholder="Ex: 12345">
-        </div>
-        <div class="fat-form-group" style="min-width:110px">
-          <label>Valor (R$)</label>
-          <input type="number" id="fat-f-valor" placeholder="0,00" min="0" step="0.01">
-        </div>
-        <div class="fat-form-group" style="min-width:130px">
-          <label>Data</label>
-          <input type="date" id="fat-f-data">
-        </div>
-        <div class="fat-form-group" style="min-width:130px">
-          <label>Tipo</label>
-          <select id="fat-f-tipo">
-            <option value="Manutenção">Manutenção</option>
-            <option value="Venda">Venda</option>
-            <option value="Locação">Locação</option>
-            <option value="Outro">Outro</option>
-          </select>
-        </div>
-        <button class="btn-green" onclick="addFaturamentoManual()" style="align-self:flex-end">+ Add</button>
-      </div>
-    </div>
-
     <div id="fat-list"></div>
   </div>
 </div>
@@ -1954,8 +1904,6 @@ function adicionarAoFaturamento(manutId, pedido) {
     numPedido: pedido.num,
     valor: pedido.valor || 0,
     data: dataPedido,
-    tipo: 'Manutenção',
-    manual: false,
     mes: new Date(dataPedido + 'T12:00:00').getMonth(),
     ano: new Date(dataPedido + 'T12:00:00').getFullYear(),
   });
@@ -1965,42 +1913,6 @@ function adicionarAoFaturamento(manutId, pedido) {
 
 function removerDoFaturamento(pedidoId) {
   faturamentos = faturamentos.filter(f => f.pedidoId !== pedidoId);
-  saveFat();
-  renderFaturamento();
-}
-
-function addFaturamentoManual() {
-  const nome  = document.getElementById('fat-f-nome').value.trim();
-  const num   = document.getElementById('fat-f-num').value.trim();
-  const valor = parseFloat(document.getElementById('fat-f-valor').value) || 0;
-  const data  = document.getElementById('fat-f-data').value;
-  const tipo  = document.getElementById('fat-f-tipo').value;
-  if (!nome) { alert('Preencha o nome!'); return; }
-  const dataSalva = data || new Date().toISOString().slice(0,10);
-  faturamentos.unshift({
-    id: Date.now().toString(),
-    pedidoId: null,
-    manutId: null,
-    nome,
-    numPedido: num || '—',
-    valor,
-    data: dataSalva,
-    tipo,
-    manual: true,
-    mes: new Date(dataSalva + 'T12:00:00').getMonth(),
-    ano: new Date(dataSalva + 'T12:00:00').getFullYear(),
-  });
-  saveFat();
-  document.getElementById('fat-f-nome').value  = '';
-  document.getElementById('fat-f-num').value   = '';
-  document.getElementById('fat-f-valor').value = '';
-  document.getElementById('fat-f-data').value  = '';
-  renderFaturamento();
-}
-
-function removeFaturamento(fatId) {
-  if (!confirm('Remover este lançamento?')) return;
-  faturamentos = faturamentos.filter(f => f.id !== fatId);
   saveFat();
   renderFaturamento();
 }
@@ -2043,10 +1955,9 @@ function renderFaturamento() {
   document.getElementById('fat-cnt-emit').textContent  = emitList.length;
   document.getElementById('fat-val-emit').textContent  = fmt(valEmit);
   if (items.length === 0) {
-    list.innerHTML = '<div class="fat-empty">Nenhum lançamento neste período.<br><span style="font-size:12px;color:var(--text-light)">Use o formulário acima ou aprove pedidos na aba Manutenção.</span></div>';
+    list.innerHTML = '<div class="fat-empty">Nenhum pedido aprovado neste período.<br><span style="font-size:12px;color:var(--text-light)">Pedidos marcados como ✅ Recebido na aba Manutenção aparecem aqui automaticamente.</span></div>';
     return;
   }
-  const tipoClass = t => t === 'Manutenção' ? 'fat-tipo-manut' : t === 'Venda' ? 'fat-tipo-venda' : t === 'Locação' ? 'fat-tipo-locacao' : 'fat-tipo-outro';
   const byNome = {};
   items.forEach(f => {
     const k = f.nome || 'Sem nome';
@@ -2058,16 +1969,13 @@ function renderFaturamento() {
     const condTotal = rows.reduce((s,f) => s + Number(f.valor||0), 0);
     const pedRows = rows.map(f => {
       const st = nfStatus[f.id] || 'pendente';
-      const manualTag = f.manual ? '<span style="font-size:10px;color:var(--text-light);margin-left:4px">manual</span>' : '';
       return `<div class="fat-pedido-row">
         <span class="fat-pedido-num">#${esc(f.numPedido)}</span>
         <span class="fat-pedido-data">${fmtDate(f.data)}</span>
-        <span class="fat-pedido-tipo ${tipoClass(f.tipo)}">${f.tipo||'—'}</span>${manualTag}
         <span class="fat-pedido-val">${fmt(f.valor||0)}</span>
         <button class="fat-nf-btn ${st}" onclick="toggleNfStatus('${f.id}')">
           ${st === 'emitida' ? '✅ NF Emitida' : '⏳ Pendente'}
         </button>
-        <button class="fat-del-btn" onclick="removeFaturamento('${f.id}')" title="Remover">×</button>
       </div>`;
     }).join('');
     return `<div class="fat-cond-block">
@@ -2339,9 +2247,12 @@ function renderManut() {
       </td>
       <td>
         <div style="display:flex;flex-direction:column;gap:0">
-          <input class="cell-input" type="date" value="${m.corretiva || ''}" title="Corretiva 1" style="border-bottom:1px solid var(--border)"
+          <input class="cell-input" type="date" value="${m.corretiva || ''}"
+                 title="Corretiva 1" style="border-bottom:1px solid var(--border)"
             oninput="updateManut('${m.id}','corretiva',this.value)">
-          <input class="cell-input" type="date" value="${m.corretiva2 || ''}" title="Corretiva 2" oninput="updateManut('${m.id}','corretiva2',this.value)">
+          <input class="cell-input" type="date" value="${m.corretiva2 || ''}"
+                 title="Corretiva 2"
+                 oninput="updateManut('${m.id}','corretiva2',this.value)">
         </div>
       </td>
       <td style="${m.obs ? 'background:#fde047;' : ''}">
