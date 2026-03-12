@@ -923,6 +923,36 @@
     font-family: 'DM Sans', sans-serif;
   }
 
+
+  /* ===== FATURAMENTO ===== */
+  .fat-wrap { max-width:860px; margin:0 auto; }
+  .fat-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; flex-wrap:wrap; gap:10px; }
+  .fat-title { font-size:17px; font-weight:700; }
+  .fat-controls { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+  .fat-mes-sel { padding:7px 12px; border:1.5px solid var(--border); border-radius:8px; font-family:'DM Sans',sans-serif; font-size:13px; color:var(--text); outline:none; cursor:pointer; }
+  .fat-total-badge { font-size:13px; font-weight:700; color:var(--green); background:#f0fdf4; border:1px solid #bbf7d0; border-radius:8px; padding:6px 16px; white-space:nowrap; }
+  .fat-cond-block { background:var(--white); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow-sm); margin-bottom:14px; overflow:hidden; }
+  .fat-cond-header { display:flex; align-items:center; justify-content:space-between; padding:13px 18px; background:#f8f9fb; border-bottom:1px solid var(--border); }
+  .fat-cond-nome { font-size:14px; font-weight:700; color:var(--text); }
+  .fat-cond-total { font-family:'DM Mono',monospace; font-size:13px; font-weight:700; color:var(--green); }
+  .fat-pedido-row { display:flex; align-items:center; gap:12px; padding:11px 18px; border-bottom:1px solid #f0f1f5; transition:background 0.1s; }
+  .fat-pedido-row:last-child { border-bottom:none; }
+  .fat-pedido-row:hover { background:#fafbff; }
+  .fat-pedido-num { font-family:'DM Mono',monospace; font-size:12px; font-weight:700; color:var(--primary); background:var(--primary-light); padding:2px 8px; border-radius:4px; white-space:nowrap; }
+  .fat-pedido-data { font-size:12px; color:var(--text-muted); white-space:nowrap; }
+  .fat-pedido-val { font-family:'DM Mono',monospace; font-size:13px; font-weight:700; color:var(--green); margin-left:auto; white-space:nowrap; }
+  .fat-nf-btn { padding:4px 12px; border-radius:20px; border:none; font-family:'DM Sans',sans-serif; font-size:11px; font-weight:700; cursor:pointer; transition:all 0.15s; white-space:nowrap; }
+  .fat-nf-btn.pendente { background:#fef3c7; color:#92400e; }
+  .fat-nf-btn.pendente:hover { background:#fde68a; }
+  .fat-nf-btn.emitida { background:var(--green-light); color:#065f46; }
+  .fat-nf-btn.emitida:hover { background:#a7f3d0; }
+  .fat-empty { text-align:center; color:var(--text-light); padding:60px; font-size:14px; }
+  .fat-resumo { display:flex; gap:12px; margin-bottom:18px; flex-wrap:wrap; }
+  .fat-resumo-card { background:var(--white); border:1px solid var(--border); border-radius:var(--radius); padding:14px 20px; flex:1; min-width:140px; box-shadow:var(--shadow-sm); }
+  .fat-resumo-label { font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:6px; }
+  .fat-resumo-val { font-size:20px; font-weight:700; }
+  .td-limpeza-ok { background: #bbf7d0 !important; }
+  .td-limpeza-ok .cell-input { color: #15803d !important; font-weight: 700 !important; background: transparent !important; }
   /* DRAG OVER */
   .funnel-col.drag-over { border-color: var(--primary); background: var(--primary-light); }
 </style>
@@ -941,6 +971,7 @@
     <button class="nav-tab" id="tab-pendencias" onclick="showTab('pendencias')">📋 Pendências <span class="badge" id="badge-count">0</span></button>
     <button class="nav-tab" onclick="showTab('manutencao')">🔧 Manutenção</button>
     <button class="nav-tab" onclick="showTab('atendimentos')">🛠 Atendimentos</button>
+    <button class="nav-tab" onclick="showTab('faturamento')">🧾 Faturamento</button>
   </div>
   <button class="btn-primary" onclick="openModal()">+ Novo Lead</button>
 </nav>
@@ -1133,7 +1164,7 @@
           <th class="th-num">#</th>
           <th style="min-width:180px">Condomínio / Cliente</th>
           <th style="min-width:130px">Dt. Preventiva</th>
-          <th style="min-width:150px">Dt. Corretiva</th>
+          <th style="min-width:130px">Dt. Corretiva</th>
           <th style="min-width:200px">Observação</th>
           <th style="min-width:130px">Nº Proposta</th>
           <th style="min-width:140px">Dt. Envio Relatório</th>
@@ -1432,14 +1463,14 @@ function showTab(tab) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
   document.getElementById('page-' + tab).classList.add('active');
-  const tabs = ['funil','vendas','pendencias','manutencao'];
+  const tabs = ['funil','vendas','pendencias','manutencao','atendimentos','faturamento'];
   document.querySelectorAll('.nav-tab')[tabs.indexOf(tab)].classList.add('active');
   if (tab === 'funil')       renderFunil();
   if (tab === 'vendas')      { buildVdTabs(); renderSales(); }
   if (tab === 'pendencias')  renderPendings();
   if (tab === 'manutencao')  { buildMesesTabs(); renderManut(); }
   if (tab === 'atendimentos') renderAt();
-renderFaturamento();
+  if (tab === 'faturamento') renderFaturamento();
 }
 
 // ===== FUNIL =====
@@ -1852,10 +1883,8 @@ function buildPedidosHTML(tipo, refId) {
 // ===== FATURAMENTO =====
 const MESES_FAT = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho',
                    'Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
-
 let faturamentos = JSON.parse(localStorage.getItem('crm_faturamentos') || '[]');
 let nfStatus = JSON.parse(localStorage.getItem('crm_nf_status') || '{}');
-
 function saveFat() { localStorage.setItem('crm_faturamentos', JSON.stringify(faturamentos)); }
 function saveNfStatus() { localStorage.setItem('crm_nf_status', JSON.stringify(nfStatus)); }
 
@@ -1914,37 +1943,27 @@ function renderFaturamento() {
   const list = document.getElementById('fat-list');
   if (!sel || !list) return;
   const mesSel = parseInt(sel.value);
-
-  let items = mesSel >= 0
-    ? faturamentos.filter(f => f.mes === mesSel)
-    : [...faturamentos];
-
+  let items = mesSel >= 0 ? faturamentos.filter(f => f.mes === mesSel) : [...faturamentos];
   items.sort((a,b) => (b.data||'').localeCompare(a.data||''));
-
   const total    = items.reduce((s,f) => s + Number(f.valor||0), 0);
   const pendList = items.filter(f => (nfStatus[f.id]||'pendente') === 'pendente');
   const emitList = items.filter(f => (nfStatus[f.id]||'pendente') === 'emitida');
   const valEmit  = emitList.reduce((s,f) => s + Number(f.valor||0), 0);
-
   document.getElementById('fat-total-badge').textContent = 'Total: ' + fmt(total);
   document.getElementById('fat-cnt-total').textContent = items.length;
   document.getElementById('fat-cnt-pend').textContent  = pendList.length;
   document.getElementById('fat-cnt-emit').textContent  = emitList.length;
   document.getElementById('fat-val-emit').textContent  = fmt(valEmit);
-
   if (items.length === 0) {
     list.innerHTML = '<div class="fat-empty">Nenhum pedido aprovado neste período.<br><span style="font-size:12px;color:var(--text-light)">Pedidos marcados como ✅ Recebido na aba Manutenção aparecem aqui automaticamente.</span></div>';
     return;
   }
-
-  // agrupa por condomínio
   const byNome = {};
   items.forEach(f => {
     const k = f.nome || 'Sem nome';
     if (!byNome[k]) byNome[k] = [];
     byNome[k].push(f);
   });
-
   list.innerHTML = Object.keys(byNome).sort().map(nome => {
     const rows = byNome[nome];
     const condTotal = rows.reduce((s,f) => s + Number(f.valor||0), 0);
@@ -2229,9 +2248,8 @@ function renderManut() {
       <td>
         <div style="display:flex;flex-direction:column;gap:0">
           <input class="cell-input" type="date" value="${m.corretiva || ''}"
-                 title="Corretiva 1"
-                 style="border-bottom:1px solid var(--border)"
-                 oninput="updateManut('${m.id}','corretiva',this.value)">
+                 title="Corretiva 1" style="border-bottom:1px solid var(--border)"
+            oninput="updateManut('${m.id}','corretiva',this.value)">
           <input class="cell-input" type="date" value="${m.corretiva2 || ''}"
                  title="Corretiva 2"
                  oninput="updateManut('${m.id}','corretiva2',this.value)">
@@ -2252,10 +2270,7 @@ function renderManut() {
       <td class="${relatorioOk}">
         <input class="cell-input" type="date" value="${m.relatorio || ''}"
             oninput="updateManut('${m.id}','relatorio',this.value)"></td>
-      <td class="${m.limpeza ? 'td-limpeza-ok' : ''}">
-        <input class="cell-input" type="date" value="${m.limpeza || ''}"
-            title="${m.limpeza ? 'Limpeza realizada em ' + fmtDate(m.limpeza) : 'Sem data'}"
-            oninput="updateManut('${m.id}','limpeza',this.value)"></td>
+      <td class="${m.limpeza ? 'td-limpeza-ok' : ''}"><input class="cell-input" type="date" value="${m.limpeza || ''}" title="${m.limpeza ? 'Limpeza realizada em ' + fmtDate(m.limpeza) : 'Sem data'}" oninput="updateManut('${m.id}','limpeza',this.value)"></td>
       <td style="padding:6px 8px;vertical-align:top;min-width:180px">
         ${buildPedidosHTML('manut', m.id)}
       </td>
