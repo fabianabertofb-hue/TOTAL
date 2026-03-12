@@ -148,6 +148,49 @@
   .at-card-date { font-size:11px; color:var(--text-light); margin-left:auto; }
   .at-card-del { background:none; border:none; color:var(--text-light); cursor:pointer; font-size:16px; padding:0 2px; transition:color 0.15s; flex-shrink:0; }
   .at-card-del:hover { color:var(--red); }
+
+  /* ── PEDIDOS ── */
+  .pedidos-wrap { margin-top:10px; border-top:1px solid var(--border); padding-top:10px; }
+  .pedidos-titulo { font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:8px; display:flex; align-items:center; justify-content:space-between; }
+  .btn-add-pedido { font-size:11px; font-weight:700; color:var(--primary); background:none; border:none; cursor:pointer; padding:0; }
+  .btn-add-pedido:hover { text-decoration:underline; }
+  .pedido-item { display:flex; align-items:center; gap:8px; padding:5px 0; border-bottom:1px solid #f5f5f5; flex-wrap:wrap; }
+  .pedido-item:last-child { border-bottom:none; }
+  .pedido-num { font-size:12px; font-weight:700; color:var(--text); font-family:'DM Mono',monospace; }
+  .pedido-data { font-size:11px; color:var(--text-muted); }
+  .pedido-val { font-size:12px; font-weight:700; color:var(--green); margin-left:auto; }
+  .pedido-badge-ag { background:#fef3c7; color:#92400e; font-size:10px; font-weight:700; padding:2px 7px; border-radius:20px; }
+  .pedido-badge-rec { background:#d1fae5; color:#065f46; font-size:10px; font-weight:700; padding:2px 7px; border-radius:20px; cursor:pointer; }
+  .pedido-badge-ag { cursor:pointer; }
+  .pedido-del { background:none; border:none; color:var(--text-light); cursor:pointer; font-size:13px; padding:0 2px; }
+  .pedido-del:hover { color:var(--red); }
+  .pedido-form { display:flex; gap:6px; flex-wrap:wrap; align-items:flex-end; padding:8px 0 4px; }
+  .pedido-form input, .pedido-form select {
+    padding:5px 8px; border:1.5px solid var(--border); border-radius:6px;
+    font-family:'DM Sans',sans-serif; font-size:12px; color:var(--text);
+    background:var(--white); outline:none;
+  }
+  .pedido-form input:focus, .pedido-form select:focus { border-color:var(--primary); }
+  .pedido-form .pf-num { width:130px; }
+  .pedido-form .pf-data { width:130px; }
+  .pedido-form .pf-val { width:100px; }
+  .btn-pedido-save { padding:5px 12px; background:var(--primary); color:white; border:none; border-radius:6px; font-family:'DM Sans',sans-serif; font-size:12px; font-weight:700; cursor:pointer; }
+  .btn-pedido-save:hover { background:#4338ca; }
+  .btn-pedido-cancel { padding:5px 10px; background:none; border:1px solid var(--border); border-radius:6px; font-family:'DM Sans',sans-serif; font-size:12px; color:var(--text-muted); cursor:pointer; }
+
+  /* ── EDIÇÃO DE VENDA ── */
+  .btn-edit-sale { background:none; border:none; color:var(--text-light); cursor:pointer; font-size:14px; padding:0 4px; transition:color 0.15s; }
+  .btn-edit-sale:hover { color:var(--primary); }
+  .sale-edit-modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:1000; display:flex; align-items:center; justify-content:center; padding:16px; }
+  .sale-edit-modal-overlay.hidden { display:none; }
+  .sale-edit-modal { background:var(--white); border-radius:var(--radius); box-shadow:var(--shadow-lg); width:100%; max-width:460px; padding:24px; }
+  .sale-edit-modal h3 { font-size:15px; font-weight:700; margin-bottom:18px; }
+  .sale-edit-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px; }
+  .sale-edit-group { margin-bottom:12px; }
+  .sale-edit-group label { display:block; font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:5px; }
+  .sale-edit-group input, .sale-edit-group select { width:100%; padding:8px 10px; border:1.5px solid var(--border); border-radius:var(--radius-sm); font-family:'DM Sans',sans-serif; font-size:13px; color:var(--text); outline:none; }
+  .sale-edit-group input:focus, .sale-edit-group select:focus { border-color:var(--primary); }
+  .sale-edit-footer { display:flex; gap:8px; justify-content:flex-end; margin-top:16px; }
   .at-empty { text-align:center; color:var(--text-light); padding:48px; font-size:14px; }
   .at-obs-tag { font-size:11px; color:var(--green); font-weight:600; background:var(--green-light); padding:2px 8px; border-radius:20px; }
 
@@ -1093,6 +1136,7 @@
           <th style="min-width:200px">Observação</th>
           <th style="min-width:130px">Nº Proposta</th>
           <th style="min-width:140px">Dt. Envio Relatório</th>
+          <th style="min-width:180px">📦 Pedidos</th>
           <th style="width:36px"></th>
         </tr>
       </thead>
@@ -1178,6 +1222,51 @@
     <div class="at-modal-footer">
       <button class="btn-secondary" onclick="fecharAtModal()">Cancelar</button>
       <button class="btn-primary" onclick="salvarAt()">Salvar atendimento</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL EDIÇÃO DE VENDA -->
+<div class="sale-edit-modal-overlay hidden" id="sale-edit-overlay" onclick="fecharEditSale(event)">
+  <div class="sale-edit-modal">
+    <h3>✏️ Editar Venda</h3>
+    <div class="sale-edit-group">
+      <label>Descrição</label>
+      <input id="se-desc" type="text" placeholder="Descrição da venda...">
+    </div>
+    <div class="sale-edit-row">
+      <div class="sale-edit-group">
+        <label>Valor (R$)</label>
+        <input id="se-value" type="number" min="0" step="0.01">
+      </div>
+      <div class="sale-edit-group">
+        <label>Data</label>
+        <input id="se-date" type="date">
+      </div>
+    </div>
+    <div class="sale-edit-row">
+      <div class="sale-edit-group">
+        <label>Tipo</label>
+        <select id="se-type">
+          <option value="Venda">Venda</option>
+          <option value="Locação">Locação</option>
+          <option value="Manutenção">Manutenção</option>
+        </select>
+      </div>
+      <div class="sale-edit-group">
+        <label>Pagamento</label>
+        <select id="se-payment">
+          <option value="Pix">Pix</option>
+          <option value="Boleto">Boleto</option>
+          <option value="Cartão">Cartão</option>
+          <option value="Dinheiro">Dinheiro</option>
+          <option value="Transferência">Transferência</option>
+        </select>
+      </div>
+    </div>
+    <div class="sale-edit-footer">
+      <button class="btn-secondary" onclick="fecharEditSale()">Cancelar</button>
+      <button class="btn-primary" onclick="confirmarEditSale()">Salvar alterações</button>
     </div>
   </div>
 </div>
@@ -1581,17 +1670,22 @@ function renderSales() {
     const items = groups[date].map(s => {
       const tClass = s.type === 'Locação' ? 'tag-locacao' : s.type === 'Manutenção' ? 'tag-manutencao' : 'tag-venda';
       const pClass = s.payment === 'Pix' ? 'tag-pix' : s.payment === 'Boleto' ? 'tag-boleto' : s.payment === 'Cartão' ? 'tag-cartao' : s.payment === 'Dinheiro' ? 'tag-dinheiro' : 'tag-transferencia';
-      return `<div class="sale-item">
-        <span>💰</span>
-        <div class="sale-info">
-          <div class="sale-name">${esc(s.desc)}</div>
-          <div class="sale-meta">
-            <span class="sale-tag ${tClass}">${s.type}</span>
-            <span class="sale-tag ${pClass}">${s.payment}</span>
+      const hasPedidos = (pedidosDB['venda_'+s.id]||[]).length > 0;
+      return `<div class="sale-item" style="flex-wrap:wrap">
+        <div style="display:flex;align-items:center;gap:10px;width:100%">
+          <span>💰</span>
+          <div class="sale-info">
+            <div class="sale-name">${esc(s.desc)}</div>
+            <div class="sale-meta">
+              <span class="sale-tag ${tClass}">${s.type}</span>
+              <span class="sale-tag ${pClass}">${s.payment}</span>
+            </div>
           </div>
+          <div class="sale-value">${fmt(s.value)}</div>
+          <button class="btn-edit-sale" onclick="abrirEditSale('${s.id}')" title="Editar">✏️</button>
+          <button class="btn-remove" onclick="removeSale('${s.id}')">×</button>
         </div>
-        <div class="sale-value">${fmt(s.value)}</div>
-        <button class="btn-remove" onclick="removeSale('${s.id}')">×</button>
+        <div style="width:100%">${buildPedidosHTML('venda',s.id)}</div>
       </div>`;
     }).join('');
     return `<div class="date-group">
@@ -1599,6 +1693,111 @@ function renderSales() {
       ${items}
     </div>`;
   }).join('');
+}
+
+// ===== EDIÇÃO DE VENDA =====
+let saleEditId = null;
+
+function abrirEditSale(id) {
+  saleEditId = id;
+  const s = getSalesMes(salesMesAtivo).find(x => x.id === id);
+  if (!s) return;
+  document.getElementById('se-desc').value    = s.desc || '';
+  document.getElementById('se-value').value   = s.value || '';
+  document.getElementById('se-date').value    = s.date || '';
+  document.getElementById('se-type').value    = s.type || 'Venda';
+  document.getElementById('se-payment').value = s.payment || 'Pix';
+  document.getElementById('sale-edit-overlay').classList.remove('hidden');
+}
+
+function fecharEditSale(e) {
+  if (e && e.target !== document.getElementById('sale-edit-overlay')) return;
+  document.getElementById('sale-edit-overlay').classList.add('hidden');
+  saleEditId = null;
+}
+
+function confirmarEditSale() {
+  const lista = getSalesMes(salesMesAtivo);
+  const idx = lista.findIndex(x => x.id === saleEditId);
+  if (idx === -1) return;
+  lista[idx].desc    = document.getElementById('se-desc').value.trim();
+  lista[idx].value   = parseFloat(document.getElementById('se-value').value) || 0;
+  lista[idx].date    = document.getElementById('se-date').value;
+  lista[idx].type    = document.getElementById('se-type').value;
+  lista[idx].payment = document.getElementById('se-payment').value;
+  save(); buildVdTabs(); renderSales();
+  document.getElementById('sale-edit-overlay').classList.add('hidden');
+  saleEditId = null;
+}
+
+// ===== PEDIDOS =====
+// pedidos ficam em localStorage separado: { 'tipo_id': [{id,num,data,valor,status},...] }
+let pedidosDB = JSON.parse(localStorage.getItem('crm_pedidos') || '{}');
+
+function savePedidos() { localStorage.setItem('crm_pedidos', JSON.stringify(pedidosDB)); }
+
+function getPedidos(tipo, id) {
+  const key = tipo + '_' + id;
+  if (!pedidosDB[key]) pedidosDB[key] = [];
+  return pedidosDB[key];
+}
+
+function addPedido(tipo, refId) {
+  const num   = document.getElementById('pf-num-'   + refId)?.value.trim();
+  const data  = document.getElementById('pf-data-'  + refId)?.value;
+  const valor = document.getElementById('pf-valor-' + refId)?.value;
+  if (!num) return;
+  const lista = getPedidos(tipo, refId);
+  lista.push({ id: Date.now().toString(), num, data: data || '', valor: parseFloat(valor)||0, status:'aguardando' });
+  savePedidos();
+  renderPedidos(tipo, refId);
+}
+
+function togglePedidoStatus(tipo, refId, pedidoId) {
+  const lista = getPedidos(tipo, refId);
+  const p = lista.find(x => x.id === pedidoId);
+  if (p) { p.status = p.status === 'aguardando' ? 'recebido' : 'aguardando'; savePedidos(); renderPedidos(tipo, refId); }
+}
+
+function removePedido(tipo, refId, pedidoId) {
+  const key = tipo + '_' + refId;
+  pedidosDB[key] = (pedidosDB[key]||[]).filter(x => x.id !== pedidoId);
+  savePedidos(); renderPedidos(tipo, refId);
+}
+
+function renderPedidos(tipo, refId) {
+  const wrap = document.getElementById('pedidos-wrap-' + refId);
+  if (!wrap) return;
+  const lista = getPedidos(tipo, refId);
+  const itens = lista.map(p => `
+    <div class="pedido-item">
+      <span class="pedido-num">#${esc(p.num)}</span>
+      ${p.data ? `<span class="pedido-data">${fmtDate(p.data)}</span>` : ''}
+      ${p.valor ? `<span class="pedido-val">${fmt(p.valor)}</span>` : '<span class="pedido-val" style="visibility:hidden">-</span>'}
+      <span class="${p.status==='recebido'?'pedido-badge-rec':'pedido-badge-ag'}"
+            onclick="togglePedidoStatus('${tipo}','${refId}','${p.id}')"
+            title="Clique para alternar status">
+        ${p.status==='recebido'?'✅ Recebido':'⏳ Aguardando'}
+      </span>
+      <button class="pedido-del" onclick="removePedido('${tipo}','${refId}','${p.id}')" title="Remover">×</button>
+    </div>`).join('');
+  const form = `
+    <div class="pedido-form">
+      <input class="pf-num"  id="pf-num-${refId}"   placeholder="Nº pedido" type="text">
+      <input class="pf-data" id="pf-data-${refId}"  type="date">
+      <input class="pf-val"  id="pf-valor-${refId}" type="number" placeholder="Valor R$" min="0" step="0.01">
+      <button class="btn-pedido-save"   onclick="addPedido('${tipo}','${refId}')">＋ Add</button>
+    </div>`;
+  wrap.innerHTML = `
+    <div class="pedidos-titulo">
+      📦 Pedidos <span style="color:var(--text-light);font-weight:400">(${lista.length})</span>
+    </div>
+    ${itens}
+    ${form}`;
+}
+
+function buildPedidosHTML(tipo, refId) {
+  return `<div class="pedidos-wrap" id="pedidos-wrap-${refId}"></div>`;
 }
 
 // ===== PENDÊNCIAS =====
@@ -1819,13 +2018,13 @@ function renderManut() {
 
   // 3. Sem dados
   if (total === 0) {
-    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;color:var(--text-light);padding:32px;font-size:13px">Clique em "Nova Linha" para começar em ${MESES[manutMesAtivo]}</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;color:var(--text-light);padding:32px;font-size:13px">Clique em "Nova Linha" para começar em ${MESES[manutMesAtivo]}</td></tr>`;
     return;
   }
 
   // 4. Sem resultados na busca
   if (lista.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="8"><div class="mn-no-results">🔍 Nenhum resultado para "<strong>${esc(query)}</strong>"</div></td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="9"><div class="mn-no-results">🔍 Nenhum resultado para "<strong>${esc(query)}</strong>"</div></td></tr>`;
     return;
   }
 
@@ -1875,6 +2074,9 @@ function renderManut() {
       <td class="${relatorioOk}">
         <input class="cell-input" type="date" value="${m.relatorio || ''}"
             oninput="updateManut('${m.id}','relatorio',this.value)"></td>
+      <td style="padding:6px 8px;vertical-align:top;min-width:180px">
+        ${buildPedidosHTML('manut', m.id)}
+      </td>
       <td style="padding:0 4px;display:flex;align-items:center;gap:3px;min-height:38px">
         <div class="mn-move-wrap">
           <button class="mn-move-btn" onclick="toggleMoveMenu('${m.id}',this)" title="Mover para outro mês">↗ Mês</button>
@@ -1886,6 +2088,8 @@ function renderManut() {
       </td>
     </tr>`;
   }).join('');
+  // inicializar pedidos de manutenção
+  lista.forEach(m => renderPedidos('manut', m.id));
 }
 
 function esc(s) {
@@ -2076,5 +2280,6 @@ document.getElementById('modal-lead').addEventListener('click', function(e) {
 </script>
 </body>
 </html>
+
 
 
