@@ -1665,19 +1665,20 @@ function renderSales() {
   const groups = {};
   lista.forEach(s => { if (!groups[s.date]) groups[s.date] = []; groups[s.date].push(s); });
   const sortedDates = Object.keys(groups).sort((a,b) => b.localeCompare(a));
+  const allSaleIds = [];
   list.innerHTML = sortedDates.map(date => {
     const dayTotal = groups[date].reduce((s,x) => s + Number(x.value), 0);
     const items = groups[date].map(s => {
+      allSaleIds.push(s.id);
       const tClass = s.type === 'Locação' ? 'tag-locacao' : s.type === 'Manutenção' ? 'tag-manutencao' : 'tag-venda';
       const pClass = s.payment === 'Pix' ? 'tag-pix' : s.payment === 'Boleto' ? 'tag-boleto' : s.payment === 'Cartão' ? 'tag-cartao' : s.payment === 'Dinheiro' ? 'tag-dinheiro' : 'tag-transferencia';
-      const hasPedidos = (pedidosDB['venda_'+s.id]||[]).length > 0;
-      const pedidosList = getPedidos('venda', s.id);
-      const pedidosNums = pedidosList.map(p => `<span style="font-family:'DM Mono',monospace;font-size:11px;font-weight:700;background:var(--primary-light);color:var(--primary);padding:2px 7px;border-radius:4px;white-space:nowrap">#${esc(p.num)}</span>`).join('');
+      const pedidosVenda = pedidosDB['venda_'+s.id] || [];
+      const pedidosNums = pedidosVenda.map(p => `<span style="font-family:'DM Mono',monospace;font-size:11px;font-weight:700;background:var(--primary-light);color:var(--primary);padding:1px 7px;border-radius:4px">#${esc(p.num)}</span>`).join(' ');
       return `<div class="sale-item" style="flex-wrap:wrap">
         <div style="display:flex;align-items:center;gap:10px;width:100%">
           <span>💰</span>
           <div class="sale-info">
-            <div class="sale-name" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">${esc(s.desc)}${pedidosNums}</div>
+            <div class="sale-name" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">${esc(s.desc)} ${pedidosNums}</div>
             <div class="sale-meta">
               <span class="sale-tag ${tClass}">${s.type}</span>
               <span class="sale-tag ${pClass}">${s.payment}</span>
@@ -1695,6 +1696,7 @@ function renderSales() {
       ${items}
     </div>`;
   }).join('');
+  allSaleIds.forEach(id => renderPedidos('venda', id));
 }
 
 // ===== EDIÇÃO DE VENDA =====
@@ -2282,7 +2284,3 @@ document.getElementById('modal-lead').addEventListener('click', function(e) {
 </script>
 </body>
 </html>
-
-
-
-
