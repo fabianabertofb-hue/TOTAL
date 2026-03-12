@@ -763,7 +763,13 @@
   }
   /* ── DESTAQUE: data de relatório em verde ── */
   .td-relatorio-ok { background: #bbf7d0 !important; }
+  .td-limpeza-ok { background: #bbf7d0 !important; }
   .td-relatorio-ok .cell-input {
+    color: #15803d !important;
+    font-weight: 700 !important;
+    background: transparent !important;
+  }
+  .td-limpeza-ok .cell-input {
     color: #15803d !important;
     font-weight: 700 !important;
     background: transparent !important;
@@ -1120,6 +1126,7 @@
   <div class="mn-legend">
     <div class="legend-item"><div class="legend-dot" style="background:#bbf7d0;border:1px solid #86efac"></div> Nome verde = preventiva feita</div>
     <div class="legend-item"><div class="legend-dot" style="background:#bbf7d0;border:1px solid #86efac"></div> Relatório verde = entregue</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#bbf7d0;border:1px solid #86efac"></div> Limpeza verde = realizada</div>
     <div class="legend-item"><div class="legend-dot" style="background:#bbf7d0;border:1px solid #86efac"></div> Proposta concluída</div>
     <div class="legend-item"><div class="legend-dot" style="background:#fde047;"></div> Observação preenchida</div>
     <div class="legend-item"><div class="legend-dot" style="background:#fee2e2;border:1px solid #fca5a5"></div> ⚠️ +30 dias sem preventiva</div>
@@ -1136,6 +1143,7 @@
           <th style="min-width:200px">Observação</th>
           <th style="min-width:130px">Nº Proposta</th>
           <th style="min-width:140px">Dt. Envio Relatório</th>
+          <th style="min-width:130px">🧹 Limpeza Esteiras</th>
           <th style="min-width:180px">📦 Pedidos</th>
           <th style="width:36px"></th>
         </tr>
@@ -1665,20 +1673,17 @@ function renderSales() {
   const groups = {};
   lista.forEach(s => { if (!groups[s.date]) groups[s.date] = []; groups[s.date].push(s); });
   const sortedDates = Object.keys(groups).sort((a,b) => b.localeCompare(a));
-  const allSaleIds = [];
   list.innerHTML = sortedDates.map(date => {
     const dayTotal = groups[date].reduce((s,x) => s + Number(x.value), 0);
     const items = groups[date].map(s => {
-      allSaleIds.push(s.id);
       const tClass = s.type === 'Locação' ? 'tag-locacao' : s.type === 'Manutenção' ? 'tag-manutencao' : 'tag-venda';
       const pClass = s.payment === 'Pix' ? 'tag-pix' : s.payment === 'Boleto' ? 'tag-boleto' : s.payment === 'Cartão' ? 'tag-cartao' : s.payment === 'Dinheiro' ? 'tag-dinheiro' : 'tag-transferencia';
-      const pedidosVenda = pedidosDB['venda_'+s.id] || [];
-      const pedidosNums = pedidosVenda.map(p => `<span style="font-family:'DM Mono',monospace;font-size:11px;font-weight:700;background:var(--primary-light);color:var(--primary);padding:1px 7px;border-radius:4px">#${esc(p.num)}</span>`).join(' ');
+      const hasPedidos = (pedidosDB['venda_'+s.id]||[]).length > 0;
       return `<div class="sale-item" style="flex-wrap:wrap">
         <div style="display:flex;align-items:center;gap:10px;width:100%">
           <span>💰</span>
           <div class="sale-info">
-            <div class="sale-name" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">${esc(s.desc)} ${pedidosNums}</div>
+            <div class="sale-name">${esc(s.desc)}</div>
             <div class="sale-meta">
               <span class="sale-tag ${tClass}">${s.type}</span>
               <span class="sale-tag ${pClass}">${s.payment}</span>
@@ -1696,7 +1701,6 @@ function renderSales() {
       ${items}
     </div>`;
   }).join('');
-  allSaleIds.forEach(id => renderPedidos('venda', id));
 }
 
 // ===== EDIÇÃO DE VENDA =====
@@ -1893,7 +1897,7 @@ function switchMes(idx) {
 
 function addManutRow() {
   const lista = getManutsMes(manutMesAtivo);
-  lista.push({ id: Date.now().toString(), cliente:'', preventiva:'', corretiva:'', obs:'', proposta:'', relatorio:'' });
+  lista.push({ id: Date.now().toString(), cliente:'', preventiva:'', corretiva:'', obs:'', proposta:'', relatorio:'', limpeza:'' });
   save(); renderManut();
   setTimeout(() => {
     const inputs = document.querySelectorAll('#manut-list .cell-cliente');
@@ -1911,7 +1915,7 @@ function updateManut(id, field, val) {
     if (field === 'obs' && val.trim()) {
       propagarObs(m, manutMesAtivo);
     }
-    if (field === 'preventiva' || field === 'relatorio') renderManut();
+    if (field === 'preventiva' || field === 'relatorio' || field === 'limpeza') renderManut();
   }
 }
 
@@ -1928,7 +1932,7 @@ function propagarObs(original, mesAtual) {
       cliente: original.cliente,
       preventiva: '', corretiva: '',
       obs: '⬆️ ' + original.obs,
-      proposta: '', relatorio: ''
+      proposta: '', relatorio: '', limpeza: ''
     };
     listaProx.push(entrada);
   } else if (!entrada.obs) {
@@ -2078,6 +2082,10 @@ function renderManut() {
       <td class="${relatorioOk}">
         <input class="cell-input" type="date" value="${m.relatorio || ''}"
             oninput="updateManut('${m.id}','relatorio',this.value)"></td>
+      <td class="${m.limpeza ? 'td-limpeza-ok' : ''}">
+        <input class="cell-input" type="date" value="${m.limpeza || ''}"
+            title="${m.limpeza ? 'Limpeza realizada em ' + fmtDate(m.limpeza) : 'Sem data'}"
+            oninput="updateManut('${m.id}','limpeza',this.value)"></td>
       <td style="padding:6px 8px;vertical-align:top;min-width:180px">
         ${buildPedidosHTML('manut', m.id)}
       </td>
