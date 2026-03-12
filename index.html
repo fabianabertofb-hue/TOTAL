@@ -967,6 +967,18 @@
   .fat-resumo-val { font-size:20px; font-weight:700; }
   .td-limpeza-ok { background: #bbf7d0 !important; }
   .td-limpeza-ok .cell-input { color: #15803d !important; font-weight: 700 !important; background: transparent !important; }
+
+  /* busca por pedido */
+  .pedido-search-block { background:var(--white); border:1.5px solid var(--primary); border-radius:var(--radius); box-shadow:var(--shadow-sm); margin-bottom:18px; overflow:hidden; }
+  .pedido-search-header { background:var(--primary-light); padding:10px 16px; font-size:12px; font-weight:700; color:var(--primary); text-transform:uppercase; letter-spacing:0.05em; }
+  .pedido-search-row { display:flex; align-items:center; gap:10px; padding:10px 16px; border-bottom:1px solid #f0f1f5; cursor:pointer; transition:background 0.1s; }
+  .pedido-search-row:last-child { border-bottom:none; }
+  .pedido-search-row:hover { background:#fafbff; }
+  .pedido-search-cliente { font-size:13px; font-weight:600; color:var(--text); flex:1; }
+  .pedido-search-num { font-family:'DM Mono',monospace; font-size:12px; font-weight:700; color:var(--primary); background:var(--primary-light); padding:2px 8px; border-radius:4px; }
+  .pedido-search-val { font-family:'DM Mono',monospace; font-size:12px; font-weight:700; color:var(--green); }
+  .pedido-search-date { font-size:11px; color:var(--text-muted); }
+  .pedido-search-empty { padding:16px; text-align:center; color:var(--text-light); font-size:13px; }
   /* DRAG OVER */
   .funnel-col.drag-over { border-color: var(--primary); background: var(--primary-light); }
 </style>
@@ -1062,7 +1074,7 @@
     <div class="vd-search-wrap">
       <span class="search-icon">🔍</span>
       <input class="vd-search" id="vd-search-input" type="text"
-        placeholder="Buscar descrição..." oninput="renderSales()">
+        placeholder="Buscar descrição ou nº pedido..." oninput="renderSales()">
     </div>
     <span class="vd-search-count" id="vd-search-count" style="display:none"></span>
     <span class="vd-total-mes" id="vd-total-mes">Total: R$ 0,00</span>
@@ -1755,8 +1767,32 @@ function renderSales() {
   const totalMes = lista.reduce((s,x) => s + Number(x.value), 0);
   if (totalMesEl) totalMesEl.textContent = 'Total ' + MESES[salesMesAtivo] + ': ' + fmt(totalMes);
 
-  // filtrar por busca
-  if (query) lista = lista.filter(s => (s.desc || '').toLowerCase().includes(query));
+  // busca por pedido em TODOS os meses
+  let pedidoResults = [];
+  if (query) {
+    Object.keys(pedidosDB).forEach(key => {
+      if (!key.startsWith('venda_')) return;
+      const saleId = key.replace('venda_', '');
+      (pedidosDB[key] || []).forEach(p => {
+        if ((p.num || '').toLowerCase().includes(query)) {
+          // acha a venda
+          let saleDesc = '';
+          for (let m = 0; m < 12; m++) {
+            const s = (sales[m] || []).find(x => x.id === saleId);
+            if (s) { saleDesc = s.desc; break; }
+          }
+          pedidoResults.push({ num: p.num, valor: p.valor, data: p.data, status: p.status, cliente: saleDesc, saleId });
+        }
+      });
+    });
+  }
+
+  // filtrar vendas por descrição
+  if (query) lista = lista.filter(s => {
+    const descMatch = (s.desc || '').toLowerCase().includes(query);
+    const pedMatch  = (pedidosDB['venda_'+s.id] || []).some(p => (p.num||'').toLowerCase().includes(query));
+    return descMatch || pedMatch;
+  });
 
   // contador busca
   if (query && countEl) {
@@ -1769,11 +1805,25 @@ function renderSales() {
   renderGrafico();
   atualizarMeta();
 
+  // bloco de resultados de pedido
+  const pedidoBlock = pedidoResults.length > 0 ? `
+    <div class="pedido-search-block">
+      <div class="pedido-search-header">🔍 Pedidos encontrados (${pedidoResults.length})</div>
+      ${pedidoResults.map(r => `
+        <div class="pedido-search-row">
+          <span class="pedido-search-cliente">${esc(r.cliente || 'Sem descrição')}</span>
+          <span class="pedido-search-num">#${esc(r.num)}</span>
+          <span class="pedido-search-date">${fmtDate(r.data)}</span>
+          <span class="pedido-search-val">${fmt(r.valor||0)}</span>
+          <span style="font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;${r.status==='recebido'?'background:#d1fae5;color:#065f46':'background:#fef3c7;color:#92400e'}">${r.status==='recebido'?'✅ Recebido':'⏳ Aguardando'}</span>
+        </div>`).join('')}
+    </div>` : '';
+
   if (getSalesMes(salesMesAtivo).length === 0) {
-    list.innerHTML = `<div class="empty-state">Nenhuma venda em ${MESES[salesMesAtivo]}</div>`;
+    list.innerHTML = pedidoBlock + `<div class="empty-state">Nenhuma venda em ${MESES[salesMesAtivo]}</div>`;
     return;
   }
-  if (lista.length === 0) {
+  if (lista.length === 0 && pedidoResults.length === 0) {
     list.innerHTML = `<div class="empty-state">🔍 Nenhum resultado para "${esc(query)}"</div>`;
     return;
   }
@@ -1782,7 +1832,8 @@ function renderSales() {
   lista.forEach(s => { if (!groups[s.date]) groups[s.date] = []; groups[s.date].push(s); });
   const sortedDates = Object.keys(groups).sort((a,b) => b.localeCompare(a));
   const allSaleIds = [];
-  list.innerHTML = sortedDates.map(date => {
+  const pedidoBlockHtml = pedidoResults.length > 0 ? pedidoBlock : '';
+  list.innerHTML = pedidoBlockHtml + sortedDates.map(date => {
     const dayTotal = groups[date].reduce((s,x) => s + Number(x.value), 0);
     const items = groups[date].map(s => {
       allSaleIds.push(s.id);
