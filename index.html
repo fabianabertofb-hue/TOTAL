@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CRM Sistema</title>
+    <title>CRM Sistema Completo</title>
     <style>
         :root {
             --primary-color: #007bff;
@@ -132,26 +132,37 @@
         <button onclick="showTab('combustivel')">Combustível</button>
     </nav>
     <div class="container">
+        <!-- Dashboard -->
         <div id="dashboard" class="tab-content active">
             <h2>Dashboard</h2>
             <p>Bem-vindo ao CRM. Selecione uma aba para navegar.</p>
         </div>
+
+        <!-- Atendimentos -->
         <div id="atendimentos" class="tab-content">
             <h2>Atendimentos</h2>
             <p>Funcionalidades de atendimentos aqui.</p>
         </div>
+
+        <!-- Vendas -->
         <div id="vendas" class="tab-content">
             <h2>Vendas</h2>
             <p>Funcionalidades de vendas aqui.</p>
         </div>
+
+        <!-- Faturamento -->
         <div id="faturamento" class="tab-content">
             <h2>Faturamento</h2>
             <p>Funcionalidades de faturamento aqui.</p>
         </div>
+
+        <!-- Pendências -->
         <div id="pendencias" class="tab-content">
             <h2>Pendências</h2>
             <p>Funcionalidades de pendências aqui.</p>
         </div>
+
+        <!-- Combustível -->
         <div id="combustivel" class="tab-content">
             <h2>Combustível</h2>
             <div class="metrics">
@@ -160,185 +171,4 @@
                 <div class="metric" id="ultimoKm">Último Km: 0</div>
                 <div class="metric" id="mesAtual">Mês Atual: R$ 0.00</div>
                 <div class="metric" id="quantidade">Quantidade: 0 abastecimentos</div>
-            </div>
-            <div class="filter">
-                <label for="mesFiltro">Filtrar por Mês:</label>
-                <select id="mesFiltro" onchange="filtrarPorMes()">
-                    <option value="">Todos</option>
-                    <!-- Meses serão adicionados dinamicamente -->
-                </select>
-            </div>
-            <form id="formAbastecimento">
-                <div class="form-group">
-                    <label for="data">Data:</label>
-                    <input type="date" id="data" required>
-                </div>
-                <div class="form-group">
-                    <label for="km">Km:</label>
-                    <input type="number" id="km" required>
-                </div>
-                <div class="form-group">
-                    <label for="volume">Volume (litros):</label>
-                    <input type="number" step="0.01" id="volume" required>
-                </div>
-                <div class="form-group">
-                    <label for="precoLitro">Preço/Litro (R$):</label>
-                    <input type="number" step="0.01" id="precoLitro" required>
-                </div>
-                <div class="form-group">
-                    <label for="posto">Posto:</label>
-                    <input type="text" id="posto" required>
-                </div>
-                <div class="form-group">
-                    <label for="tipo">Tipo:</label>
-                    <select id="tipo" required>
-                        <option value="Gasolina">Gasolina</option>
-                        <option value="Diesel">Diesel</option>
-                        <option value="Etanol">Etanol</option>
-                    </select>
-                </div>
-                <button type="submit">Cadastrar Abastecimento</button>
-            </form>
-            <table id="tabelaHistorico">
-                <thead>
-                    <tr>
-                        <th>Data</th>
-                        <th>Km</th>
-                        <th>Volume (L)</th>
-                        <th>Preço/Litro (R$)</th>
-                        <th>Total (R$)</th>
-                        <th>Posto</th>
-                        <th>Tipo</th>
-                        <th>Consumo (km/l)</th>
-                        <th>Ações</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Dados serão inseridos aqui -->
-                </tbody>
-            </table>
-        </div>
-    </div>
-    <script>
-        let abastecimentos = JSON.parse(localStorage.getItem('abastecimentos')) || [];
-
-        function showTab(tabId) {
-            const tabs = document.querySelectorAll('.tab-content');
-            tabs.forEach(tab => tab.classList.remove('active'));
-            document.getElementById(tabId).classList.add('active');
-            const buttons = document.querySelectorAll('.navbar button');
-            buttons.forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
-            if (tabId === 'combustivel') {
-                atualizarMetricas();
-                atualizarTabela();
-                atualizarMesesFiltro();
-            }
-        }
-
-        function atualizarMetricas() {
-            let totalGasto = 0;
-            let totalKm = 0;
-            let totalLitros = 0;
-            let ultimoKm = 0;
-            let mesAtualGasto = 0;
-            const mesAtual = new Date().getMonth() + 1;
-            const anoAtual = new Date().getFullYear();
-
-            abastecimentos.forEach((ab, index) => {
-                const total = ab.volume * ab.precoLitro;
-                totalGasto += total;
-                totalLitros += ab.volume;
-                if (index > 0) {
-                    totalKm += ab.km - abastecimentos[index - 1].km;
-                }
-                ultimoKm = ab.km;
-                const data = new Date(ab.data);
-                if (data.getMonth() + 1 === mesAtual && data.getFullYear() === anoAtual) {
-                    mesAtualGasto += total;
-                }
-            });
-
-            const mediaConsumo = totalKm > 0 ? (totalKm / totalLitros).toFixed(2) : 0;
-
-            document.getElementById('totalGasto').innerText = `Total Gasto: R$ ${totalGasto.toFixed(2)}`;
-            document.getElementById('mediaConsumo').innerText = `Média Consumo: ${mediaConsumo} km/l`;
-            document.getElementById('ultimoKm').innerText = `Último Km: ${ultimoKm}`;
-            document.getElementById('mesAtual').innerText = `Mês Atual: R$ ${mesAtualGasto.toFixed(2)}`;
-            document.getElementById('quantidade').innerText = `Quantidade: ${abastecimentos.length} abastecimentos`;
-        }
-
-        function atualizarTabela(filtroMes = '') {
-            const tbody = document.querySelector('#tabelaHistorico tbody');
-            tbody.innerHTML = '';
-            abastecimentos.forEach((ab, index) => {
-                if (filtroMes && !ab.data.startsWith(filtroMes)) return;
-                const consumo = index > 0 ? ((ab.km - abastecimentos[index - 1].km) / ab.volume).toFixed(2) : 'N/A';
-                const total = (ab.volume * ab.precoLitro).toFixed(2);
-                const row = `<tr>
-                    <td>${ab.data}</td>
-                    <td>${ab.km}</td>
-                    <td>${ab.volume}</td>
-                    <td>${ab.precoLitro}</td>
-                    <td>${total}</td>
-                    <td>${ab.posto}</td>
-                    <td>${ab.tipo}</td>
-                    <td>${consumo}</td>
-                    <td><button onclick="removerAbastecimento(${index})">Remover</button></td>
-                </tr>`;
-                tbody.innerHTML += row;
-            });
-        }
-
-        function atualizarMesesFiltro() {
-            const select = document.getElementById('mesFiltro');
-            select.innerHTML = '<option value="">Todos</option>';
-            const meses = new Set();
-            abastecimentos.forEach(ab => {
-                const mes = ab.data.substring(0, 7); // YYYY-MM
-                meses.add(mes);
-            });
-            meses.forEach(mes => {
-                const option = document.createElement('option');
-                option.value = mes;
-                option.textContent = mes;
-                select.appendChild(option);
-            });
-        }
-
-        function filtrarPorMes() {
-            const mes = document.getElementById('mesFiltro').value;
-            atualizarTabela(mes);
-        }
-
-        function removerAbastecimento(index) {
-            abastecimentos.splice(index, 1);
-            localStorage.setItem('abastecimentos', JSON.stringify(abastecimentos));
-            atualizarMetricas();
-            atualizarTabela();
-            atualizarMesesFiltro();
-        }
-
-        document.getElementById('formAbastecimento').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const data = document.getElementById('data').value;
-            const km = parseFloat(document.getElementById('km').value);
-            const volume = parseFloat(document.getElementById('volume').value);
-            const precoLitro = parseFloat(document.getElementById('precoLitro').value);
-            const posto = document.getElementById('posto').value;
-            const tipo = document.getElementById('tipo').value;
-
-            abastecimentos.push({ data, km, volume, precoLitro, posto, tipo });
-            abastecimentos.sort((a, b) => new Date(a.data) - new Date(b.data));
-            localStorage.setItem('abastecimentos', JSON.stringify(abastecimentos));
-            atualizarMetricas();
-            atualizarTabela();
-            atualizarMesesFiltro();
-            this.reset();
-        });
-
-        // Inicializar
-        showTab('dashboard');
-    </script>
-</body>
-</html>
+          
