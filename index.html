@@ -3,19 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CRM Completo - Sistema</title>
+    <title>CRM Sistema Completo</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f5f5f5;
-            margin: 0;
-            padding: 0;
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
         }
         
         .container {
@@ -25,29 +25,37 @@
         }
         
         header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #4361ee 0%, #3a0ca3 100%);
             color: white;
-            padding: 20px;
-            text-align: center;
-            border-radius: 8px;
-            margin-bottom: 30px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
         }
         
-        nav {
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .navbar {
             background: white;
-            border-radius: 8px;
+            border-radius: 10px;
             padding: 15px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 25px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.08);
         }
         
         .nav-tabs {
             display: flex;
             gap: 10px;
             list-style: none;
-            padding: 0;
-            margin: 0;
+            flex-wrap: wrap;
         }
         
         .nav-tabs li {
@@ -55,225 +63,825 @@
         }
         
         .nav-tabs button {
-            padding: 12px 24px;
+            padding: 14px 28px;
             background: #f8f9fa;
-            border: none;
-            border-radius: 6px;
+            border: 2px solid transparent;
+            border-radius: 8px;
             cursor: pointer;
-            font-weight: 500;
+            font-weight: 600;
+            font-size: 15px;
+            color: #495057;
             transition: all 0.3s ease;
-            color: #333;
-            font-size: 14px;
-            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
         
         .nav-tabs button:hover {
             background: #e9ecef;
+            transform: translateY(-2px);
         }
         
         .nav-tabs button.active {
-            background: #667eea;
+            background: #4361ee;
             color: white;
+            border-color: #4361ee;
+            box-shadow: 0 4px 8px rgba(67, 97, 238, 0.3);
         }
         
         .tab-content {
             background: white;
-            border-radius: 8px;
+            border-radius: 12px;
             padding: 30px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            margin-top: 20px;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.08);
+            min-height: 500px;
         }
         
         .tab-pane {
             display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         
         .tab-pane.active {
             display: block;
         }
         
-        .metrics {
+        .metrics-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             gap: 20px;
-            margin-bottom: 30px;
+            margin-bottom: 35px;
         }
         
         .metric-card {
             background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            text-align: center;
+            padding: 25px;
+            border-radius: 10px;
+            border-left: 5px solid #4361ee;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease;
+        }
+        
+        .metric-card:hover {
+            transform: translateY(-5px);
         }
         
         .metric-value {
-            font-size: 28px;
-            font-weight: bold;
-            color: #667eea;
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #4361ee;
+            margin-bottom: 8px;
         }
         
         .metric-label {
             font-size: 14px;
-            color: #666;
-            margin-top: 5px;
+            color: #6c757d;
+            font-weight: 500;
+        }
+        
+        .form-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        
+        .form-section h3 {
+            margin-bottom: 20px;
+            color: #4361ee;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
         }
         
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
         
         .form-group label {
             display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-            color: #333;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #495057;
         }
         
         .form-control {
             width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 14px;
+            padding: 12px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: border-color 0.3s;
+        }
+        
+        .form-control:focus {
+            border-color: #4361ee;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
         }
         
         .btn {
-            background: #667eea;
+            background: #4361ee;
             color: white;
             border: none;
-            padding: 12px 24px;
-            border-radius: 4px;
+            padding: 14px 28px;
+            border-radius: 8px;
             cursor: pointer;
-            font-weight: 500;
-            transition: background 0.3s;
+            font-weight: 600;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
         }
         
         .btn:hover {
-            background: #5a67d8;
+            background: #3a56d4;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(67, 97, 238, 0.2);
         }
         
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
+        .btn-secondary {
+            background: #6c757d;
         }
         
-        th, td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
+        .btn-secondary:hover {
+            background: #5a6268;
         }
         
-        th {
-            background: #f8f9fa;
-            font-weight: 600;
+        .btn-success {
+            background: #28a745;
         }
         
-        .btn-delete {
-            background: #dc3545;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        
-        .btn-edit {
-            background: #ffc107;
-            color: #000;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 4px;
-            cursor: pointer;
+        .btn-success:hover {
+            background: #218838;
         }
         
         .filters {
             display: flex;
             gap: 10px;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
         }
         
         .filter-btn {
-            padding: 8px 16px;
+            padding: 10px 20px;
             background: #f8f9fa;
-            border: 1px solid #ddd;
-            border-radius: 4px;
+            border: 2px solid #e9ecef;
+            border-radius: 6px;
             cursor: pointer;
+            font-weight: 500;
+            color: #495057;
+            transition: all 0.3s ease;
+        }
+        
+        .filter-btn:hover {
+            background: #e9ecef;
         }
         
         .filter-btn.active {
-            background: #667eea;
+            background: #4361ee;
             color: white;
+            border-color: #4361ee;
+        }
+        
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+        }
+        
+        .data-table th {
+            background: #f8f9fa;
+            padding: 16px;
+            text-align: left;
+            font-weight: 600;
+            color: #495057;
+            border-bottom: 2px solid #e9ecef;
+        }
+        
+        .data-table td {
+            padding: 14px 16px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .data-table tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .btn-icon {
+            padding: 8px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-edit {
+            background: #ffc107;
+            color: #212529;
+        }
+        
+        .btn-edit:hover {
+            background: #e0a800;
+        }
+        
+        .btn-delete {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .btn-delete:hover {
+            background: #c82333;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 50px;
+            color: #6c757d;
+            font-style: italic;
+        }
+        
+        .consumo-badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .consumo-good {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .consumo-normal {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .consumo-bad {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        @media (max-width: 768px) {
+            .nav-tabs {
+                flex-direction: column;
+            }
+            
+            .nav-tabs button {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>CRM Sistema</h1>
-            <p>Sistema de Gestão Completo</p>
+            <h1>🏢 CRM Sistema Completo</h1>
+            <p>Sistema de gestão integrado com controle de combustível</p>
         </header>
         
-        <nav>
+        <nav class="navbar">
             <ul class="nav-tabs">
-                <li><button onclick="showTab('dashboard')" class="active">Dashboard</button></li>
-                <li><button onclick="showTab('atendimentos')">Atendimentos</button></li>
-                <li><button onclick="showTab('vendas')">Vendas</button></li>
-                <li><button onclick="showTab('faturamento')">Faturamento</button></li>
-                <li><button onclick="showTab('combustivel')">Combustível</button></li>
+                <li><button onclick="showTab('dashboard')" class="active">📊 Dashboard</button></li>
+                <li><button onclick="showTab('atendimentos')">📞 Atendimentos</button></li>
+                <li><button onclick="showTab('vendas')">💰 Vendas</button></li>
+                <li><button onclick="showTab('faturamento')">💳 Faturamento</button></li>
+                <li><button onclick="showTab('pendencias')">📋 Pendências</button></li>
+                <li><button onclick="showTab('combustivel')">⛽ Combustível</button></li>
             </ul>
         </nav>
         
         <div class="tab-content">
+            <!-- Dashboard -->
             <div id="dashboard" class="tab-pane active">
-                <h2>Dashboard</h2>
-                <div class="metrics">
+                <h2>📊 Dashboard Geral</h2>
+                <div class="metrics-grid">
                     <div class="metric-card">
-                        <div class="metric-value" id="totalGasto">R$ 0,00</div>
-                        <div class="metric-label">Total Gasto</div>
+                        <div class="metric-value" id="dash-total-abastecimentos">0</div>
+                        <div class="metric-label">Total de Abastecimentos</div>
                     </div>
                     <div class="metric-card">
-                        <div class="metric-value" id="mediaConsumo">0,0 km/l</div>
-                        <div class="metric-label">Média Consumo</div>
+                        <div class="metric-value" id="dash-gasto-total">R$ 0,00</div>
+                        <div class="metric-label">Gasto Total com Combustível</div>
                     </div>
                     <div class="metric-card">
-                        <div class="metric-value" id="ultimoKm">0</div>
-                        <div class="metric-label">Último KM</div>
+                        <div class="metric-value" id="dash-media-consumo">0,0 km/l</div>
+                        <div class="metric-label">Média de Consumo</div>
                     </div>
                     <div class="metric-card">
-                        <div class="metric-value" id="mesAtual">R$ 0,00</div>
-                        <div class="metric-label">Gasto Mês Atual</div>
+                        <div class="metric-value" id="dash-ultimo-km">0</div>
+                        <div class="metric-label">Última Quilometragem</div>
                     </div>
+                </div>
+                <p>Bem-vindo ao seu CRM! Use as abas acima para navegar entre os módulos.</p>
+            </div>
+            
+            <!-- Atendimentos -->
+            <div id="atendimentos" class="tab-pane">
+                <h2>📞 Gestão de Atendimentos</h2>
+                <div class="empty-state">
+                    Módulo de atendimentos em desenvolvimento
                 </div>
             </div>
             
+            <!-- Vendas -->
+            <div id="vendas" class="tab-pane">
+                <h2>💰 Gestão de Vendas</h2>
+                <div class="empty-state">
+                    Módulo de vendas em desenvolvimento
+                </div>
+            </div>
+            
+            <!-- Faturamento -->
+            <div id="faturamento" class="tab-pane">
+                <h2>💳 Gestão de Faturamento</h2>
+                <div class="empty-state">
+                    Módulo de faturamento em desenvolvimento
+                </div>
+            </div>
+            
+            <!-- Pendências -->
+            <div id="pendencias" class="tab-pane">
+                <h2>📋 Gestão de Pendências</h2>
+                <div class="empty-state">
+                    Módulo de pendências em desenvolvimento
+                </div>
+            </div>
+            
+            <!-- COMBUSTÍVEL -->
             <div id="combustivel" class="tab-pane">
-                <h2>Controle de Combustível</h2>
+                <h2>⛽ Controle de Combustível</h2>
                 
+                <!-- Filtros -->
                 <div class="filters">
-                    <button class="filter-btn active" onclick="filterData('todos')">Todos</button>
-                    <button class="filter-btn" onclick="filterData('mes')">Este Mês</button>
-                    <button class="filter-btn" onclick="filterData('semana')">Última Semana</button>
+                    <button class="filter-btn active" onclick="filterCombustivel('todos')">Todos</button>
+                    <button class="filter-btn" onclick="filterCombustivel('mes')">Este Mês</button>
+                    <button class="filter-btn" onclick="filterCombustivel('gasolina')">Gasolina</button>
+                    <button class="filter-btn" onclick="filterCombustivel('etanol')">Etanol</button>
+                    <button class="filter-btn" onclick="filterCombustivel('diesel')">Diesel</button>
                 </div>
                 
-                <div class="form-container" style="margin: 20px 0;">
-                    <h3>Novo Abastecimento</h3>
-                    <div class="form-group">
-                        <label>Data:</label>
-                        <input type="date" id="dataAbastecimento" class="form-control">
+                <!-- Métricas -->
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-value" id="comb-total-gasto">R$ 0,00</div>
+                        <div class="metric-label">Total Gasto</div>
                     </div>
-                    <div class="form-group">
-                        <label>KM do Veículo:</label>
-                        <input type="number" id="kmAtual" class="form-control" placeholder="Ex: 45000">
+                    <div class="metric-card">
+                        <div class="metric-value" id="comb-media-consumo">0,0 km/l</div>
+                        <div class="metric-label">Média de Consumo</div>
                     </div>
-                    <div class="form-group">
-                        <label>Volume (Litros):</label>
-                        <input type="number" step="0.01" id="volume" class="form-control" placeholder="Ex: 45.5">
+                    <div class="metric-card">
+                        <div class="metric-value" id="comb-ultimo-km">0</div>
+                        <div class="metric-label">Último KM</div>
                     </div>
-                    <div class="form-group">
-                        <label>Preço por Litro (R$):</label>
-                        <input type="number" step="0.001" id="precoLitro" class="form-control" placeholder="Ex: 5.899">
+                    <div class="metric-card">
+                        <div class="metric-value" id="comb-gasto-mes">R$ 0,00</div>
+                        <div class="metric-label">Gasto do Mês</div>
                     </div>
-                    <div class="form-group">
-                        <label>Posto
+                    <div class="metric-card">
+                        <div class="metric-value" id="comb-total-abastecimentos">0</div>
+                        <div class="metric-label">Total Abastecimentos</div>
+                    </div>
+                </div>
+                
+                <!-- Formulário -->
+                <div class="form-section">
+                    <h3>➕ Novo Abastecimento</h3>
+                    <form id="form-abastecimento">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="data">📅 Data do Abastecimento</label>
+                                <input type="date" id="data" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="km">🚗 KM do Veículo</label>
+                                <input type="number" id="km" class="form-control" placeholder="Ex: 45000" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="volume">⛽ Volume (Litros)</label>
+                                <input type="number" step="0.01" id="volume" class="form-control" placeholder="Ex: 45.50" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="preco">💰 Preço por Litro (R$)</label>
+                                <input type="number" step="0.001" id="preco" class="form-control" placeholder="Ex: 5.899" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="posto">🏪 Posto</label>
+                                <input type="text" id="posto" class="form-control" placeholder="Ex: Shell, Ipiranga..." required>
+                            </div>
+                            <div class="form-group">
+                                <label for="tipo">🔋 Tipo de Combustível</label>
+                                <select id="tipo" class="form-control" required>
+                                    <option value="gasolina">Gasolina Comum</option>
+                                    <option value="gasolina_aditivada">Gasolina Aditivada</option>
+                                    <option value="etanol">Etanol</option>
+                                    <option value="diesel">Diesel</option>
+                                    <option value="gnv">GNV</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="observacoes">📝 Observações (Opcional)</label>
+                            <textarea id="observacoes" class="form-control" rows="2" placeholder="Observações adicionais..."></textarea>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-success">
+                            💾 Salvar Abastecimento
+                        </button>
+                        <button type="button" class="btn btn-secondary" onclick="limparFormulario()">
+                            🗑️ Limpar
+                        </button>
+                    </form>
+                </div>
+                
+                <!-- Tabela de Histórico -->
+                <h3>📋 Histórico de Abastecimentos</h3>
+                <div class="filters">
+                    <select id="filtro-mes" class="form-control" style="max-width: 200px;" onchange="filtrarPorMes()">
+                        <option value="todos">Todos os Meses</option>
+                    </select>
+                </div>
+                
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Data</th>
+                            <th>Mês</th>
+                            <th>KM</th>
+                            <th>Volume (L)</th>
+                            <th>Preço/L</th>
+                            <th>Valor Total</th>
+                            <th>Consumo (km/l)</th>
+                            <th>Posto</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabela-combustivel">
+                        <!-- Os dados serão inseridos aqui pelo JavaScript -->
+                    </tbody>
+                </table>
+                
+                <div id="empty-state" class="empty-state" style="display: none;">
+                    📭 Nenhum abastecimento registrado ainda.<br>
+                    Clique em "Novo Abastecimento" para começar!
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Variáveis globais
+        let abastecimentos = JSON.parse(localStorage.getItem('abastecimentos')) || [];
+        let filtroAtual = 'todos';
+        let mesFiltro = 'todos';
+
+        // Função para mostrar abas
+        function showTab(tabId) {
+            // Esconde todas as abas
+            document.querySelectorAll('.tab-pane').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Remove classe active de todos os botões
+            document.querySelectorAll('.nav-tabs button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Mostra a aba selecionada
+            document.getElementById(tabId).classList.add('active');
+            
+            // Adiciona classe active ao botão clicado
+            event.target.classList.add('active');
+            
+            // Se for a aba de combustível, atualiza os dados
+            if (tabId === 'combustivel') {
+                atualizarCombustivel();
+            } else if (tabId === 'dashboard') {
+                atualizarDashboard();
+            }
+        }
+
+        // Função para salvar dados
+        function salvarDados() {
+            localStorage.setItem('abastecimentos', JSON.stringify(abastecimentos));
+        }
+
+        // Função para adicionar abastecimento
+        document.getElementById('form-abastecimento').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const data = document.getElementById('data').value;
+            const km = parseFloat(document.getElementById('km').value);
+            const volume = parseFloat(document.getElementById('volume').value);
+            const preco = parseFloat(document.getElementById('preco').value);
+            const posto = document.getElementById('posto').value;
+            const tipo = document.getElementById('tipo').value;
+            const observacoes = document.getElementById('observacoes').value;
+            
+            // Validação
+            if (!data || !km || !volume || !preco || !posto || !tipo) {
+                alert('Por favor, preencha todos os campos obrigatórios!');
+                return;
+            }
+            
+            // Calcula valor total
+            const valorTotal = volume * preco;
+            
+            // Extrai mês da data (formato YYYY-MM)
+            const mes = data.substring(0, 7);
+            
+            // Cria novo abastecimento
+            const novoAbastecimento = {
+                id: Date.now(),
+                data: data,
+                mes: mes,
+                km: km,
+                volume: volume,
+                preco: preco,
+                valorTotal: valorTotal,
+                posto: posto,
+                tipo: tipo,
+                observacoes: observacoes,
+                consumo: 0 // será calculado posteriormente
+            };
+            
+            // Adiciona à lista
+            abastecimentos.push(novoAbastecimento);
+            
+            // Ordena por data (mais recente primeiro)
+            abastecimentos.sort((a, b) => new Date(b.data) - new Date(a.data));
+            
+            // Salva no localStorage
+            salvarDados();
+            
+            // Atualiza a interface
+            atualizarCombustivel();
+            
+            // Limpa o formulário
+            limparFormulario();
+            
+            alert('✅ Abastecimento registrado com sucesso!');
+        });
+
+        // Função para limpar formulário
+        function limparFormulario() {
+            document.getElementById('form-abastecimento').reset();
+            document.getElementById('data').value = new Date().toISOString().split('T')[0];
+        }
+
+        // Função para calcular consumo
+        function calcularConsumo() {
+            if (abastecimentos.length &lt; 2) return;
+            
+            // Ordena por KM crescente para cálculo correto
+            const ordenadosPorKm = [...abastecimentos].sort((a, b) => a.km - b.km);
+            
+            for (let i = 1; i &lt; ordenadosPorKm.length; i++) {
+                const kmAtual = ordenadosPorKm[i].km;
+                const kmAnterior = ordenadosPorKm[i-1].km;
+                const volumeAtual = ordenadosPorKm[i].volume;
+                
+                if (kmAtual > kmAnterior && volumeAtual > 0) {
+                    const consumo = ((kmAtual - kmAnterior) / volumeAtual).toFixed(1);
+                    
+                    // Atualiza no array original
+                    const index = abastecimentos.findIndex(a => a.id === ordenadosPorKm[i].id);
+                    if (index !== -1) {
+                        abastecimentos[index].consumo = consumo;
+                    }
+                }
+            }
+            
+            salvarDados();
+        }
+
+        // Função para atualizar tabela
+        function atualizarTabela() {
+            const tbody = document.getElementById('tabela-combustivel');
+            const emptyState = document.getElementById('empty-state');
+            
+            tbody.innerHTML = '';
+            
+            // Filtra os dados
+            let dadosFiltrados = abastecimentos;
+            
+            if (filtroAtual !== 'todos') {
+                dadosFiltrados = dadosFiltrados.filter(a => a.tipo === filtroAtual);
+            }
+            
+            if (mesFiltro !== 'todos') {
+                dadosFiltrados = dadosFiltrados.filter(a => a.mes === mesFiltro);
+            }
+            
+            // Verifica se há dados
+            if (dadosFiltrados.length === 0) {
+                emptyState.style.display = 'block';
+                return;
+            }
+            
+            emptyState.style.display = 'none';
+            
+            // Preenche a tabela
+            dadosFiltrados.forEach(abastecimento => {
+                const tr = document.createElement('tr');
+                
+                // Formata data
+                const dataFormatada = new Date(abastecimento.data).toLocaleDateString('pt-BR');
+                
+                // Formata mês
+                const [ano, mes] = abastecimento.mes.split('-');
+                const mesFormatado = `${mes}/${ano}`;
+                
+                // Determina classe do consumo
+                let consumoClass = 'consumo-normal';
+                if (abastecimento.consumo > 12) consumoClass = 'consumo-good';
+                if (abastecimento.consumo &lt; 8) consumoClass = 'consumo-bad';
+                
+                tr.innerHTML = `
+                    <td>${dataFormatada}</td>
+                    <td><span class="consumo-badge">${mesFormatado}</span></td>
+                    <td><strong>${abastecimento.km.toLocaleString('pt-BR')}</strong></td>
+                    <td>${abastecimento.volume.toFixed(2)} L</td>
+                    <td>R$ ${abastecimento.preco.toFixed(3)}</td>
+                    <td><strong style="color: #28a745;">R$ ${abastecimento.valorTotal.toFixed(2)}</strong></td>
+                    <td><span class="consumo-badge ${consumoClass}">${abastecimento.consumo || '-'} km/l</span></td>
+                    <td>${abastecimento.posto}</td>
+                    <td class="action-buttons">
+                        <button class="btn-icon btn-edit" onclick="editarAbastecimento(${abastecimento.id})">✏️</button>
+                        <button class="btn-icon btn-delete" onclick="excluirAbastecimento(${abastecimento.id})">🗑️</button>
+                    </td>
+                `;
+                
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Função para atualizar métricas
+        function atualizarMetricas() {
+            if (abastecimentos.length === 0) {
+                // Combustível
+                document.getElementById('comb-total-gasto').textContent = 'R$ 0,00';
+                document.getElementById('comb-media-consumo').textContent = '0,0 km/l';
+                document.getElementById('comb-ultimo-km').textContent = '0';
+                document.getElementById('comb-gasto-mes').textContent = 'R$ 0,00';
+                document.getElementById('comb-total-abastecimentos').textContent = '0';
+                
+                // Dashboard
+                document.getElementById('dash-total-abastecimentos').textContent = '0';
+                document.getElementById('dash-gasto-total').textContent = 'R$ 0,00';
+                document.getElementById('dash-media-consumo').textContent = '0,0 km/l';
+                document.getElementById('dash-ultimo-km').textContent = '0';
+                return;
+            }
+            
+            // Cálculos para combustível
+            const totalGasto = abastecimentos.reduce((sum, a) => sum + a.valorTotal, 0);
+            const consumosValidos = abastecimentos.filter(a => a.consumo > 0).map(a => parseFloat(a.consumo));
+            const mediaConsumo = consumosValidos.length > 0 
+                ? (consumosValidos.reduce((a, b) => a + b) / consumosValidos.length).toFixed(1)
+                : '0,0';
+            const ultimoKm = abastecimentos[0].km;
+            
+            // Gasto do mês atual
+            const mesAtual = new Date().toISOString().substring(0, 7);
+            const gastoMes = abastecimentos
+                .filter(a => a.mes === mesAtual)
+                .reduce((sum, a) => sum + a.valorTotal, 0);
+            
+            // Atualiza métricas de combustível
+            document.getElementById('comb-total-gasto').textContent = `R$ ${totalGasto.toFixed(2)}`;
+            document.getElementById('comb-media-consumo').textContent = `${mediaConsumo} km/l`;
+            document.getElementById('comb-ultimo-km').textContent = ultimoKm.toLocaleString('pt-BR');
+            document.getElementById('comb-gasto-mes').textContent = `R$ ${gastoMes.toFixed(2)}`;
+            document.getElementById('comb-total-abastecimentos').textContent = abastecimentos.length;
+            
+            // Atualiza métricas do dashboard
+            document.getElementById('dash-total-abastecimentos').textContent = abastecimentos.length;
+            document.getElementById('dash-gasto-total').textContent = `R$ ${totalGasto.toFixed(2)}`;
+            document.getElementById('dash-media-consumo').textContent = `${mediaConsumo} km/l`;
+            document.getElementById('dash-ultimo-km').textContent = ultimoKm.toLocaleString('pt-BR');
+        }
+
+        // Função para atualizar filtro de mês
+        function atualizarFiltroMes() {
+            const select = document.getElementById('filtro-mes');
+            select.innerHTML = '<option value="todos">Todos os Meses</option>';
+            
+            // Coleta meses únicos
+            const meses = [...new Set(abastecimentos.map(a => a.mes))].sort().reverse();
+            
+            meses.forEach(mes => {
+                const [ano, mesNum] = mes.split('-');
+                const mesesNomes = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+                const option = document.createElement('option');
+                option.value = mes;
+                option.textContent = `${mesesNomes[parseInt(mesNum)-1]}/${ano}`;
+                select.appendChild(option);
+            });
+        }
+
+        // Funções de filtro
+        function filterCombustivel(tipo) {
+            filtroAtual = tipo;
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            atualizarCombustivel();
+        }
+
+        function filtrarPorMes() {
+            mesFiltro = document.getElementById('filtro-mes').value;
+            atualizarCombustivel();
+        }
+
+        // Função para atualizar tudo
+        function atualizarCombustivel() {
+            calcularConsumo();
+            atualizarTabela();
+            atualizarMetricas();
+            atualizarFiltroMes();
+        }
+
+        function atualizarDashboard() {
+            atualizarMetricas();
+        }
+
+        // Funções CRUD
+        function editarAbastecimento(id) {
+            const abastecimento = abastecimentos.find(a => a.id === id);
+            if (abastecimento) {
+                // Preenche o formulário
+                document.getElementById('data').value = abastecimento.data;
+                document.getElementById('km').value = abastecimento.km;
+                document.getElementById('volume').value = abastecimento.volume;
+                document.getElementById('preco').value = abastecimento.preco;
+                document.getElementById('posto').value = abastecimento.posto;
+                document.getElementById('tipo').value = abastecimento.tipo;
+                document.getElementById('observacoes').value = abastecimento.observacoes;
+                
+                // Remove o item antigo
+                abastecimentos = abastecimentos.filter(a => a.id !== id);
+                salvarDados();
+                
+                alert('✏️ Abastecimento carregado para edição. Faça as alterações e clique em Salvar.');
+            }
+        }
+
+        function excluirAbastecimento(id) {
+            if (confirm('Tem certeza que deseja excluir este abastecimento?')) {
+                abastecimentos = abastecimentos.filter(a => a.id !== id);
+                salvarDados();
+                atualizarCombustivel();
+                alert('🗑️ Abastecimento excluído com sucesso!');
+            }
+        }
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            // Configura data atual no formulário
+            document.getElementById('data').value = new Date().toISOString().split('T')[0];
+            
+            // Inicializa o sistema
+            atualizarCombustivel();
+        });
+    </script>
+</body>
+</html>
