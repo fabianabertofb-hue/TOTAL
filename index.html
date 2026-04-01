@@ -1162,6 +1162,14 @@
           <option value="nao">⏳ Pendente</option>
         </select>
       </div>
+      <div class="form-group">
+        <label>Nº Pedido</label>
+        <input type="text" id="sale-numped" placeholder="Ex: 00123">
+      </div>
+      <div class="form-group">
+        <label>Data Pedido</label>
+        <input type="date" id="sale-dataped">
+      </div>
       <button class="btn-green" onclick="addSale()">+ Add</button>
     </div>
   </div>
@@ -1251,7 +1259,7 @@
 </div>
 
 <!-- MODAL RELATÓRIO MENSAL (fora da .page para não ser afetado pelo display:none) -->
-<div id="mn-relatorio-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:2000;align-items:center;justify-content:center;padding:16px">
+<div id="mn-relatorio-overlay" style="position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:2000;align-items:center;justify-content:center;padding:16px;display:none">
   <div style="background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow-lg);width:100%;max-width:680px;max-height:90vh;overflow-y:auto;padding:28px">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
       <div style="font-size:16px;font-weight:700;color:var(--text)">📋 Relatório Mensal — <span id="mn-rel-titulo" style="color:var(--primary)"></span></div>
@@ -1654,6 +1662,16 @@
         <option value="nao">⏳ Pendente</option>
       </select>
     </div>
+    <div class="sale-edit-row">
+      <div class="sale-edit-group">
+        <label>Nº Pedido</label>
+        <input id="se-numped" type="text" placeholder="Ex: 00123">
+      </div>
+      <div class="sale-edit-group">
+        <label>Data Pedido</label>
+        <input id="se-dataped" type="date">
+      </div>
+    </div>
     <div class="sale-edit-footer">
       <button class="btn-secondary" onclick="fecharEditSale()">Cancelar</button>
       <button class="btn-primary" onclick="confirmarEditSale()">Salvar alterações</button>
@@ -1960,13 +1978,17 @@ function addSale() {
   const payment = document.getElementById('sale-payment').value;
   const date    = document.getElementById('sale-date').value;
   const pago    = document.getElementById('sale-pago').value;
+  const numped  = document.getElementById('sale-numped').value.trim();
+  const dataped = document.getElementById('sale-dataped').value;
   if (!desc) return;
   let mes = salesMesAtivo;
   if (date) mes = parseInt(date.split('-')[1]) - 1;
-  getSalesMes(mes).push({ id: Date.now().toString(), desc, value, type, payment, pago, date: date || new Date().toISOString().slice(0,10) });
+  getSalesMes(mes).push({ id: Date.now().toString(), desc, value, type, payment, pago, date: date || new Date().toISOString().slice(0,10), numped, dataped });
   save(); buildVdTabs(); renderSales();
-  document.getElementById('sale-desc').value  = '';
-  document.getElementById('sale-value').value = '';
+  document.getElementById('sale-desc').value   = '';
+  document.getElementById('sale-value').value  = '';
+  document.getElementById('sale-numped').value = '';
+  document.getElementById('sale-dataped').value = '';
 }
 
 function removeSale(id) {
@@ -2066,6 +2088,7 @@ function renderSales() {
       const pClass = s.payment === 'Pix' ? 'tag-pix' : s.payment === 'Boleto' ? 'tag-boleto' : s.payment === 'Cartão' ? 'tag-cartao' : s.payment === 'Dinheiro' ? 'tag-dinheiro' : 'tag-transferencia';
       const isPago = s.pago !== 'nao';
       const pagoBadge = `<span class="sale-pago-badge ${isPago?'sale-pago-sim':'sale-pago-nao'}" onclick="toggleSalePago('${s.id}')" title="Clique para alternar">${isPago?'✅ Pago':'⏳ Pendente'}</span>`;
+      const pedidoBadge = s.numped ? `<span class="sale-tag" style="background:#f0f4ff;color:#4f46e5;font-family:'DM Mono',monospace">📋 Ped. #${esc(s.numped)}${s.dataped?' · '+fmtDate(s.dataped):''}</span>` : '';
       const hasPedidos = (pedidosDB['venda_'+s.id]||[]).length > 0;
       return `<div class="sale-item" style="flex-wrap:wrap">
         <div style="display:flex;align-items:center;gap:10px;width:100%">
@@ -2076,6 +2099,7 @@ function renderSales() {
               <span class="sale-tag ${tClass}">${s.type}</span>
               <span class="sale-tag ${pClass}">${s.payment}</span>
               ${pagoBadge}
+              ${pedidoBadge}
             </div>
           </div>
           <div class="sale-value">${fmt(s.value)}</div>
@@ -2105,6 +2129,8 @@ function abrirEditSale(id) {
   document.getElementById('se-type').value    = s.type || 'Venda';
   document.getElementById('se-payment').value = s.payment || 'Pix';
   document.getElementById('se-pago').value    = s.pago || 'sim';
+  document.getElementById('se-numped').value  = s.numped || '';
+  document.getElementById('se-dataped').value = s.dataped || '';
   document.getElementById('sale-edit-overlay').classList.remove('hidden');
 }
 
@@ -2124,6 +2150,8 @@ function confirmarEditSale() {
   lista[idx].type    = document.getElementById('se-type').value;
   lista[idx].payment = document.getElementById('se-payment').value;
   lista[idx].pago    = document.getElementById('se-pago').value;
+  lista[idx].numped  = document.getElementById('se-numped').value.trim();
+  lista[idx].dataped = document.getElementById('se-dataped').value;
   save(); buildVdTabs(); renderSales();
   document.getElementById('sale-edit-overlay').classList.add('hidden');
   saleEditId = null;
@@ -2577,7 +2605,7 @@ function abrirRelatorioMensal() {
   }
 
   const overlay = document.getElementById('mn-relatorio-overlay');
-  overlay.style.display = 'flex';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:2000;display:flex;align-items:center;justify-content:center;padding:16px';
 }
 
 function fecharRelatorioMensal() {
