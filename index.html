@@ -1337,75 +1337,116 @@
 
 <!-- =================== COMBUSTÍVEL =================== -->
 <div class="page" id="page-combustivel">
+  <div style="padding:24px">
 
-  <div class="comb-header">
-    <div class="comb-title">⛽ Combustível — <span id="comb-count">0 registros</span></div>
-  </div>
-
-  <!-- MÉTRICAS -->
-  <div class="comb-metrics" id="comb-metrics"></div>
-
-  <!-- FORMULÁRIO -->
-  <div class="comb-form-card">
-    <h3>Registrar Abastecimento</h3>
-    <div class="comb-form-row">
-      <div class="comb-form-group" style="min-width:140px">
-        <label>Carro</label>
-        <select id="comb-f-carro">
-          <option value="Carro 1">🚗 Carro 1</option>
-          <option value="Carro 2">🚙 Carro 2</option>
-        </select>
+    <!-- HEADER -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px">
+      <div>
+        <div style="font-size:17px;font-weight:700;color:var(--text)">⛽ Combustível — <span id="comb-count" style="color:var(--orange)">0 registros</span></div>
+        <div style="font-size:12px;color:var(--text-muted);margin-top:3px" id="comb-mes-titulo">Todos os meses</div>
       </div>
-      <div class="comb-form-group">
-        <label>Data</label>
-        <input type="date" id="comb-f-data">
-      </div>
-      <div class="comb-form-group">
-        <label>KM atual</label>
-        <input type="number" id="comb-f-km" placeholder="Ex: 45230" min="0" step="1">
-      </div>
-      <div class="comb-form-group">
-        <label>Litros</label>
-        <input type="number" id="comb-f-litros" placeholder="Ex: 40,00" min="0" step="0.01" oninput="calcCombTotal()">
-      </div>
-      <div class="comb-form-group">
-        <label>Preço por litro (R$)</label>
-        <input type="number" id="comb-f-preco" placeholder="Ex: 5,89" min="0" step="0.01" oninput="calcCombTotal()">
-      </div>
-      <div class="comb-form-group">
-        <label>Total (R$)</label>
-        <input type="number" id="comb-f-total" placeholder="Calculado auto" min="0" step="0.01">
-      </div>
-      <button class="btn-primary" style="margin-left:4px;align-self:flex-end" onclick="addCombustivel()">+ Registrar</button>
+      <button class="btn-primary" style="background:var(--orange);font-size:13px" onclick="gerarRelatorio()">📊 Relatório do Mês</button>
     </div>
-  </div>
 
-  <!-- ABAS DOS CARROS -->
-  <div class="comb-tabs">
-    <button class="comb-tab active" id="comb-tab-todos" onclick="setCombFiltro('todos')">🚘 Todos os carros</button>
-    <button class="comb-tab" id="comb-tab-1" onclick="setCombFiltro('Carro 1')">🚗 Carro 1</button>
-    <button class="comb-tab" id="comb-tab-2" onclick="setCombFiltro('Carro 2')">🚙 Carro 2</button>
-  </div>
+    <!-- MÉTRICAS -->
+    <div id="comb-metrics" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px;margin-bottom:22px"></div>
 
-  <!-- TABELA -->
-  <div class="comb-table-wrap">
-    <table class="comb-table">
-      <thead>
-        <tr>
-          <th>Carro</th>
-          <th>Data</th>
-          <th>KM</th>
-          <th>Litros</th>
-          <th>Preço/L</th>
-          <th>Total</th>
-          <th style="width:40px"></th>
-        </tr>
-      </thead>
-      <tbody id="comb-tbody"></tbody>
-    </table>
-    <div id="comb-empty" class="comb-empty" style="display:none">Nenhum abastecimento registrado ainda.</div>
-  </div>
+    <!-- FORMULÁRIO -->
+    <div class="comb-form-card">
+      <h3>➕ Registrar Abastecimento</h3>
+      <div class="comb-form-row">
+        <div class="comb-form-group" style="min-width:130px">
+          <label>Carro</label>
+          <select id="comb-f-carro">
+            <option value="Carro 1">🚗 Carro 1</option>
+            <option value="Carro 2">🚙 Carro 2</option>
+          </select>
+        </div>
+        <div class="comb-form-group">
+          <label>Data</label>
+          <input type="date" id="comb-f-data">
+        </div>
+        <div class="comb-form-group">
+          <label>KM atual</label>
+          <input type="number" id="comb-f-km" placeholder="Ex: 45230" min="0" step="1" oninput="calcCombKml()">
+        </div>
+        <div class="comb-form-group">
+          <label>Litros</label>
+          <input type="number" id="comb-f-litros" placeholder="Ex: 40,00" min="0" step="0.01" oninput="calcCombTotal();calcCombKml()">
+        </div>
+        <div class="comb-form-group">
+          <label>Preço/L (R$)</label>
+          <input type="number" id="comb-f-preco" placeholder="Ex: 5,89" min="0" step="0.01" oninput="calcCombTotal()">
+        </div>
+        <div class="comb-form-group">
+          <label>Total (R$)</label>
+          <input type="number" id="comb-f-total" placeholder="Calculado auto" min="0" step="0.01">
+        </div>
+        <div class="comb-form-group" style="min-width:90px">
+          <label>KM/L prev.</label>
+          <input type="text" id="comb-f-kml" placeholder="—" readonly style="background:#f8f9fb;color:var(--orange);font-weight:700">
+        </div>
+        <button class="btn-primary" style="align-self:flex-end;background:var(--orange)" onclick="addCombustivel()">+ Registrar</button>
+      </div>
+    </div>
 
+    <!-- ABAS MESES + CARROS -->
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:12px">
+      <div style="overflow-x:auto;flex:1">
+        <div style="display:flex;gap:4px;min-width:max-content" id="comb-meses-tabs"></div>
+      </div>
+      <div style="display:flex;gap:6px;flex-shrink:0">
+        <button class="comb-tab active" id="comb-tab-todos" onclick="setCombFiltro('todos')" style="padding:5px 12px;font-size:12px">🚘 Todos</button>
+        <button class="comb-tab" id="comb-tab-1"    onclick="setCombFiltro('Carro 1')"  style="padding:5px 12px;font-size:12px">🚗 Carro 1</button>
+        <button class="comb-tab" id="comb-tab-2"    onclick="setCombFiltro('Carro 2')"  style="padding:5px 12px;font-size:12px">🚙 Carro 2</button>
+      </div>
+    </div>
+
+    <!-- TABELA -->
+    <div class="comb-table-wrap">
+      <table class="comb-table">
+        <thead>
+          <tr>
+            <th>Carro</th>
+            <th>Data</th>
+            <th>KM Atual</th>
+            <th>KM Rodados</th>
+            <th>Litros</th>
+            <th>Preço/L</th>
+            <th>Total</th>
+            <th style="color:var(--orange)">KM/L</th>
+            <th style="width:40px"></th>
+          </tr>
+        </thead>
+        <tbody id="comb-tbody"></tbody>
+      </table>
+      <div id="comb-empty" class="comb-empty" style="display:none">Nenhum abastecimento registrado ainda.</div>
+    </div>
+
+    <!-- RELATÓRIO MENSAL (oculto por padrão) -->
+    <div id="comb-relatorio" style="display:none;margin-top:24px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+        <div style="font-size:15px;font-weight:700;color:var(--text)">📊 Relatório — <span id="rel-titulo"></span></div>
+        <button onclick="document.getElementById('comb-relatorio').style.display='none'" style="background:none;border:none;cursor:pointer;font-size:20px;color:var(--text-muted)">×</button>
+      </div>
+      <div id="rel-cards" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:14px;margin-bottom:20px"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;flex-wrap:wrap">
+        <div class="metric-card" style="padding:20px">
+          <div class="metric-label" style="margin-bottom:14px">📈 KM/L por abastecimento</div>
+          <div id="rel-grafico" style="display:flex;align-items:flex-end;gap:6px;height:100px;padding-bottom:20px;position:relative"></div>
+        </div>
+        <div class="metric-card" style="padding:20px">
+          <div class="metric-label" style="margin-bottom:14px">🚗 Detalhes por carro</div>
+          <div id="rel-carros"></div>
+        </div>
+      </div>
+      <div class="metric-card" style="padding:20px;margin-top:16px">
+        <div class="metric-label" style="margin-bottom:14px">📋 Histórico detalhado do mês</div>
+        <div id="rel-lista"></div>
+      </div>
+    </div>
+
+  </div>
 </div>
 
 <!-- =================== FATURAMENTO =================== -->
@@ -2870,7 +2911,8 @@ function renderDashboard() {
 // ===== COMBUSTÍVEL =====
 
 let combustiveis = JSON.parse(localStorage.getItem('crm_combustiveis') || '[]');
-let combFiltro = 'todos';
+let combFiltro   = 'todos';
+let combMesAtivo = new Date().getMonth();
 
 function saveComb() { localStorage.setItem('crm_combustiveis', JSON.stringify(combustiveis)); }
 
@@ -2880,10 +2922,47 @@ function calcCombTotal() {
   if (litros && preco) document.getElementById('comb-f-total').value = (litros * preco).toFixed(2);
 }
 
+function calcCombKml() {
+  const carro   = document.getElementById('comb-f-carro').value;
+  const kmAtual = parseFloat(document.getElementById('comb-f-km').value) || 0;
+  const litros  = parseFloat(document.getElementById('comb-f-litros').value) || 0;
+  const kmlEl   = document.getElementById('comb-f-kml');
+  if (!kmAtual || !litros) { kmlEl.value = '—'; return; }
+  const anterior = [...combustiveis]
+    .filter(c => c.carro === carro && c.km && c.km < kmAtual)
+    .sort((a,b) => b.km - a.km)[0];
+  if (anterior) {
+    const kmRodados = kmAtual - anterior.km;
+    kmlEl.value = (kmRodados / litros).toFixed(2) + ' km/L';
+  } else {
+    kmlEl.value = '—';
+  }
+}
+
+function buildCombTabs() {
+  const wrap = document.getElementById('comb-meses-tabs');
+  if (!wrap) return;
+  const mesesComDados = new Set(combustiveis.map(c => c.data ? parseInt(c.data.split('-')[1]) - 1 : -1));
+  const itens = [{ label: 'Todos', idx: -1 }, ...MESES.map((n,i) => ({ label: n, idx: i }))];
+  wrap.innerHTML = itens.map(({ label, idx }) => {
+    const ativo    = idx === combMesAtivo ? 'active' : '';
+    const temDados = idx >= 0 && mesesComDados.has(idx) && !ativo ? 'tem-dados' : '';
+    const style    = ativo ? 'background:var(--orange);border-color:var(--orange);color:white' : '';
+    return `<button class="comb-tab ${ativo} ${temDados}" onclick="switchCombMes(${idx})" style="${style};padding:5px 12px;font-size:12px">${label}</button>`;
+  }).join('');
+}
+
+function switchCombMes(idx) {
+  combMesAtivo = idx;
+  document.getElementById('comb-relatorio').style.display = 'none';
+  buildCombTabs();
+  renderCombustivel();
+}
+
 function setCombFiltro(val) {
   combFiltro = val;
-  document.querySelectorAll('.comb-tab').forEach(t => t.classList.remove('active'));
-  const map = { todos: 'comb-tab-todos', 'Carro 1': 'comb-tab-1', 'Carro 2': 'comb-tab-2' };
+  document.querySelectorAll('#comb-tab-todos,#comb-tab-1,#comb-tab-2').forEach(t => t.classList.remove('active'));
+  const map = { todos:'comb-tab-todos', 'Carro 1':'comb-tab-1', 'Carro 2':'comb-tab-2' };
   document.getElementById(map[val])?.classList.add('active');
   renderCombustivel();
 }
@@ -2891,76 +2970,239 @@ function setCombFiltro(val) {
 function addCombustivel() {
   const carro  = document.getElementById('comb-f-carro').value;
   const data   = document.getElementById('comb-f-data').value;
-  const km     = parseFloat(document.getElementById('comb-f-km').value);
+  const km     = parseFloat(document.getElementById('comb-f-km').value) || null;
   const litros = parseFloat(document.getElementById('comb-f-litros').value);
-  const preco  = parseFloat(document.getElementById('comb-f-preco').value);
+  const preco  = parseFloat(document.getElementById('comb-f-preco').value) || null;
   const total  = parseFloat(document.getElementById('comb-f-total').value);
   if (!data || !litros || !total) { alert('Preencha pelo menos: Data, Litros e Total!'); return; }
-  combustiveis.unshift({
-    id: Date.now().toString(), carro, data,
-    km: km || null, litros, preco: preco || null, total
-  });
+  let kml = null;
+  if (km) {
+    const anterior = [...combustiveis]
+      .filter(c => c.carro === carro && c.km && c.km < km)
+      .sort((a,b) => b.km - a.km)[0];
+    if (anterior) kml = parseFloat(((km - anterior.km) / litros).toFixed(2));
+  }
+  combustiveis.unshift({ id: Date.now().toString(), carro, data, km, litros, preco, total, kml });
   saveComb();
+  buildCombTabs();
   renderCombustivel();
   ['comb-f-km','comb-f-litros','comb-f-preco','comb-f-total'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('comb-f-kml').value = '—';
 }
 
 function removerComb(id) {
   if (!confirm('Remover este registro?')) return;
   combustiveis = combustiveis.filter(c => c.id !== id);
-  saveComb(); renderCombustivel();
+  saveComb(); buildCombTabs(); renderCombustivel();
+}
+
+function calcKmRodados(lista) {
+  const sorted = [...lista].filter(c => c.km).sort((a,b) => a.km - b.km);
+  const kmMap = {};
+  sorted.forEach((c, i) => {
+    if (i === 0) { kmMap[c.id] = null; return; }
+    const prev = sorted.slice(0, i).filter(x => x.carro === c.carro).pop();
+    kmMap[c.id] = prev ? c.km - prev.km : null;
+  });
+  return kmMap;
 }
 
 function renderCombustivel() {
-  const lista = combFiltro === 'todos' ? combustiveis : combustiveis.filter(c => c.carro === combFiltro);
-  document.getElementById('comb-count').textContent = `${lista.length} registro${lista.length !== 1 ? 's' : ''}`;
+  let base = combMesAtivo === -1
+    ? combustiveis
+    : combustiveis.filter(c => c.data && parseInt(c.data.split('-')[1]) - 1 === combMesAtivo);
+  const lista = combFiltro === 'todos' ? base : base.filter(c => c.carro === combFiltro);
 
-  // métricas
+  document.getElementById('comb-count').textContent = lista.length + ' registro' + (lista.length !== 1 ? 's' : '');
+  const mesTitulo = combMesAtivo === -1 ? 'Todos os meses' : MESES[combMesAtivo];
+  document.getElementById('comb-mes-titulo').textContent = mesTitulo;
+
   const carros = ['Carro 1', 'Carro 2'];
   let metricsHtml = '';
   carros.forEach((car, i) => {
-    const regs = combustiveis.filter(c => c.carro === car);
-    const totalGasto = regs.reduce((s, c) => s + (c.total || 0), 0);
-    const totalLitros = regs.reduce((s, c) => s + (c.litros || 0), 0);
+    const regs = base.filter(c => c.carro === car);
+    const totalGasto  = regs.reduce((s,c) => s+(c.total||0), 0);
+    const totalLitros = regs.reduce((s,c) => s+(c.litros||0), 0);
+    const kmls = regs.filter(c => c.kml).map(c => c.kml);
+    const mediaKml = kmls.length ? (kmls.reduce((s,v)=>s+v,0)/kmls.length).toFixed(2) : null;
+    const kmsValidos = regs.filter(c => c.km).map(c => c.km).sort((a,b)=>a-b);
+    const kmRodados = kmsValidos.length >= 2 ? kmsValidos[kmsValidos.length-1] - kmsValidos[0] : null;
     const cls = i === 0 ? 'comb-car-1' : 'comb-car-2';
-    metricsHtml += `
-      <div class="metric-card">
-        <div class="metric-label"><span class="comb-car-badge ${cls}">${car}</span></div>
-        <div class="metric-value" style="font-size:20px;margin-top:8px">${fmt(totalGasto)}</div>
-        <div style="font-size:12px;color:var(--text-muted);margin-top:4px">${totalLitros.toFixed(1)} L abastecidos</div>
-      </div>`;
+    const icon = i === 0 ? '🚗' : '🚙';
+    metricsHtml += '<div class="metric-card" style="border-top:3px solid ' + (i===0?'var(--blue)':'var(--purple)') + '">' +
+      '<div class="metric-label"><span class="comb-car-badge ' + cls + '">' + icon + ' ' + car + '</span></div>' +
+      '<div style="font-size:20px;font-weight:700;margin-top:8px;color:var(--text)">' + fmt(totalGasto) + '</div>' +
+      '<div style="font-size:11px;color:var(--text-muted);margin-top:4px">' + totalLitros.toFixed(1) + ' L · ' + regs.length + ' abast.</div>' +
+      (mediaKml ? '<div style="font-size:13px;font-weight:700;color:var(--orange);margin-top:6px">⚡ ' + mediaKml + ' km/L média</div>' : '') +
+      (kmRodados ? '<div style="font-size:11px;color:var(--text-muted)">' + kmRodados.toLocaleString('pt-BR') + ' km rodados</div>' : '') +
+      '</div>';
   });
-  const totalGeral = combustiveis.reduce((s, c) => s + (c.total || 0), 0);
-  metricsHtml += `
-    <div class="metric-card">
-      <div class="metric-label">Total Geral</div>
-      <div class="metric-value green" style="font-size:20px;margin-top:8px">${fmt(totalGeral)}</div>
-      <div style="font-size:12px;color:var(--text-muted);margin-top:4px">${combustiveis.length} abastecimentos</div>
-    </div>`;
+  const totalGeral  = base.reduce((s,c) => s+(c.total||0), 0);
+  const litrosGeral = base.reduce((s,c) => s+(c.litros||0), 0);
+  const todasKmls   = base.filter(c=>c.kml).map(c=>c.kml);
+  const mediaGeral  = todasKmls.length ? (todasKmls.reduce((s,v)=>s+v,0)/todasKmls.length).toFixed(2) : null;
+  metricsHtml += '<div class="metric-card" style="border-top:3px solid var(--orange)">' +
+    '<div class="metric-label">⛽ Total Geral</div>' +
+    '<div style="font-size:20px;font-weight:700;margin-top:8px;color:var(--green)">' + fmt(totalGeral) + '</div>' +
+    '<div style="font-size:11px;color:var(--text-muted);margin-top:4px">' + litrosGeral.toFixed(1) + ' L · ' + base.length + ' abast.</div>' +
+    (mediaGeral ? '<div style="font-size:13px;font-weight:700;color:var(--orange);margin-top:6px">⚡ ' + mediaGeral + ' km/L média</div>' : '') +
+    '</div>';
   document.getElementById('comb-metrics').innerHTML = metricsHtml;
 
-  // tabela
   const tbody = document.getElementById('comb-tbody');
   const empty = document.getElementById('comb-empty');
-  if (lista.length === 0) {
-    tbody.innerHTML = '';
-    empty.style.display = 'block';
+  if (lista.length === 0) { tbody.innerHTML = ''; empty.style.display = 'block'; return; }
+  empty.style.display = 'none';
+
+  const kmMap = calcKmRodados(lista);
+  const listaOrdenada = [...lista].sort((a,b) => (b.data||'').localeCompare(a.data||''));
+
+  tbody.innerHTML = listaOrdenada.map(c => {
+    const cls  = c.carro === 'Carro 1' ? 'comb-car-1' : 'comb-car-2';
+    const icon = c.carro === 'Carro 1' ? '🚗' : '🚙';
+    const kmRod = kmMap[c.id];
+    let kmlColor = 'var(--text-muted)';
+    if (c.kml) kmlColor = c.kml >= 12 ? 'var(--green)' : c.kml >= 9 ? 'var(--orange)' : 'var(--red)';
+    return '<tr>' +
+      '<td><span class="comb-car-badge ' + cls + '">' + icon + ' ' + esc(c.carro) + '</span></td>' +
+      '<td style="font-family:DM Mono,monospace;font-size:12px;color:var(--text-muted)">' + fmtDate(c.data) + '</td>' +
+      '<td class="comb-val-km">' + (c.km ? c.km.toLocaleString('pt-BR') + ' km' : '—') + '</td>' +
+      '<td style="font-family:DM Mono,monospace;color:var(--blue);font-size:12px">' + (kmRod ? '+' + kmRod.toLocaleString('pt-BR') + ' km' : '—') + '</td>' +
+      '<td class="comb-val-litros">' + c.litros.toFixed(2) + ' L</td>' +
+      '<td style="font-family:DM Mono,monospace;font-size:12px;color:var(--text-muted)">' + (c.preco ? 'R$ ' + c.preco.toFixed(3) : '—') + '</td>' +
+      '<td class="comb-val-total">' + fmt(c.total) + '</td>' +
+      '<td style="font-family:DM Mono,monospace;font-weight:700;color:' + kmlColor + ';font-size:13px">' + (c.kml ? c.kml.toFixed(2) + ' km/L' : '—') + '</td>' +
+      '<td><button class="comb-del" onclick="removerComb(' + "'" + c.id + "'" + ')" title="Remover">×</button></td>' +
+      '</tr>';
+  }).join('');
+}
+
+function gerarRelatorio() {
+  const mes = combMesAtivo === -1 ? new Date().getMonth() : combMesAtivo;
+  const nomeMes = MESES[mes];
+  const dadosMes = combustiveis.filter(c => c.data && parseInt(c.data.split('-')[1]) - 1 === mes);
+
+  document.getElementById('rel-titulo').textContent = nomeMes + ' ' + new Date().getFullYear();
+  document.getElementById('comb-relatorio').style.display = 'block';
+  document.getElementById('comb-relatorio').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  if (dadosMes.length === 0) {
+    document.getElementById('rel-cards').innerHTML = '<div style="color:var(--text-muted);font-size:13px;grid-column:1/-1;padding:20px 0">Nenhum abastecimento em ' + nomeMes + '.</div>';
+    ['rel-grafico','rel-carros','rel-lista'].forEach(id => document.getElementById(id).innerHTML = '');
     return;
   }
-  empty.style.display = 'none';
-  tbody.innerHTML = lista.map(c => {
-    const cls = c.carro === 'Carro 1' ? 'comb-car-1' : 'comb-car-2';
-    const icon = c.carro === 'Carro 1' ? '🚗' : '🚙';
-    return `<tr>
-      <td><span class="comb-car-badge ${cls}">${icon} ${esc(c.carro)}</span></td>
-      <td>${fmtDate(c.data)}</td>
-      <td class="comb-val-km">${c.km ? c.km.toLocaleString('pt-BR') + ' km' : '—'}</td>
-      <td class="comb-val-litros">${c.litros.toFixed(2)} L</td>
-      <td style="color:var(--text-muted);font-family:'DM Mono',monospace">${c.preco ? 'R$ ' + c.preco.toFixed(3) : '—'}</td>
-      <td class="comb-val-total">${fmt(c.total)}</td>
-      <td><button class="comb-del" onclick="removerComb('${c.id}')" title="Remover">×</button></td>
-    </tr>`;
+
+  const carros  = ['Carro 1', 'Carro 2'];
+  const kmMap   = calcKmRodados(dadosMes);
+  const totalGasto  = dadosMes.reduce((s,c) => s+(c.total||0), 0);
+  const totalLitros = dadosMes.reduce((s,c) => s+(c.litros||0), 0);
+  const kmls    = dadosMes.filter(c=>c.kml).map(c=>c.kml);
+  const mediaKml  = kmls.length ? kmls.reduce((s,v)=>s+v,0)/kmls.length : null;
+  const melhorKml = kmls.length ? Math.max(...kmls) : null;
+  const piorKml   = kmls.length ? Math.min(...kmls) : null;
+
+  let kmTotalMes = 0;
+  carros.forEach(car => {
+    const regs = dadosMes.filter(c=>c.carro===car && c.km).map(c=>c.km).sort((a,b)=>a-b);
+    if (regs.length >= 2) kmTotalMes += regs[regs.length-1] - regs[0];
+  });
+  const custoPorKm = kmTotalMes > 0 ? totalGasto / kmTotalMes : null;
+
+  const kmlMediaCor = mediaKml ? (mediaKml >= 12 ? 'var(--green)' : mediaKml >= 9 ? 'var(--orange)' : 'var(--red)') : 'var(--text-muted)';
+  document.getElementById('rel-cards').innerHTML =
+    '<div class="dash-kpi-card" style="border-top:3px solid var(--orange)">' +
+      '<div class="dash-kpi-label">💸 Total gasto</div>' +
+      '<div class="dash-kpi-value" style="color:var(--orange)">' + fmt(totalGasto) + '</div>' +
+      '<div class="dash-kpi-sub">' + totalLitros.toFixed(1) + ' litros · ' + dadosMes.length + ' abast.</div>' +
+    '</div>' +
+    '<div class="dash-kpi-card" style="border-top:3px solid var(--blue)">' +
+      '<div class="dash-kpi-label">🛣️ KM rodados</div>' +
+      '<div class="dash-kpi-value" style="color:var(--blue)">' + (kmTotalMes ? kmTotalMes.toLocaleString('pt-BR') + ' km' : '—') + '</div>' +
+      '<div class="dash-kpi-sub">em ' + nomeMes + '</div>' +
+    '</div>' +
+    '<div class="dash-kpi-card" style="border-top:3px solid var(--green)">' +
+      '<div class="dash-kpi-label">⚡ Média KM/L</div>' +
+      '<div class="dash-kpi-value" style="color:' + kmlMediaCor + '">' + (mediaKml ? mediaKml.toFixed(2) + ' km/L' : '—') + '</div>' +
+      '<div class="dash-kpi-sub">' + (melhorKml ? 'Melhor: ' + melhorKml.toFixed(2) + ' | Pior: ' + piorKml.toFixed(2) : 'Sem dados suficientes') + '</div>' +
+    '</div>' +
+    '<div class="dash-kpi-card" style="border-top:3px solid var(--purple)">' +
+      '<div class="dash-kpi-label">💰 Custo por KM</div>' +
+      '<div class="dash-kpi-value" style="color:var(--purple)">' + (custoPorKm ? 'R$ ' + custoPorKm.toFixed(3) : '—') + '</div>' +
+      '<div class="dash-kpi-sub">por quilômetro rodado</div>' +
+    '</div>';
+
+  // Gráfico KM/L
+  const comKml   = [...dadosMes].filter(c=>c.kml).sort((a,b)=>(a.data||'').localeCompare(b.data||''));
+  const maxKml   = comKml.length ? Math.max(...comKml.map(c=>c.kml), 1) : 1;
+  const grafico  = document.getElementById('rel-grafico');
+  if (comKml.length === 0) {
+    grafico.innerHTML = '<div style="color:var(--text-muted);font-size:12px;align-self:center">Sem dados de KM/L.<br>Preencha o KM nos próximos abastecimentos.</div>';
+  } else {
+    grafico.innerHTML = comKml.map(c => {
+      const h   = Math.round((c.kml / maxKml) * 88);
+      const cor = c.kml >= 12 ? 'var(--green)' : c.kml >= 9 ? 'var(--orange)' : 'var(--red)';
+      const icn = c.carro === 'Carro 1' ? '🚗' : '🚙';
+      return '<div style="flex:1;display:flex;flex-direction:column;align-items:center;position:relative" title="' + icn + ' ' + fmtDate(c.data) + ': ' + c.kml.toFixed(2) + ' km/L">' +
+        '<span style="font-size:8px;color:var(--text-muted);position:absolute;top:-14px;white-space:nowrap">' + c.kml.toFixed(1) + '</span>' +
+        '<div style="width:100%;border-radius:4px 4px 0 0;background:' + cor + ';height:' + Math.max(h,4) + 'px;min-width:16px"></div>' +
+        '<span style="font-size:9px;color:var(--text-muted);margin-top:3px;white-space:nowrap">' + fmtDate(c.data).slice(0,5) + '</span>' +
+        '</div>';
+    }).join('');
+  }
+
+  // Detalhes por carro
+  document.getElementById('rel-carros').innerHTML = carros.map((car, i) => {
+    const regs    = dadosMes.filter(c=>c.carro===car);
+    if (regs.length === 0) return '<div style="font-size:12px;color:var(--text-muted);margin-bottom:10px">' + car + ': sem registros</div>';
+    const gastoC  = regs.reduce((s,c)=>s+(c.total||0), 0);
+    const litrosC = regs.reduce((s,c)=>s+(c.litros||0), 0);
+    const kmlsC   = regs.filter(c=>c.kml).map(c=>c.kml);
+    const mediaC  = kmlsC.length ? (kmlsC.reduce((s,v)=>s+v,0)/kmlsC.length).toFixed(2) : '—';
+    const kmsC    = regs.filter(c=>c.km).map(c=>c.km).sort((a,b)=>a-b);
+    const kmRodC  = kmsC.length>=2 ? kmsC[kmsC.length-1]-kmsC[0] : null;
+    const cls = i===0?'comb-car-1':'comb-car-2';
+    const icn = i===0?'🚗':'🚙';
+    return '<div style="padding:10px 12px;background:var(--bg);border-radius:8px;margin-bottom:8px">' +
+      '<div style="font-weight:700;font-size:13px;margin-bottom:6px"><span class="comb-car-badge ' + cls + '">' + icn + ' ' + car + '</span></div>' +
+      '<div style="font-size:12px;color:var(--text-muted);display:grid;grid-template-columns:1fr 1fr;gap:4px">' +
+        '<span>Gasto: <strong style="color:var(--text)">' + fmt(gastoC) + '</strong></span>' +
+        '<span>Litros: <strong style="color:var(--blue)">' + litrosC.toFixed(1) + ' L</strong></span>' +
+        '<span>Média KM/L: <strong style="color:var(--orange)">' + mediaC + '</strong></span>' +
+        '<span>KM rodados: <strong style="color:var(--purple)">' + (kmRodC ? kmRodC.toLocaleString('pt-BR') + ' km' : '—') + '</strong></span>' +
+      '</div></div>';
   }).join('');
+
+  // Tabela detalhada
+  const listaOrd = [...dadosMes].sort((a,b)=>(a.data||'').localeCompare(b.data||''));
+  document.getElementById('rel-lista').innerHTML =
+    '<table style="width:100%;border-collapse:collapse;font-size:12px">' +
+    '<thead><tr style="background:#f1f3f8">' +
+      ['Carro','Data','KM Atual','+KM','Litros','Preço/L','Total','KM/L'].map(h =>
+        '<th style="padding:8px 10px;text-align:' + (['Total','KM/L','KM Atual','+KM','Litros','Preço/L'].includes(h)?'right':'left') + ';font-weight:700;text-transform:uppercase;font-size:10px;color:var(--text-muted)">' + h + '</th>'
+      ).join('') +
+    '</tr></thead><tbody>' +
+    listaOrd.map(c => {
+      const kmRod = kmMap[c.id];
+      const kmlC  = c.kml ? (c.kml>=12?'var(--green)':c.kml>=9?'var(--orange)':'var(--red)') : 'var(--text-muted)';
+      const icn   = c.carro === 'Carro 1' ? '🚗' : '🚙';
+      return '<tr style="border-bottom:1px solid #f0f1f5">' +
+        '<td style="padding:8px 10px">' + icn + ' ' + esc(c.carro) + '</td>' +
+        '<td style="padding:8px 10px;color:var(--text-muted)">' + fmtDate(c.data) + '</td>' +
+        '<td style="padding:8px 10px;text-align:right;font-family:DM Mono,monospace">' + (c.km ? c.km.toLocaleString('pt-BR') : '—') + '</td>' +
+        '<td style="padding:8px 10px;text-align:right;color:var(--blue);font-family:DM Mono,monospace">' + (kmRod ? '+' + kmRod.toLocaleString('pt-BR') : '—') + '</td>' +
+        '<td style="padding:8px 10px;text-align:right;color:var(--blue);font-family:DM Mono,monospace">' + c.litros.toFixed(2) + ' L</td>' +
+        '<td style="padding:8px 10px;text-align:right;color:var(--text-muted);font-family:DM Mono,monospace">' + (c.preco ? 'R$ '+c.preco.toFixed(3) : '—') + '</td>' +
+        '<td style="padding:8px 10px;text-align:right;font-weight:700;color:var(--green);font-family:DM Mono,monospace">' + fmt(c.total) + '</td>' +
+        '<td style="padding:8px 10px;text-align:right;font-weight:700;color:' + kmlC + ';font-family:DM Mono,monospace">' + (c.kml ? c.kml.toFixed(2) : '—') + '</td>' +
+        '</tr>';
+    }).join('') +
+    '<tr style="background:#f8f9fb;font-weight:700;border-top:2px solid var(--border)">' +
+      '<td colspan="4" style="padding:10px">TOTAL ' + nomeMes.toUpperCase() + '</td>' +
+      '<td style="padding:10px;text-align:right;color:var(--blue);font-family:DM Mono,monospace">' + totalLitros.toFixed(2) + ' L</td>' +
+      '<td style="padding:10px;text-align:right;color:var(--text-muted);font-size:11px">' + (totalLitros>0?(totalGasto/totalLitros).toFixed(3)+'/L':'') + '</td>' +
+      '<td style="padding:10px;text-align:right;color:var(--green);font-family:DM Mono,monospace">' + fmt(totalGasto) + '</td>' +
+      '<td style="padding:10px;text-align:right;color:var(--orange);font-family:DM Mono,monospace">' + (mediaKml ? mediaKml.toFixed(2) : '—') + '</td>' +
+    '</tr></tbody></table>';
 }
 
 // ===== INIT =====
@@ -2975,6 +3217,7 @@ updateBadge();
 buildMesesTabs();
 buildVdTabs();
 buildFatTabs();
+buildCombTabs();
 renderGrafico();
 atualizarMeta();
 renderAt();
