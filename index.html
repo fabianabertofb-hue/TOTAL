@@ -1,1154 +1,2992 @@
-html
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CRM Vendas</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+  :root {
+    --bg: #f8f9fb;
+    --white: #ffffff;
+    --border: #e8eaef;
+    --text: #1a1d27;
+    --text-muted: #8b90a0;
+    --text-light: #b0b5c3;
+    --primary: #4f46e5;
+    --primary-light: #eef2ff;
+    --green: #10b981;
+    --green-light: #d1fae5;
+    --orange: #f59e0b;
+    --orange-light: #fef3c7;
+    --red: #ef4444;
+    --red-light: #fee2e2;
+    --blue: #3b82f6;
+    --blue-light: #dbeafe;
+    --purple: #8b5cf6;
+    --purple-light: #ede9fe;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+    --shadow: 0 4px 12px rgba(0,0,0,0.08);
+    --shadow-lg: 0 8px 24px rgba(0,0,0,0.10);
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
 
-    
-    
-    
-    
-    
-    
-    
-        :root {
-            --primary: #4f46e5; /* Indigo 600 */<br/>
-            --primary-dark: #4338ca; /* Indigo 700 */<br/>
-            --primary-light: #6366f1; /* Indigo 500 */<br/>
-            --secondary: #ec4899; /* Pink 500 */<br/>
-            --green: #10b981; /* Emerald 500 */<br/>
-            --red: #ef4444; /* Red 500 */<br/>
-            --orange: #f97316; /* Orange 500 */<br/>
-            --purple: #8b5cf6; /* Violet 500 */<br/>
-            --blue: #3b82f6; /* Blue 500 */<br/>
-            --yellow: #f59e0b; /* Amber 500 */<br/>
-            --text: #1a1a1a;<br/>
-            --text-light: #555555;<br/>
-            --text-muted: #757575;<br/>
-            --bg: #f8fafc; /* Slate 50 */<br/>
-            --bg-dark: #e2e8f0; /* Slate 200 */<br/>
-            --white: #ffffff;<br/>
-            --border: #e5e7eb; /* Gray 200 */<br/>
-            --radius: 8px;<br/>
-            --radius-sm: 4px;<br/>
-            --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);<br/>
-            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);<br/>
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);<br/>
-            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-        }    body {
-        font-family: 'DM Sans', sans-serif;<br/>
-        margin: 0;<br/>
-        padding: 0;<br/>
-        background-color: var(--bg);<br/>
-        color: var(--text);<br/>
-        line-height: 1.6;<br/>
-        -webkit-font-smoothing: antialiased;<br/>
-        -moz-osx-font-smoothing: grayscale;
-    }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
 
-    .container {
-        display: flex;<br/>
-        min-height: 100vh;
-    }
+  /* NAVBAR */
+  .navbar {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+    height: 58px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .navbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--text);
+    margin-right: auto;
+  }
+  .brand-icon {
+    width: 34px; height: 34px;
+    background: var(--primary);
+    border-radius: 9px;
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-size: 16px;
+  }
+  .nav-tabs {
+    display: flex;
+    gap: 4px;
+  }
+  .nav-tab {
+    padding: 7px 16px;
+    border-radius: 8px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.15s;
+  }
+  .nav-tab:hover { background: var(--bg); color: var(--text); }
+  .nav-tab.active { background: var(--primary); color: white; }
 
-    .sidebar {
-        width: 220px;<br/>
-        background-color: var(--white);<br/>
-        padding: 20px 0;<br/>
-        box-shadow: var(--shadow-lg);<br/>
-        display: flex;<br/>
-        flex-direction: column;<br/>
-        border-right: 1px solid var(--border);<br/>
-        flex-shrink: 0;
-    }
+  /* ── ABA ATENDIMENTOS ── */
+  #page-atendimentos { background: var(--bg); min-height: calc(100vh - 58px); padding: 24px; }
 
-    .logo {
-        text-align: center;<br/>
-        margin-bottom: 30px;<br/>
-        padding: 0 20px;
-    }
+  .at-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; flex-wrap:wrap; gap:12px; }
+  .at-title { font-size:17px; font-weight:700; color:var(--text); }
+  .at-title span { color:var(--primary); }
 
-    .logo h1 {
-        font-family: 'DM Mono', monospace;<br/>
-        font-size: 24px;<br/>
-        color: var(--primary);<br/>
-        margin: 0;<br/>
-        font-weight: 500;
-    }
+  /* filtros */
+  .at-filters { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:18px; align-items:center; }
+  .at-filter-btn {
+    padding:5px 12px; border-radius:20px; border:1.5px solid var(--border);
+    background:var(--white); font-family:'DM Sans',sans-serif; font-size:12px;
+    font-weight:600; color:var(--text-muted); cursor:pointer; transition:all 0.15s;
+  }
+  .at-filter-btn:hover { border-color:var(--primary); color:var(--primary); }
+  .at-filter-btn.active { background:var(--primary); color:white; border-color:var(--primary); }
+  .at-filter-btn.urg-alta.active  { background:#ef4444; border-color:#ef4444; }
+  .at-filter-btn.urg-media.active { background:#f59e0b; border-color:#f59e0b; }
+  .at-filter-btn.urg-baixa.active { background:#10b981; border-color:#10b981; }
+  .at-search-wrap { position:relative; flex:1; min-width:200px; max-width:320px; }
+  .at-search-wrap .search-icon { position:absolute; left:11px; top:50%; transform:translateY(-50%); font-size:14px; pointer-events:none; color:var(--text-muted); }
+  .at-search { width:100%; padding:7px 12px 7px 32px; border:1.5px solid var(--border); border-radius:20px; font-family:'DM Sans',sans-serif; font-size:13px; color:var(--text); background:var(--white); outline:none; transition:border 0.15s; }
+  .at-search:focus { border-color:var(--primary); }
 
-    .nav-menu {
-        display: flex;<br/>
-        flex-direction: column;<br/>
-        gap: 8px;<br/>
-        padding: 0 15px;
-    }
+  /* cards */
+  .at-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); gap:14px; }
+  .at-card {
+    background:var(--white); border:1px solid var(--border);
+    border-radius:var(--radius); box-shadow:var(--shadow-sm);
+    padding:16px 18px; cursor:pointer; transition:box-shadow 0.15s, transform 0.15s;
+    border-left:4px solid var(--border);
+  }
+  .at-card:hover { box-shadow:var(--shadow); transform:translateY(-2px); }
+  .at-card.urg-alta   { border-left-color:#ef4444; }
+  .at-card.urg-media  { border-left-color:#f59e0b; }
+  .at-card.urg-baixa  { border-left-color:#10b981; }
+  .at-card-top { display:flex; align-items:flex-start; justify-content:space-between; gap:8px; margin-bottom:8px; }
+  .at-card-nome { font-size:14px; font-weight:700; color:var(--text); }
+  .at-card-equip { font-size:12px; color:var(--text-muted); margin-top:2px; }
+  .at-card-assunto { font-size:13px; color:var(--text); margin-bottom:10px; line-height:1.4; }
+  .at-card-footer { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .at-badge {
+    padding:3px 9px; border-radius:20px; font-size:11px; font-weight:700;
+    white-space:nowrap;
+  }
+  .at-badge-alta   { background:#fee2e2; color:#b91c1c; }
+  .at-badge-media  { background:#fef3c7; color:#92400e; }
+  .at-badge-baixa  { background:#d1fae5; color:#065f46; }
+  .at-badge-solicitacao  { background:#dbeafe; color:#1e40af; }
+  .at-badge-andamento    { background:#ede9fe; color:#5b21b6; }
+  .at-badge-orcamento    { background:#fef3c7; color:#92400e; }
+  .at-badge-peca         { background:#ffedd5; color:#9a3412; }
+  .at-badge-concluido    { background:#d1fae5; color:#065f46; }
+  .at-card-date { font-size:11px; color:var(--text-light); margin-left:auto; }
+  .at-card-del { background:none; border:none; color:var(--text-light); cursor:pointer; font-size:16px; padding:0 2px; transition:color 0.15s; flex-shrink:0; }
+  .at-card-del:hover { color:var(--red); }
 
-    .nav-tab {
-        background-color: transparent;<br/>
-        border: none;<br/>
-        color: var(--text-light);<br/>
-        padding: 12px 15px;<br/>
-        text-align: left;<br/>
-        font-size: 15px;<br/>
-        cursor: pointer;<br/>
-        border-radius: var(--radius-sm);<br/>
-        transition: all 0.2s ease;<br/>
-        display: flex;<br/>
-        align-items: center;<br/>
-        gap: 10px;
-    }
+  /* ── PEDIDOS ── */
+  .pedidos-wrap { margin-top:10px; border-top:1px solid var(--border); padding-top:10px; }
+  .pedidos-titulo { font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:8px; display:flex; align-items:center; justify-content:space-between; }
+  .btn-add-pedido { font-size:11px; font-weight:700; color:var(--primary); background:none; border:none; cursor:pointer; padding:0; }
+  .btn-add-pedido:hover { text-decoration:underline; }
+  .pedido-item { display:flex; align-items:center; gap:8px; padding:5px 0; border-bottom:1px solid #f5f5f5; flex-wrap:wrap; }
+  .pedido-item:last-child { border-bottom:none; }
+  .pedido-num { font-size:12px; font-weight:700; color:var(--text); font-family:'DM Mono',monospace; }
+  .pedido-data { font-size:11px; color:var(--text-muted); }
+  .pedido-val { font-size:12px; font-weight:700; color:var(--green); margin-left:auto; }
+  .pedido-badge-ag { background:#fef3c7; color:#92400e; font-size:10px; font-weight:700; padding:2px 7px; border-radius:20px; }
+  .pedido-badge-rec { background:#d1fae5; color:#065f46; font-size:10px; font-weight:700; padding:2px 7px; border-radius:20px; cursor:pointer; }
+  .pedido-badge-ag { cursor:pointer; }
+  .pedido-del { background:none; border:none; color:var(--text-light); cursor:pointer; font-size:13px; padding:0 2px; }
+  .pedido-del:hover { color:var(--red); }
+  .pedido-form { display:flex; gap:6px; flex-wrap:wrap; align-items:flex-end; padding:8px 0 4px; }
+  .pedido-form input, .pedido-form select {
+    padding:5px 8px; border:1.5px solid var(--border); border-radius:6px;
+    font-family:'DM Sans',sans-serif; font-size:12px; color:var(--text);
+    background:var(--white); outline:none;
+  }
+  .pedido-form input:focus, .pedido-form select:focus { border-color:var(--primary); }
+  .pedido-form .pf-num { width:130px; }
+  .pedido-form .pf-data { width:130px; }
+  .pedido-form .pf-val { width:100px; }
+  .btn-pedido-save { padding:5px 12px; background:var(--primary); color:white; border:none; border-radius:6px; font-family:'DM Sans',sans-serif; font-size:12px; font-weight:700; cursor:pointer; }
+  .btn-pedido-save:hover { background:#4338ca; }
+  .btn-pedido-cancel { padding:5px 10px; background:none; border:1px solid var(--border); border-radius:6px; font-family:'DM Sans',sans-serif; font-size:12px; color:var(--text-muted); cursor:pointer; }
 
-    .nav-tab:hover {<br/>
-        background-color: var(--bg-dark);<br/>
-        color: var(--text);
-    }
+  /* ── EDIÇÃO DE VENDA ── */
+  .btn-edit-sale { background:none; border:none; color:var(--text-light); cursor:pointer; font-size:14px; padding:0 4px; transition:color 0.15s; }
+  .btn-edit-sale:hover { color:var(--primary); }
+  .sale-edit-modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:1000; display:flex; align-items:center; justify-content:center; padding:16px; }
+  .sale-edit-modal-overlay.hidden { display:none; }
+  .sale-edit-modal { background:var(--white); border-radius:var(--radius); box-shadow:var(--shadow-lg); width:100%; max-width:460px; padding:24px; }
+  .sale-edit-modal h3 { font-size:15px; font-weight:700; margin-bottom:18px; }
+  .sale-edit-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px; }
+  .sale-edit-group { margin-bottom:12px; }
+  .sale-edit-group label { display:block; font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:5px; }
+  .sale-edit-group input, .sale-edit-group select { width:100%; padding:8px 10px; border:1.5px solid var(--border); border-radius:var(--radius-sm); font-family:'DM Sans',sans-serif; font-size:13px; color:var(--text); outline:none; }
+  .sale-edit-group input:focus, .sale-edit-group select:focus { border-color:var(--primary); }
+  .sale-edit-footer { display:flex; gap:8px; justify-content:flex-end; margin-top:16px; }
+  .at-empty { text-align:center; color:var(--text-light); padding:48px; font-size:14px; }
+  .at-obs-tag { font-size:11px; color:var(--green); font-weight:600; background:var(--green-light); padding:2px 8px; border-radius:20px; }
 
-    .nav-tab.active {
-        background-color: var(--primary);<br/>
-        color: var(--white);<br/>
-        font-weight: 500;<br/>
-        box-shadow: var(--shadow-sm);
-    }
+  /* modal atendimento */
+  .at-modal-overlay {
+    position:fixed; inset:0; background:rgba(0,0,0,0.4);
+    z-index:1000; display:flex; align-items:center; justify-content:center;
+    padding:16px;
+  }
+  .at-modal-overlay.hidden { display:none; }
+  .at-modal {
+    background:var(--white); border-radius:var(--radius);
+    box-shadow:var(--shadow-lg); width:100%; max-width:520px;
+    max-height:90vh; overflow-y:auto; padding:28px;
+  }
+  .at-modal h3 { font-size:16px; font-weight:700; margin-bottom:20px; color:var(--text); }
+  .at-form-group { margin-bottom:14px; }
+  .at-form-group label { display:block; font-size:12px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:6px; }
+  .at-form-group input, .at-form-group textarea, .at-form-group select {
+    width:100%; padding:9px 12px; border:1.5px solid var(--border);
+    border-radius:var(--radius-sm); font-family:'DM Sans',sans-serif;
+    font-size:13px; color:var(--text); background:var(--white); outline:none;
+    transition:border 0.15s;
+  }
+  .at-form-group input:focus, .at-form-group textarea:focus, .at-form-group select:focus { border-color:var(--primary); }
+  .at-form-group textarea { resize:vertical; min-height:80px; }
+  .at-form-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .at-modal-footer { display:flex; gap:10px; justify-content:flex-end; margin-top:20px; }
+  .at-sync-info { font-size:12px; color:var(--green); background:var(--green-light); border-radius:8px; padding:8px 12px; margin-top:12px; display:none; }
+  .badge {
+    background: rgba(255,255,255,0.25);
+    padding: 1px 7px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .badge-red { background: var(--red); color: white; }
+  .btn-primary {
+    padding: 8px 18px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    margin-left: 8px;
+    white-space: nowrap;
+  }
+  .btn-primary:hover { background: #4338ca; transform: translateY(-1px); }
+  .btn-green {
+    padding: 8px 18px;
+    background: var(--green);
+    color: white;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn-green:hover { background: #059669; }
 
-    .nav-tab.active:hover {<br/>
-        background-color: var(--primary-dark);<br/>
-        color: var(--white);
-    }
+  /* PAGE */
+  .page { display: none; padding: 24px; }
+  .page.active { display: block; }
 
-    .main-content {
-        flex-grow: 1;<br/>
-        display: flex;<br/>
-        flex-direction: column;<br/>
-        background-color: var(--bg);
-    }
+  /* CARDS MÉTRICAS */
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+  .metric-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    box-shadow: var(--shadow-sm);
+  }
+  .metric-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+  }
+  .metric-value {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .metric-value.green { color: var(--green); }
+  .metric-value.orange { color: var(--orange); }
+  .metric-value.purple { color: var(--purple); }
 
-    .header {
-        background-color: var(--white);<br/>
-        padding: 15px 30px;<br/>
-        border-bottom: 1px solid var(--border);<br/>
-        display: flex;<br/>
-        justify-content: space-between;<br/>
-        align-items: center;<br/>
-        box-shadow: var(--shadow-sm);<br/>
-        flex-shrink: 0;
-    }
+  /* FUNIL */
+  .funnel-board {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+  }
+  .funnel-col {
+    min-width: 200px;
+    flex: 1;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px;
+    box-shadow: var(--shadow-sm);
+  }
+  .funnel-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+    font-weight: 600;
+    font-size: 13px;
+  }
+  .dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+  .dot-gray   { background: #94a3b8; }
+  .dot-blue   { background: var(--blue); }
+  .dot-orange { background: var(--orange); }
+  .dot-purple { background: var(--purple); }
+  .dot-green  { background: var(--green); }
+  .dot-red    { background: var(--red); }
+  .col-count {
+    margin-left: auto;
+    background: var(--bg);
+    padding: 1px 8px;
+    border-radius: 20px;
+    font-size: 11px;
+    color: var(--text-muted);
+    font-weight: 600;
+  }
+  .funnel-empty {
+    border: 1.5px dashed var(--border);
+    border-radius: var(--radius-sm);
+    padding: 20px;
+    text-align: center;
+    color: var(--text-light);
+    font-size: 12px;
+    min-height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .lead-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 12px;
+    margin-bottom: 8px;
+    cursor: grab;
+    transition: all 0.15s;
+  }
+  .lead-card:hover { box-shadow: var(--shadow); transform: translateY(-1px); }
+  .lead-card.dragging { opacity: 0.5; }
+  .btn-edit-lead {
+    background: none; border: none; cursor: pointer;
+    font-size: 13px; padding: 1px 3px; opacity: 0.4;
+    transition: opacity 0.15s; line-height: 1;
+  }
+  .lead-card:hover .btn-edit-lead { opacity: 1; }
+  .lead-name  { font-weight: 600; font-size: 13px; margin-bottom: 4px; }
+  .lead-value { color: var(--purple); font-weight: 700; font-size: 13px; font-family: 'DM Mono', monospace; }
+  .lead-tag {
+    display: inline-block;
+    padding: 2px 7px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 600;
+    margin-top: 4px;
+  }
 
-    .header h2 {
-        margin: 0;<br/>
-        font-size: 20px;<br/>
-        color: var(--text);<br/>
-        font-weight: 600;
-    }
+  /* MODAL */
+  .modal-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.35);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--white);
+    border-radius: 16px;
+    padding: 28px;
+    width: 480px;
+    max-width: 95vw;
+    box-shadow: var(--shadow-lg);
+  }
+  .modal h2 { font-size: 17px; font-weight: 700; margin-bottom: 20px; }
+  .form-row  { display: flex; gap: 10px; margin-bottom: 12px; }
+  .form-group { flex: 1; display: flex; flex-direction: column; gap: 5px; }
+  .form-group label { font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; }
+  .form-group input, .form-group select, .form-group textarea {
+    padding: 9px 12px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13.5px;
+    color: var(--text);
+    background: var(--white);
+    outline: none;
+    transition: border 0.15s;
+    width: 100%;
+  }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--primary); }
+  .modal-actions { display: flex; gap: 10px; margin-top: 20px; justify-content: flex-end; }
+  .btn-cancel {
+    padding: 9px 18px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13.5px;
+    font-weight: 500;
+    cursor: pointer;
+  }
 
-    .user-info {
-        display: flex;<br/>
-        align-items: center;<br/>
-        gap: 10px;<br/>
-        color: var(--text-light);<br/>
-        font-size: 14px;
-    }
+  /* VENDAS */
+  .vd-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; flex-wrap:wrap; gap:10px; }
+  .vd-meses-wrap { overflow-x:auto; margin-bottom:12px; padding-bottom:2px; }
+  .vd-meses { display:flex; gap:4px; min-width:max-content; }
+  .vd-mes-tab {
+    padding: 6px 14px; border-radius: 7px;
+    border: 1.5px solid var(--border); background: var(--white);
+    font-family: 'DM Sans', sans-serif; font-size: 12.5px; font-weight: 600;
+    color: var(--text-muted); cursor: pointer; transition: all 0.15s; white-space: nowrap;
+  }
+  .vd-mes-tab:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
+  .vd-mes-tab.active { background: var(--primary); color: white; border-color: var(--primary); }
+  .vd-mes-tab.tem-dados { border-color: var(--green); color: var(--green); }
+  .vd-mes-tab.tem-dados.active { background: var(--green); color: white; border-color: var(--green); }
+  .vd-controls { display:flex; align-items:center; gap:10px; margin-bottom:14px; flex-wrap:wrap; }
+  .vd-search-wrap { position:relative; flex:1; min-width:200px; max-width:360px; }
+  .vd-search-wrap .search-icon { position:absolute; left:11px; top:50%; transform:translateY(-50%); font-size:15px; pointer-events:none; color:var(--text-muted); }
+  .vd-search { width:100%; padding:8px 12px 8px 34px; border:1.5px solid var(--border); border-radius:var(--radius-sm); font-family:'DM Sans',sans-serif; font-size:13px; color:var(--text); background:var(--white); outline:none; transition:border 0.15s,box-shadow 0.15s; }
+  .vd-search:focus { border-color:var(--primary); box-shadow:0 0 0 3px rgba(79,70,229,0.1); }
+  .vd-search::placeholder { color:var(--text-light); }
+  .vd-search-count { font-size:12px; color:var(--text-muted); background:var(--primary-light); color:var(--primary); padding:4px 10px; border-radius:20px; font-weight:600; white-space:nowrap; }
+  .vd-total-mes { font-size:13px; font-weight:700; color:var(--green); background:#f0fdf4; border:1px solid #bbf7d0; border-radius:8px; padding:6px 14px; white-space:nowrap; }
 
-    .user-info img {
-        width: 32px;<br/>
-        height: 32px;<br/>
-        border-radius: 50%;<br/>
-        object-fit: cover;
-    }
+  /* ── ALERTA VENCIMENTO ── */
+  .cell-cliente-vencido {
+    background: #fee2e2 !important;
+    color: #b91c1c !important;
+    font-weight: 700 !important;
+  }
+  .alerta-icon { font-size:13px; margin-right:2px; }
 
-    .content-area {
-        flex-grow: 1;<br/>
-        padding: 20px;<br/>
-        overflow-y: auto; /* Enable scrolling for content */
-    }
+  /* ── GRÁFICO MENSAL ── */
+  .vd-grafico-card {
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: var(--radius); box-shadow: var(--shadow-sm);
+    padding: 20px 24px; margin-bottom: 18px; max-width: 100%;
+  }
+  .vd-grafico-titulo {
+    font-size: 13px; font-weight: 700; color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 16px;
+  }
+  .vd-grafico-barras {
+    display: flex; align-items: flex-end; gap: 8px;
+    height: 120px; padding-bottom: 24px; position: relative;
+  }
+  .vd-barra-wrap {
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; gap: 4px; position: relative;
+    cursor: pointer;
+  }
+  .vd-barra {
+    width: 100%; border-radius: 5px 5px 0 0;
+    background: var(--primary); opacity: 0.7;
+    transition: opacity 0.15s, transform 0.15s;
+    min-height: 4px;
+  }
+  .vd-barra-wrap:hover .vd-barra { opacity: 1; transform: scaleY(1.03); transform-origin: bottom; }
+  .vd-barra-wrap.ativo .vd-barra { opacity: 1; background: var(--green); }
+  .vd-barra-label {
+    font-size: 10px; font-weight: 600; color: var(--text-muted);
+    position: absolute; bottom: -20px; white-space: nowrap;
+  }
+  .vd-barra-valor {
+    font-size: 9px; color: var(--text-muted); font-weight: 600;
+    position: absolute; top: -16px; white-space: nowrap;
+  }
+  .vd-barra-wrap.ativo .vd-barra-label { color: var(--green); }
 
-    .page {
-        display: none; /* Default: hide all pages */<br/>
-        padding: 20px;<br/>
-        background-color: var(--bg);<br/>
-        border-radius: var(--radius);<br/>
-        min-height: calc(100vh - 100px); /* Adjust as needed */<br/>
-        box-shadow: var(--shadow);<br/>
-        margin-bottom: 20px; /* Spacing between pages if they were stacked */
-    }
-    .page.active {
-        display: block; /* Show active page */<br/>
-        background-color: var(--white); /* Page content background */<br/>
-        border: 1px solid var(--border);
-    }
+  /* ── META MENSAL ── */
+  .vd-meta-card {
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: var(--radius); box-shadow: var(--shadow-sm);
+    padding: 16px 24px; margin-bottom: 18px;
+    display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+  }
+  .vd-meta-label { font-size: 13px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; white-space: nowrap; }
+  .vd-meta-input-wrap { display: flex; align-items: center; gap: 8px; }
+  .vd-meta-input {
+    width: 140px; padding: 6px 10px;
+    border: 1.5px solid var(--border); border-radius: 7px;
+    font-family: 'DM Sans', sans-serif; font-size: 13px;
+    color: var(--text); outline: none; transition: border 0.15s;
+  }
+  .vd-meta-input:focus { border-color: var(--primary); }
+  .vd-meta-barra-wrap { flex: 1; min-width: 200px; }
+  .vd-meta-barra-bg {
+    height: 10px; background: #f1f3f8; border-radius: 99px; overflow: hidden;
+  }
+  .vd-meta-barra-fill {
+    height: 100%; border-radius: 99px; transition: width 0.4s ease;
+    background: var(--primary);
+  }
+  .vd-meta-barra-fill.atingida { background: var(--green); }
+  .vd-meta-pct { font-size: 13px; font-weight: 700; color: var(--text); white-space: nowrap; }
+  .vd-meta-pct.atingida { color: var(--green); }
+  .section-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 22px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow-sm);
+    max-width: 700px;
+    margin-left: auto; margin-right: auto;
+  }
+  .section-card h3 { font-size: 15px; font-weight: 700; margin-bottom: 16px; }
+  .input-row { display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap; }
+  .input-row .form-group { min-width: 120px; }
+  .total-bar {
+    background: var(--green);
+    color: white;
+    border-radius: var(--radius-sm);
+    padding: 16px 22px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    max-width: 700px;
+    margin-left: auto; margin-right: auto;
+  }
+  .total-bar .label  { font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; opacity: 0.85; }
+  .total-bar .amount { font-family: 'DM Mono', monospace; font-size: 22px; font-weight: 700; }
+  .sales-list { max-width: 700px; margin: 0 auto; }
+  .date-group { margin-bottom: 20px; }
+  .date-header {
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 13px; font-weight: 600; color: var(--text-muted);
+    margin-bottom: 8px; padding: 0 2px;
+  }
+  .date-header .date-total { font-family: 'DM Mono', monospace; color: var(--green); font-weight: 700; }
+  .sale-item {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 13px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 6px;
+    transition: all 0.15s;
+  }
+  .sale-item:hover { box-shadow: var(--shadow-sm); }
+  .sale-info { flex: 1; }
+  .sale-name { font-size: 13.5px; font-weight: 600; }
+  .sale-meta { display: flex; gap: 8px; margin-top: 3px; flex-wrap: wrap; }
+  .sale-tag {
+    font-size: 10.5px; font-weight: 600; padding: 2px 8px;
+    border-radius: 4px;
+    text-transform: uppercase; letter-spacing: 0.03em;
+  }
+  .tag-venda       { background: var(--blue-light);   color: var(--blue); }
+  .tag-locacao     { background: var(--purple-light);  color: var(--purple); }
+  .tag-manutencao  { background: var(--orange-light);  color: var(--orange); }
+  .tag-pix         { background: var(--green-light);   color: var(--green); }
+  .tag-boleto      { background: #f0f9ff; color: #0369a1; }
+  .tag-cartao      { background: #fdf4ff; color: #9333ea; }
+  .tag-dinheiro    { background: #f0fdf4; color: #15803d; }
+  .tag-transferencia { background: #eff6ff; color: #2563eb; }
+  .sale-value { font-family: 'DM Mono', monospace; font-weight: 700; color: var(--green); font-size: 14px; }
+  .btn-remove {
+    background: none; border: none; color: var(--text-light);
+    cursor: pointer; font-size: 16px; padding: 2px 4px;
+    transition: color 0.1s;
+  }
+  .btn-remove:hover { color: var(--red); }
 
-    .section-card {
-        background-color: var(--white);<br/>
-        border: 1px solid var(--border);<br/>
-        border-radius: var(--radius);<br/>
-        padding: 20px;<br/>
-        margin-bottom: 20px;<br/>
-        box-shadow: var(--shadow-sm);
-    }
+  /* PENDÊNCIAS */
+  .pending-section { max-width: 700px; margin: 0 auto; }
+  .priority-group  { margin-bottom: 24px; }
+  .priority-header {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 12px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.06em; margin-bottom: 10px; padding: 0 2px;
+    color: var(--text-muted);
+  }
+  .pending-item {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 6px;
+    transition: all 0.15s;
+  }
+  .pending-item.done { opacity: 0.55; }
+  .pending-item.done .pend-name { text-decoration: line-through; color: var(--text-muted); }
+  .pending-check {
+    width: 17px; height: 17px; min-width: 17px;
+    border: 2px solid var(--border);
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    margin-top: 2px;
+    transition: all 0.15s;
+  }
+  .pending-check.checked { background: var(--red); border-color: var(--red); }
+  .pending-check.checked::after { content: '✓'; color: white; font-size: 10px; font-weight: 700; }
+  .pend-info { flex: 1; }
+  .pend-name { font-size: 13.5px; font-weight: 500; }
+  .pend-meta { display: flex; gap: 8px; margin-top: 3px; flex-wrap: wrap; align-items: center; }
+  .pend-category {
+    font-size: 10.5px; font-weight: 600; padding: 2px 7px;
+    border-radius: 4px; text-transform: uppercase;
+  }
+  .cat-manutencao  { background: var(--orange-light); color: var(--orange); }
+  .cat-pedido      { background: var(--blue-light);   color: var(--blue); }
+  .cat-orcamento   { background: var(--purple-light);  color: var(--purple); }
+  .cat-financeiro  { background: var(--green-light);   color: var(--green); }
+  .cat-outro       { background: var(--bg);            color: var(--text-muted); }
+  .pend-date { font-size: 11px; color: var(--text-light); font-family: 'DM Mono', monospace; }
 
-    h3 {
-        font-size: 18px;<br/>
-        color: var(--text);<br/>
-        margin-top: 0;<br/>
-        margin-bottom: 15px;<br/>
-        font-weight: 600;
-    }
+  /* MANUTENÇÃO */
+  #page-manutencao {
+    background: var(--bg);
+    min-height: calc(100vh - 58px);
+    padding: 24px;
+  }
+  .mn-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 16px; gap: 12px; flex-wrap: wrap;
+  }
+  .mn-title { font-size: 17px; font-weight: 700; color: var(--text); }
+  .mn-title span { color: var(--primary); }
 
-    .metric-grid {
-        display: grid;<br/>
-        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));<br/>
-        gap: 15px;<br/>
-        margin-bottom: 20px;
-    }
+  /* ── BARRA DE CONTROLES (busca + ordenar) ── */
+  .mn-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+  }
+  .mn-search-wrap {
+    position: relative;
+    flex: 1;
+    min-width: 200px;
+    max-width: 360px;
+  }
+  .mn-search-wrap .search-icon {
+    position: absolute;
+    left: 11px; top: 50%;
+    transform: translateY(-50%);
+    font-size: 15px;
+    pointer-events: none;
+    color: var(--text-muted);
+  }
+  .mn-search {
+    width: 100%;
+    padding: 8px 12px 8px 34px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    color: var(--text);
+    background: var(--white);
+    outline: none;
+    transition: border 0.15s, box-shadow 0.15s;
+  }
+  .mn-search:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(79,70,229,0.1);
+  }
+  .mn-search::placeholder { color: var(--text-light); }
 
-    .metric-card {
-        background-color: var(--bg);<br/>
-        border: 1px solid var(--border);<br/>
-        border-radius: var(--radius);<br/>
-        padding: 15px;<br/>
-        text-align: center;<br/>
-        box-shadow: var(--shadow-sm);
-    }
+  /* Botão ordenar A→Z */
+  .btn-sort {
+    padding: 8px 14px;
+    background: var(--white);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--text-muted);
+    cursor: pointer;
+    display: flex; align-items: center; gap: 6px;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .btn-sort:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
+  .btn-sort.active { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
 
-    .metric-label {
-        font-size: 13px;<br/>
-        color: var(--text-muted);<br/>
-        margin-bottom: 5px;<br/>
-        text-transform: uppercase;<br/>
-        letter-spacing: 0.05em;
-    }
+  /* legenda de cores */
+  .mn-legend {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+  .legend-item {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 11.5px; color: var(--text-muted); font-weight: 500;
+  }
+  .legend-dot {
+    width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0;
+  }
+  .legend-done { background: #bbf7d0; }
+  .legend-none { background: #f1f3f8; border: 1px solid var(--border); }
 
-    .metric-value {
-        font-size: 24px;<br/>
-        font-weight: 700;<br/>
-        color: var(--primary);
-    }
+  .btn-novo-atend {
+    padding: 9px 18px; background: var(--primary); color: white;
+    border: none; border-radius: 8px;
+    font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600;
+    cursor: pointer; white-space: nowrap; transition: all 0.15s;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .btn-novo-atend:hover { background: #4338ca; transform: translateY(-1px); }
 
-    .chart-container {
-        background-color: var(--white);<br/>
-        border: 1px solid var(--border);<br/>
-        border-radius: var(--radius);<br/>
-        padding: 20px;<br/>
-        margin-bottom: 20px;<br/>
-        box-shadow: var(--shadow-sm);
-    }
+  /* PLANILHA */
+  .mn-sheet-wrap {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    overflow-x: auto;
+  }
+  .mn-sheet { width: 100%; border-collapse: collapse; min-width: 900px; }
+  .mn-sheet thead tr {
+    background: #f1f3f8;
+    border-bottom: 2px solid var(--border);
+  }
+  .mn-sheet th {
+    font-size: 10.5px; font-weight: 700; color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: 0.06em;
+    padding: 11px 12px; text-align: left; white-space: nowrap;
+    border-right: 1px solid var(--border); cursor: default;
+  }
+  .mn-sheet th:last-child { border-right: none; }
+  .mn-sheet th.th-num { width: 36px; text-align: center; color: var(--text-light); }
+  .mn-sheet tbody tr { border-bottom: 1px solid #f0f1f5; transition: background 0.1s; }
+  .mn-sheet tbody tr:last-child { border-bottom: none; }
+  .mn-sheet tbody tr:hover { background: #fafbff; }
 
-    .table-responsive {
-        overflow-x: auto;
-    }
+  /* ── DESTAQUE: só nome do condomínio fica verde quando preventiva feita ── */
+  .cell-cliente-ok {
+    background: #bbf7d0 !important;
+    color: #15803d !important;
+    font-weight: 700 !important;
+  }
+  /* ── DESTAQUE: data de relatório em verde ── */
+  .td-relatorio-ok { background: #bbf7d0 !important; }
+  .td-limpeza-ok { background: #bbf7d0 !important; }
+  .td-relatorio-ok .cell-input {
+    color: #15803d !important;
+    font-weight: 700 !important;
+    background: transparent !important;
+  }
+  .td-limpeza-ok .cell-input {
+    color: #15803d !important;
+    font-weight: 700 !important;
+    background: transparent !important;
+  }
+  /* ── MOVER PARA MÊS ── */
+  .mn-move-wrap { position: relative; display: inline-block; }
+  .mn-move-btn {
+    background: none; border: 1px solid var(--border);
+    border-radius: 5px; padding: 3px 7px;
+    font-size: 11px; color: var(--text-muted);
+    cursor: pointer; transition: all 0.15s;
+    font-family: 'DM Sans', sans-serif;
+    white-space: nowrap;
+  }
+  .mn-move-btn:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
+  .mn-move-dropdown {
+    position: absolute; right: 0; top: 110%;
+    background: var(--white); border: 1.5px solid var(--border);
+    border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    z-index: 999; min-width: 140px; overflow: hidden;
+    animation: fadeIn 0.1s ease;
+  }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(-4px); } to { opacity:1; transform:translateY(0); } }
+  .mn-move-dropdown button {
+    display: block; width: 100%; text-align: left;
+    padding: 8px 14px; border: none; background: none;
+    font-family: 'DM Sans', sans-serif; font-size: 13px;
+    color: var(--text); cursor: pointer; transition: background 0.1s;
+  }
+  .mn-move-dropdown button:hover { background: var(--primary-light); color: var(--primary); }
+  .mn-move-dropdown button.active-mes { font-weight: 700; color: var(--primary); }
 
-    table {
-        width: 100%;<br/>
-        border-collapse: collapse;<br/>
-        margin-top: 15px;
-    }
+  /* ── ABAS DOS MESES ── */
+  .mn-meses-wrap {
+    overflow-x: auto;
+    margin-bottom: 14px;
+    padding-bottom: 2px;
+  }
+  .mn-meses {
+    display: flex;
+    gap: 4px;
+    min-width: max-content;
+  }
+  .mn-mes-tab {
+    padding: 6px 14px;
+    border-radius: 7px;
+    border: 1.5px solid var(--border);
+    background: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .mn-mes-tab:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
+  .mn-mes-tab.active { background: var(--primary); color: white; border-color: var(--primary); }
+  .mn-mes-tab.tem-dados { border-color: var(--green); color: var(--green); }
+  .mn-mes-tab.tem-dados.active { background: var(--green); color: white; border-color: var(--green); }
 
-    th, td {
-        padding: 12px 15px;<br/>
-        text-align: left;<br/>
-        border-bottom: 1px solid var(--border);<br/>
-        font-size: 14px;<br/>
-        color: var(--text);
-    }
+  .mn-sheet td {
+    padding: 0; vertical-align: middle;
+    border-right: 1px solid #f0f1f5;
+  }
+  .mn-sheet td:last-child { border-right: none; }
+  .mn-sheet td.td-num {
+    text-align: center; font-size: 11px;
+    color: var(--text-light); font-family: 'DM Mono', monospace;
+    padding: 10px 4px; width: 36px;
+  }
 
-    th {
-        background-color: var(--bg-dark);<br/>
-        font-weight: 600;<br/>
-        color: var(--text-light);<br/>
-        text-transform: uppercase;<br/>
-        font-size: 12px;<br/>
-        letter-spacing: 0.05em;
-    }
+  /* CÉLULAS EDITÁVEIS */
+  .cell-input {
+    width: 100%; border: none; outline: none; background: transparent;
+    font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--text);
+    padding: 10px 12px; transition: background 0.1s;
+    min-width: 0;
+  }
+  .cell-input:focus { background: #eef2ff; }
+  .cell-input::placeholder { color: var(--text-light); font-style: italic; }
+  .cell-input[type="date"] { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--text-muted); }
+  .cell-input[type="date"]:focus { color: var(--text); }
 
-    tr:last-child td {<br/>
-        border-bottom: none;
-    }
+  /* badge de realizado na célula de data preventiva */
+  .mn-sheet tbody tr.row-preventiva-ok .cell-prev-wrap::after {
+    content: '✓';
+    font-size: 11px;
+    color: var(--green);
+    font-weight: 700;
+    margin-left: 4px;
+    pointer-events: none;
+  }
 
-    .status-badge {
-        display: inline-block;<br/>
-        padding: 5px 10px;<br/>
-        border-radius: var(--radius-sm);<br/>
-        font-size: 12px;<br/>
-        font-weight: 500;<br/>
-        text-transform: capitalize;
-    }
+  .mn-sheet tbody tr.row-new { background: #f9feff; }
+  .mn-sheet tbody tr.row-new .cell-input::placeholder { color: #c8cfe0; }
 
-    .status-badge.open { background-color: #dbeafe; color: #2563eb; } /* Blue 100/600 */<br/>
-    .status-badge.closed { background-color: #d1fae5; color: #059669; } /* Green 100/600 */<br/>
-    .status-badge.pending { background-color: #fef3c7; color: #d97706; } /* Yellow 100/600 */<br/>
-    .status-badge.high { background-color: #fee2e2; color: #dc2626; } /* Red 100/600 */<br/>
-    .status-badge.medium { background-color: #fef9c3; color: #ca8a04; } /* Yellow 100/700 */<br/>
-    .status-badge.low { background-color: #dcfce7; color: #16a34a; } /* Green 100/700 */
+  .mn-row-del {
+    width: 28px; height: 28px; border-radius: 5px; border: none;
+    background: none; color: var(--text-light);
+    cursor: pointer; font-size: 15px; display: flex; align-items: center; justify-content: center;
+    margin: 0 4px; transition: all 0.1s; flex-shrink: 0;
+  }
+  .mn-row-del:hover { background: var(--red-light); color: var(--red); }
 
-    .form-group {
-        margin-bottom: 15px;
-    }
+  .mn-add-row {
+    display: flex; align-items: center; gap: 8px;
+    padding: 10px 14px;
+    border-top: 1px dashed var(--border);
+    background: #fafbff;
+    border-radius: 0 0 var(--radius) var(--radius);
+    cursor: pointer; color: var(--primary); font-size: 13px; font-weight: 600;
+    transition: background 0.1s;
+  }
+  .mn-add-row:hover { background: var(--primary-light); }
 
-    .form-group label {
-        display: block;<br/>
-        margin-bottom: 8px;<br/>
-        font-size: 13px;<br/>
-        color: var(--text-light);<br/>
-        font-weight: 500;
-    }
+  /* contador de resultados da busca */
+  .mn-search-count {
+    font-size: 12px;
+    color: var(--text-muted);
+    padding: 4px 8px;
+    background: var(--bg);
+    border-radius: 20px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
 
-    .form-group input[type="text"],
-    .form-group input[type="number"],
-    .form-group input[type="date"],
-    .form-group input[type="month"],
-    .form-group select,
-    .form-group textarea {
-        width: 100%;<br/>
-        padding: 10px 12px;<br/>
-        border: 1px solid var(--border);<br/>
-        border-radius: var(--radius-sm);<br/>
-        font-family: 'DM Sans', sans-serif;<br/>
-        font-size: 14px;<br/>
-        color: var(--text);<br/>
-        background: var(--white);<br/>
-        outline: none;<br/>
-        transition: border 0.15s ease;
-    }
+  /* sem resultados */
+  .mn-no-results {
+    text-align: center;
+    padding: 28px;
+    color: var(--text-light);
+    font-size: 13px;
+  }
 
-    .form-group input:focus,<br/>
-    .form-group select:focus,<br/>
-    .form-group textarea:focus {<br/>
-        border-color: var(--primary);<br/>
-        box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
-    }
+  /* STATUS PILL */
+  .mn-status-pill {
+    display: inline-block; padding: 3px 9px; border-radius: 20px;
+    font-size: 10.5px; font-weight: 700; white-space: nowrap;
+  }
+  .pill-ok    { background: var(--green-light);  color: var(--green); }
+  .pill-pend  { background: var(--orange-light); color: var(--orange); }
+  .pill-empty { background: var(--bg);           color: var(--text-light); }
 
-    .form-group textarea {
-        resize: vertical;<br/>
-        min-height: 60px;
-    }
+  /* UTILS */
+  .empty-state {
+    text-align: center; color: var(--text-light);
+    padding: 32px; font-size: 13px;
+  }
+  .page-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 20px;
+    max-width: 900px; margin-left: auto; margin-right: auto;
+  }
+  .page-header h2 { font-size: 17px; font-weight: 700; }
+  select, input[type="text"], input[type="number"], input[type="date"] {
+    font-family: 'DM Sans', sans-serif;
+  }
 
-    .btn {
-        display: inline-flex;<br/>
-        align-items: center;<br/>
-        justify-content: center;<br/>
-        padding: 10px 20px;<br/>
-        border-radius: var(--radius-sm);<br/>
-        font-size: 14px;<br/>
-        font-weight: 500;<br/>
-        cursor: pointer;<br/>
-        transition: all 0.2s ease;<br/>
-        border: 1px solid transparent;
-    }
+  /* DRAG OVER */
+  .funnel-col.drag-over { border-color: var(--primary); background: var(--primary-light); }
 
-    .btn-primary {
-        background-color: var(--primary);<br/>
-        color: var(--white);
-    }
+  /* ── COMBUSTÍVEL ── */
+  #page-combustivel { background: var(--bg); min-height: calc(100vh - 58px); padding: 24px; }
+  .comb-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; flex-wrap:wrap; gap:12px; }
+  .comb-title { font-size:17px; font-weight:700; color:var(--text); }
+  .comb-title span { color:#f59e0b; }
 
-    .btn-primary:hover {<br/>
-        background-color: var(--primary-dark);
-    }
+  .comb-metrics { display:grid; grid-template-columns:repeat(auto-fill,minmax(170px,1fr)); gap:14px; margin-bottom:24px; }
 
-    .btn-green {
-        background-color: var(--green);<br/>
-        color: var(--white);
-    }
+  .comb-form-card {
+    background:var(--white); border:1px solid var(--border);
+    border-radius:var(--radius); box-shadow:var(--shadow-sm);
+    padding:20px 24px; margin-bottom:20px;
+  }
+  .comb-form-card h3 { font-size:14px; font-weight:700; margin-bottom:16px; color:var(--text); }
+  .comb-form-row { display:flex; gap:10px; flex-wrap:wrap; align-items:flex-end; }
+  .comb-form-group { display:flex; flex-direction:column; gap:5px; min-width:120px; }
+  .comb-form-group label { font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.05em; }
+  .comb-form-group input, .comb-form-group select {
+    padding:8px 10px; border:1.5px solid var(--border); border-radius:var(--radius-sm);
+    font-family:'DM Sans',sans-serif; font-size:13px; color:var(--text);
+    background:var(--white); outline:none; transition:border 0.15s;
+  }
+  .comb-form-group input:focus, .comb-form-group select:focus { border-color:var(--primary); }
 
-    .btn-green:hover {<br/>
-        background-color: #047857; /* Darker green */
-    }
+  .comb-tabs { display:flex; gap:8px; margin-bottom:16px; }
+  .comb-tab {
+    padding:7px 18px; border-radius:8px; border:1.5px solid var(--border);
+    background:var(--white); font-family:'DM Sans',sans-serif; font-size:13px;
+    font-weight:600; color:var(--text-muted); cursor:pointer; transition:all 0.15s;
+    display:flex; align-items:center; gap:6px;
+  }
+  .comb-tab:hover { border-color:var(--orange); color:var(--orange); background:var(--orange-light); }
+  .comb-tab.active { background:var(--orange); color:white; border-color:var(--orange); }
 
-    .btn-red {
-        background-color: var(--red);<br/>
-        color: var(--white);
-    }
+  .comb-table-wrap {
+    background:var(--white); border:1px solid var(--border);
+    border-radius:var(--radius); box-shadow:var(--shadow-sm); overflow-x:auto;
+  }
+  .comb-table { width:100%; border-collapse:collapse; min-width:620px; }
+  .comb-table thead tr { background:#f1f3f8; border-bottom:2px solid var(--border); }
+  .comb-table th {
+    font-size:10.5px; font-weight:700; color:var(--text-muted);
+    text-transform:uppercase; letter-spacing:0.06em;
+    padding:11px 14px; text-align:left; white-space:nowrap;
+    border-right:1px solid var(--border);
+  }
+  .comb-table th:last-child { border-right:none; }
+  .comb-table tbody tr { border-bottom:1px solid #f0f1f5; transition:background 0.1s; }
+  .comb-table tbody tr:last-child { border-bottom:none; }
+  .comb-table tbody tr:hover { background:#fffbf0; }
+  .comb-table td { padding:11px 14px; font-size:13px; color:var(--text); border-right:1px solid #f0f1f5; }
+  .comb-table td:last-child { border-right:none; }
+  .comb-val-litros { font-family:'DM Mono',monospace; color:var(--blue); font-weight:700; }
+  .comb-val-total  { font-family:'DM Mono',monospace; color:var(--green); font-weight:700; }
+  .comb-val-km     { font-family:'DM Mono',monospace; color:var(--purple); font-weight:700; }
+  .comb-del { background:none; border:none; color:var(--text-light); cursor:pointer; font-size:16px; padding:0 4px; transition:color 0.15s; }
+  .comb-del:hover { color:var(--red); }
+  .comb-empty { text-align:center; color:var(--text-light); padding:40px; font-size:13px; }
+  .comb-car-badge {
+    display:inline-block; padding:3px 9px; border-radius:20px;
+    font-size:11px; font-weight:700; white-space:nowrap;
+  }
+  .comb-car-1 { background:#dbeafe; color:#1e40af; }
+  .comb-car-2 { background:#ede9fe; color:#5b21b6; }
 
-    .btn-red:hover {<br/>
-        background-color: #b91c1c; /* Darker red */
-    }
+  /* ── FATURAMENTO ── */
+  .fat-badge-recebido { background:var(--green-light); color:var(--green); font-size:11px; font-weight:700; padding:3px 10px; border-radius:20px; white-space:nowrap; cursor:pointer; }
+  .fat-badge-pendente { background:var(--orange-light); color:var(--orange); font-size:11px; font-weight:700; padding:3px 10px; border-radius:20px; white-space:nowrap; cursor:pointer; }
+  .fat-badge-atrasado { background:var(--red-light); color:var(--red); font-size:11px; font-weight:700; padding:3px 10px; border-radius:20px; white-space:nowrap; cursor:pointer; }
+  .fat-cat-badge { display:inline-block; padding:3px 9px; border-radius:20px; font-size:11px; font-weight:700; white-space:nowrap; }
+  .fat-cat-manutencao { background:var(--orange-light); color:var(--orange); }
+  .fat-cat-locacao    { background:var(--purple-light); color:var(--purple); }
+  .fat-cat-venda      { background:var(--blue-light); color:var(--blue); }
+  .fat-cat-servico    { background:var(--green-light); color:var(--green); }
+  .fat-cat-outro      { background:var(--bg); color:var(--text-muted); border:1px solid var(--border); }
+  .fat-import-item {
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    padding:8px 12px; background:var(--bg); border-radius:8px; margin-bottom:6px;
+    font-size:13px; flex-wrap:wrap;
+  }
+  .fat-import-item.importado { opacity:0.5; text-decoration:line-through; }
 
-    .btn-outline {
-        background-color: transparent;<br/>
-        border-color: var(--border);<br/>
-        color: var(--text-light);
-    }
+  /* ── DASHBOARD ── */
+  .dash-kpi-card {
+    background:var(--white); border:1px solid var(--border);
+    border-radius:var(--radius); padding:18px 20px; box-shadow:var(--shadow-sm);
+    display:flex; flex-direction:column; gap:4px;
+  }
+  .dash-kpi-label { font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.06em; }
+  .dash-kpi-value { font-size:24px; font-weight:700; color:var(--text); }
+  .dash-kpi-sub   { font-size:11.5px; color:var(--text-muted); }
+  .dash-sale-row  { display:flex; align-items:center; justify-content:space-between; gap:8px; padding:6px 0; border-bottom:1px solid #f5f5f5; font-size:13px; }
+  .dash-sale-row:last-child { border-bottom:none; }
+  .dash-pend-item { padding:6px 10px; border-radius:6px; font-size:12px; border-left:3px solid var(--border); background:var(--bg); margin-bottom:4px; }
+  .dash-pend-alta { border-left-color:var(--red); }
+  .dash-pend-media { border-left-color:var(--orange); }
+  .dash-pend-baixa { border-left-color:var(--green); }
 
-    .btn-outline:hover {<br/>
-        background-color: var(--bg-dark);<br/>
-        color: var(--text);
-    }
-
-    .btn-remove {
-        background-color: var(--red);<br/>
-        color: var(--white);<br/>
-        border: none;<br/>
-        border-radius: var(--radius-sm);<br/>
-        padding: 4px 8px;<br/>
-        font-size: 12px;<br/>
-        cursor: pointer;<br/>
-        transition: background-color 0.2s ease;
-    }
-
-    .btn-remove:hover {<br/>
-        background-color: #b91c1c;
-    }
-
-    /* Responsive adjustments */
-    @media (max-width: 768px) {
-        .container {
-            flex-direction: column;
-        }
-        .sidebar {
-            width: 100%;<br/>
-            padding: 15px 0;<br/>
-            box-shadow: var(--shadow-md);<br/>
-            border-right: none;<br/>
-            border-bottom: 1px solid var(--border);
-        }
-        .nav-menu {
-            flex-direction: row;<br/>
-            overflow-x: auto;<br/>
-            padding: 0 10px;<br/>
-            justify-content: flex-start;<br/>
-            gap: 5px;
-        }
-        .nav-tab {
-            flex-shrink: 0;<br/>
-            padding: 8px 12px;<br/>
-            font-size: 14px;
-        }
-        .logo {
-            display: none; /* Hide logo on small screens */
-        }
-        .header {
-            padding: 10px 20px;
-        }
-        .header h2 {
-            font-size: 18px;
-        }
-        .content-area {
-            padding: 15px;
-        }
-        .page {
-            min-height: auto;
-        }
-        .metric-grid {
-            grid-template-columns: 1fr;
-        }
-    }
+  /* badge pago/pendente nas vendas */
+  .sale-pago-badge { font-size:10.5px; font-weight:700; padding:2px 8px; border-radius:20px; cursor:pointer; white-space:nowrap; }
+  .sale-pago-sim { background:var(--green-light); color:var(--green); }
+  .sale-pago-nao { background:var(--orange-light); color:var(--orange); }
 </style>
+</head>
+<body>
 
-    
-        
-            
-                CRM Total
-            
-            
-                📊 Dashboard
-                 funnel Funil de Vendas
-                💰 Vendas
-                ⚠️ Pendências
-                🔧 Manutenção
-                🛠 Atendimentos
-                ⛽ Combustível
-                🧾 Faturamento
-                🎯 Objetivos
-            
-        
-        
-            
-                Dashboard
-                
-                    Olá, Usuário!
-                    
-                
-            
-            
-                
-                
-                    
-                        Visão Geral
-                        
-                            
-                                Vendas Mês
-                                R$ 15.000
-                            
-                            
-                                Novos Leads
-                                120
-                            
-                            
-                                Atendimentos Abertos
-                                5
-                            
-                            
-                                Manutenções Pendentes
-                                2
-                            
-                        
-                    
-                    
-                        Gráfico de Vendas Anual
-                        
-                            
-                        
-                    
-                            <!-- =================== FUNIL DE VENDAS =================== -->
-            <div class="page" id="page-funil">
-                <div class="section-card">
-                    <h3>Funil de Vendas</h3>
-                    <p>Conteúdo do funil de vendas aqui.</p>
-                    <div class="metric-grid">
-                        <div class="metric-card">
-                            <div class="metric-label">Prospects</div>
-                            <div class="metric-value" style="color:var(--blue);">500</div>
-                        </div>
-                        <div class="metric-card">
-                            <div class="metric-label">Qualificados</div>
-                            <div class="metric-value" style="color:var(--purple);">200</div>
-                        </div>
-                        <div class="metric-card">
-                            <div class="metric-label">Propostas</div>
-                            <div class="metric-value" style="color:var(--orange);">80</div>
-                        </div>
-                        <div class="metric-card">
-                            <div class="metric-label">Fechados</div>
-                            <div class="metric-value" style="color:var(--green);">30</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="navbar-brand">
+    <div class="brand-icon">📊</div>
+    CRM Vendas
+  </div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showTab('dashboard')">🏠 Dashboard</button>
+    <button class="nav-tab" onclick="showTab('funil')">🗂 Funil</button>
+    <button class="nav-tab" onclick="showTab('vendas')">💰 Vendas</button>
+    <button class="nav-tab" onclick="showTab('faturamento')">🧾 Faturamento</button>
+    <button class="nav-tab" id="tab-pendencias" onclick="showTab('pendencias')">📋 Pendências <span class="badge" id="badge-count">0</span></button>
+    <button class="nav-tab" onclick="showTab('manutencao')">🔧 Manutenção</button>
+    <button class="nav-tab" onclick="showTab('atendimentos')">🛠 Atendimentos</button>
+    <button class="nav-tab" onclick="showTab('combustivel')">⛽ Combustível</button>
+  </div>
+  <button class="btn-primary" onclick="openModal()">+ Novo Lead</button>
+</nav>
 
-            <!-- =================== VENDAS =================== -->
-            <div class="page" id="page-vendas">
-                <div class="section-card">
-                    <h3>Registro de Vendas</h3>
-                    <p>Conteúdo da página de vendas aqui.</p>
-                    <div class="form-group">
-                        <label for="venda-cliente">Cliente</label>
-                        <input type="text" id="venda-cliente" placeholder="Nome do Cliente">
-                    </div>
-                    <div class="form-group">
-                        <label for="venda-valor">Valor</label>
-                        <input type="number" id="venda-valor" placeholder="Valor da Venda">
-                    </div>
-                    <button class="btn btn-primary">Registrar Venda</button>
-                </div>
-                <div class="section-card">
-                    <h3>Histórico de Vendas</h3>
-                    <div class="table-responsive">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Cliente</th>
-                                    <th>Valor</th>
-                                    <th>Data</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>#001</td>
-                                    <td>Empresa X</td>
-                                    <td>R$ 5.000,00</td>
-                                    <td>2026-03-20</td>
-                                    <td><span class="status-badge closed">Concluída</span></td>
-                                </tr>
-                                <tr>
-                                    <td>#002</td>
-                                    <td>Cliente Y</td>
-                                    <td>R$ 2.500,00</td>
-                                    <td>2026-03-18</td>
-                                    <td><span class="status-badge open">Em Aberto</span></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- =================== PENDÊNCIAS =================== -->
-            <div class="page" id="page-pendencias">
-                <div class="section-card">
-                    <h3>Minhas Pendências</h3>
-                    <p>Conteúdo da página de pendências aqui.</p>
-                    <div class="form-group">
-                        <label for="pendencia-descricao">Descrição</label>
-                        <input type="text" id="pendencia-descricao" placeholder="O que precisa ser feito?">
-                    </div>
-                    <div class="form-group">
-                        <label for="pendencia-prazo">Prazo</label>
-                        <input type="date" id="pendencia-prazo">
-                    </div>
-                    <button class="btn btn-primary">Adicionar Pendência</button>
-                </div>
-                <div class="section-card">
-                    <h3>Lista de Pendências</h3>
-                    <div class="table-responsive">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Descrição</th>
-                                    <th>Prazo</th>
-                                    <th>Prioridade</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Revisar contrato com Fornecedor A</td>
-                                    <td>2026-04-05</td>
-                                    <td><span class="status-badge high">Alta</span></td>
-                                    <td><span class="status-badge open">Pendente</span></td>
-                                </tr>
-                                <tr>
-                                    <td>Agendar reunião com Cliente Z</td>
-                                    <td>2026-04-10</td>
-                                    <td><span class="status-badge medium">Média</span></td>
-                                    <td><span class="status-badge open">Pendente</span></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- =================== MANUTENÇÃO =================== -->
-            <div class="page" id="page-manutencao">
-                <div class="section-card">
-                    <h3>Solicitações de Manutenção</h3>
-                    <p>Conteúdo da página de manutenção aqui.</p>
-                    <div class="form-group">
-                        <label for="manutencao-item">Item</label>
-                        <input type="text" id="manutencao-item" placeholder="Qual item precisa de manutenção?">
-                    </div>
-                    <div class="form-group">
-                        <label for="manutencao-descricao">Descrição do Problema</label>
-                        <textarea id="manutencao-descricao" rows="3" placeholder="Detalhes do problema..."></textarea>
-                    </div>
-                    <button class="btn btn-primary">Registrar Solicitação</button>
-                </div>
-                <div class="section-card">
-                    <h3>Status das Manutenções</h3>
-                    <div class="table-responsive">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Item</th>
-                                    <th>Problema</th>
-                                    <th>Status</th>
-                                    <th>Data Solicitação</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Servidor Principal</td>
-                                    <td>Falha intermitente na rede</td>
-                                    <td><span class="status-badge pending">Em Andamento</span></td>
-                                    <td>2026-03-25</td>
-                                </tr>
-                                <tr>
-                                    <td>Impressora Setor Financeiro</td>
-                                    <td>Atolamento de papel constante</td>
-                                    <td><span class="status-badge open">Aguardando Peça</span></td>
-                                    <td>2026-03-28</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- =================== ATENDIMENTOS =================== -->
-            <div class="page" id="page-atendimentos">
-                <div class="section-card">
-                    <h3>Registro de Atendimentos</h3>
-                    <p>Conteúdo da página de atendimentos aqui.</p>
-                    <div class="form-group">
-                        <label for="atendimento-cliente">Cliente</label>
-                        <input type="text" id="atendimento-cliente" placeholder="Nome do Cliente">
-                    </div>
-                    <div class="form-group">
-                        <label for="atendimento-tipo">Tipo</label>
-                        <select id="atendimento-tipo">
-                            <option value="suporte">Suporte Técnico</option>
-                            <option value="comercial">Comercial</option>
-                            <option value="financeiro">Financeiro</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="atendimento-obs">Observações</label>
-                        <textarea id="atendimento-obs" rows="3" placeholder="Detalhes do atendimento..."></textarea>
-                    </div>
-                    <button class="btn btn-primary">Registrar Atendimento</button>
-                </div>
-                <div class="section-card">
-                    <h3>Histórico de Atendimentos</h3>
-                    <div class="table-responsive">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Cliente</th>
-                                    <th>Tipo</th>
-                                    <th>Data</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Cliente A</td>
-                                    <td>Suporte Técnico</td>
-                                    <td>2026-03-29</td>
-                                    <td><span class="status-badge closed">Resolvido</span></td>
-                                </tr>
-                                <tr>
-                                    <td>Cliente B</td>
-                                    <td>Comercial</td>
-                                    <td>2026-03-28</td>
-                                    <td><span class="status-badge open">Em Aberto</span></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- =================== COMBUSTÍVEL =================== -->
-            <div class="page" id="page-combustivel">
-                <div class="section-card" style="max-width:1000px;margin:0 auto;">
-                    <h3>⛽ Controle de Combustível</h3>
-                    
-                    <!-- Seletores de Carro e Mês/Ano -->
-                    <div style="display:flex;gap:20px;margin-bottom:24px;flex-wrap:wrap;"><br/>
-                        <div class="form-group" style="flex:1;min-width:200px;">
-                            <label>Selecionar Carro</label>
-                            <select id="combustivel-carro" onchange="renderCombustivel()">
-                                <option value="1">Carro 1</option>
-                                <option value="2">Carro 2</option>
-                            </select>
-                        </div>
-                        <div class="form-group" style="flex:1;min-width:200px;">
-                            <label>Selecionar Mês/Ano</label>
-                            <input type="month" id="combustivel-mes-ano" onchange="renderCombustivel()" style="width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:'DM Sans',sans-serif;font-size:13.5px;color:var(--text);background:var(--white);outline:none;transition:border 0.15s;" />
-                        </div>
-                    </div>
-
-                    <!-- Formulário para adicionar registro -->
-                    <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:24px;box-shadow:var(--shadow-sm);"><br/>
-                        <h4 style="font-size:14px;font-weight:700;margin-bottom:16px;color:var(--text);">Adicionar Novo Registro</h4><br/>
-                        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:12px;">
-                            <div class="form-group">
-                                <label>Data</label>
-                                <input type="date" id="combustivel-data" />
-                            </div>
-                            <div class="form-group">
-                                <label>KM Inicial</label>
-                                <input type="number" id="combustivel-km-inicial" min="0" />
-                            </div>
-                            <div class="form-group">
-                                <label>KM Final</label>
-                                <input type="number" id="combustivel-km-final" min="0" />
-                            </div>
-                            <div class="form-group">
-                                <label>Litros Abastecidos</label>
-                                <input type="number" id="combustivel-litros" min="0.01" step="0.01" />
-                            </div>
-                        </div>
-                        <div class="form-group" style="margin-bottom:12px;">
-                            <label>Observação (opcional)</label>
-                            <textarea id="combustivel-obs" rows="2" placeholder="Observações sobre o abastecimento..."></textarea>
-                        </div>
-                        <button class="btn-green" onclick="adicionarCombustivel()">+ Adicionar Registro</button>
-                    </div>
-
-                    <!-- Resumo Mensal -->
-                    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:24px;">
-                        <div class="metric-card">
-                            <div class="metric-label">Total KM Rodados</div>
-                            <div class="metric-value" id="combustivel-total-km" style="color:var(--primary);">0 KM</div>
-                        </div>
-                        <div class="metric-card">
-                            <div class="metric-label">Total Litros</div>
-                            <div class="metric-value" id="combustivel-total-litros" style="color:var(--green);">0 L</div>
-                        </div>
-                        <div class="metric-card">
-                            <div class="metric-label">Consumo Médio (KM/L)</div>
-                            <div class="metric-value" id="combustivel-consumo-medio" style="color:var(--orange);">0 KM/L</div>
-                        </div>
-                        <div class="metric-card">
-                            <div class="metric-label">Abastecimentos</div>
-                            <div class="metric-value" id="combustivel-num-abastecimentos" style="color:var(--purple);">0</div>
-                        </div>
-                    </div>
-
-                    <!-- Tabela de Registros -->
-                    <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow-sm);"><br/>
-                        <table style="width:100%;border-collapse:collapse;"><br/>
-                            <thead style="background:var(--bg);">
-                                <tr>
-                                    <th style="text-align:left;padding:12px;font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;border-bottom:1px solid var(--border);">Data</th><br/>
-                                    <th style="text-align:left;padding:12px;font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;border-bottom:1px solid var(--border);">KM Inicial</th><br/>
-                                    <th style="text-align:left;padding:12px;font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;border-bottom:1px solid var(--border);">KM Final</th><br/>
-                                    <th style="text-align:left;padding:12px;font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;border-bottom:1px solid var(--border);">KM Rodados</th><br/>
-                                    <th style="text-align:left;padding:12px;font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;border-bottom:1px solid var(--border);">Litros</th><br/>
-                                    <th style="text-align:left;padding:12px;font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;border-bottom:1px solid var(--border);">KM/L</th><br/>
-                                    <th style="text-align:left;padding:12px;font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;border-bottom:1px solid var(--border);">Observação</th><br/>
-                                    <th style="text-align:center;padding:12px;font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;border-bottom:1px solid var(--border);">Ações</th>
-                                </tr>
-                            </thead>
-                            <tbody id="combustivel-tabela"></tbody>
-                        </table>
-                        <div id="combustivel-vazio" style="text-align:center;color:var(--text-light);padding:32px;font-size:14px;">
-                            Nenhum registro encontrado para este período.
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- =================== FATURAMENTO =================== -->
-            <div class="page" id="page-faturamento">
-                <div class="section-card">
-                    <h3>Controle de Faturamento</h3>
-                    <p>Conteúdo da página de faturamento aqui.</p>
-                    <div class="form-group">
-                        <label for="faturamento-item">Item Faturado</label>
-                        <input type="text" id="faturamento-item" placeholder="Descrição do item">
-                    </div>
-                    <div class="form-group">
-                        <label for="faturamento-valor">Valor</label>
-                        <input type="number" id="faturamento-valor" placeholder="Valor faturado">
-                    </div>
-                    <button class="btn btn-primary">Registrar Faturamento</button>
-                </div>
-                <div class="section-card">
-                    <h3>Extrato Mensal</h3>
-                    <div class="table-responsive">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Item</th>
-                                    <th>Valor</th>
-                                    <th>Data</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Serviço de Consultoria</td>
-                                    <td>R$ 3.000,00</td>
-                                    <td>2026-03-15</td>
-                                    <td><span class="status-badge closed">Pago</span></td>
-                                </tr>
-                                <tr>
-                                    <td>Licença de Software</td>
-                                    <td>R$ 1.500,00</td>
-                                    <td>2026-03-01</td>
-                                    <td><span class="status-badge open">Aberto</span></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- =================== OBJETIVOS =================== -->
-            <div class="page" id="page-objetivos">
-                <div class="section-card">
-                    <h3>Meus Objetivos</h3>
-                    <p>Conteúdo da página de objetivos aqui.</p>
-                    <div class="form-group">
-                        <label for="objetivo-meta">Meta</label>
-                        <input type="text" id="objetivo-meta" placeholder="Qual seu objetivo?">
-                    </div>
-                    <div class="form-group">
-                        <label for="objetivo-prazo">Prazo</label>
-                        <input type="date" id="objetivo-prazo">
-                    </div>
-                    <button class="btn btn-primary">Definir Objetivo</button>
-                </div>
-                <div class="section-card">
-                    <h3>Progresso dos Objetivos</h3>
-                    <div class="table-responsive">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Objetivo</th>
-                                    <th>Prazo</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Aumentar vendas em 10%</td>
-                                    <td>2026-06-30</td>
-                                    <td><span class="status-badge pending">Em Progresso</span></td>
-                                </tr>
-                                <tr>
-                                    <td>Reduzir custos operacionais</td>
-                                    <td>2026-12-31</td>
-                                    <td><span class="status-badge open">Não Iniciado</span></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-        </div>
+<!-- =================== DASHBOARD =================== -->
+<div class="page active" id="page-dashboard">
+  <div style="padding:24px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px">
+      <div>
+        <div style="font-size:20px;font-weight:700;color:var(--text)">Olá! 👋 Bem-vindo ao CRM</div>
+        <div style="font-size:13px;color:var(--text-muted);margin-top:4px" id="dash-subtitle">Resumo geral do negócio</div>
+      </div>
+      <button class="btn-primary" onclick="showTab('faturamento')" style="font-size:13px">🧾 Lançar Faturamento</button>
     </div>
+
+    <!-- KPIs principais -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;margin-bottom:28px" id="dash-kpis"></div>
+
+    <!-- Linha 2: gráfico faturamento + pendências abertas -->
+    <div style="display:grid;grid-template-columns:1fr 340px;gap:16px;margin-bottom:20px;flex-wrap:wrap" id="dash-row2">
+      <div class="metric-card" style="padding:20px 24px">
+        <div class="metric-label" style="margin-bottom:16px">📊 Faturamento por mês (ano)</div>
+        <div id="dash-grafico" style="display:flex;align-items:flex-end;gap:6px;height:110px;padding-bottom:22px;position:relative"></div>
+      </div>
+      <div class="metric-card" style="padding:20px 24px;overflow:hidden">
+        <div class="metric-label" style="margin-bottom:14px">📋 Pendências abertas</div>
+        <div id="dash-pend" style="display:flex;flex-direction:column;gap:6px;max-height:200px;overflow-y:auto"></div>
+      </div>
+    </div>
+
+    <!-- Linha 3: últimas vendas + atendimentos recentes -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+      <div class="metric-card" style="padding:20px 24px">
+        <div class="metric-label" style="margin-bottom:14px">💰 Últimas vendas</div>
+        <div id="dash-vendas"></div>
+      </div>
+      <div class="metric-card" style="padding:20px 24px">
+        <div class="metric-label" style="margin-bottom:14px">🛠 Atendimentos recentes</div>
+        <div id="dash-atend"></div>
+      </div>
+    </div>
+  </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- =================== FUNIL =================== -->
+<div class="page" id="page-funil">
+  <div class="metrics-grid">
+    <div class="metric-card">
+      <div class="metric-label">Total de Leads</div>
+      <div class="metric-value" id="m-total">0</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Fechados</div>
+      <div class="metric-value green" id="m-fechados">0</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Em Andamento</div>
+      <div class="metric-value orange" id="m-andamento">0</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Receita Fechada</div>
+      <div class="metric-value purple" id="m-receita">R$ 0,00</div>
+    </div>
+  </div>
+  <div class="funnel-board" id="funnel-board"></div>
+</div>
+
+<!-- =================== VENDAS =================== -->
+<div class="page" id="page-vendas">
+  <div class="section-card">
+    <h3>Registrar Venda</h3>
+    <div class="input-row">
+      <div class="form-group" style="flex:2">
+        <label>Descrição</label>
+        <input type="text" id="sale-desc" placeholder="Descrição da venda...">
+      </div>
+      <div class="form-group">
+        <label>Valor (R$)</label>
+        <input type="number" id="sale-value" placeholder="0,00" min="0" step="0.01">
+      </div>
+      <div class="form-group">
+        <label>Tipo</label>
+        <select id="sale-type">
+          <option value="Venda">Venda</option>
+          <option value="Locação">Locação</option>
+          <option value="Manutenção">Manutenção</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Pagamento</label>
+        <select id="sale-payment">
+          <option value="Pix">Pix</option>
+          <option value="Boleto">Boleto</option>
+          <option value="Cartão">Cartão</option>
+          <option value="Dinheiro">Dinheiro</option>
+          <option value="Transferência">Transferência</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Data</label>
+        <input type="date" id="sale-date">
+      </div>
+      <div class="form-group">
+        <label>Pago?</label>
+        <select id="sale-pago">
+          <option value="sim">✅ Sim</option>
+          <option value="nao">⏳ Pendente</option>
+        </select>
+      </div>
+      <button class="btn-green" onclick="addSale()">+ Add</button>
+    </div>
+  </div>
+
+  <!-- ABAS DOS MESES -->
+  <div class="vd-meses-wrap">
+    <div class="vd-meses" id="vd-meses"></div>
+  </div>
+
+  <!-- BUSCA + TOTAL DO MÊS -->
+  <div class="vd-controls">
+    <div class="vd-search-wrap">
+      <span class="search-icon">🔍</span>
+      <input class="vd-search" id="vd-search-input" type="text"
+        placeholder="Buscar descrição..." oninput="renderSales()">
+    </div>
+    <span class="vd-search-count" id="vd-search-count" style="display:none"></span>
+    <span class="vd-total-mes" id="vd-total-mes">Total: R$ 0,00</span>
+  </div>
+
+  <!-- GRÁFICO MENSAL -->
+  <div class="vd-grafico-card">
+    <div class="vd-grafico-titulo">📊 Faturamento por mês</div>
+    <div class="vd-grafico-barras" id="vd-grafico"></div>
+  </div>
+
+  <!-- META MENSAL -->
+  <div class="vd-meta-card">
+    <span class="vd-meta-label">🎯 Meta do mês</span>
+    <div class="vd-meta-input-wrap">
+      <span style="font-size:13px;color:var(--text-muted)">R$</span>
+      <input class="vd-meta-input" id="vd-meta-input" type="number" min="0" step="100"
+        placeholder="Ex: 20000" oninput="salvarMeta()" onchange="salvarMeta()">
+    </div>
+    <div class="vd-meta-barra-wrap">
+      <div class="vd-meta-barra-bg">
+        <div class="vd-meta-barra-fill" id="vd-meta-fill" style="width:0%"></div>
+      </div>
+    </div>
+    <span class="vd-meta-pct" id="vd-meta-pct">—</span>
+  </div>
+
+  <div class="total-bar">
+    <span class="label">Total Geral (todos os meses)</span>
+    <span class="amount" id="sales-total">R$ 0,00</span>
+  </div>
+  <div class="sales-list" id="sales-list"></div>
+</div>
+
+<!-- =================== PENDÊNCIAS =================== -->
+<div class="page" id="page-pendencias">
+  <div class="pending-section">
+    <div class="section-card">
+      <h3>Nova Pendência</h3>
+      <div class="input-row">
+        <div class="form-group" style="flex:2">
+          <label>Descrição</label>
+          <input type="text" id="pend-desc" placeholder="Descreva a pendência...">
+        </div>
+        <div class="form-group">
+          <label>Categoria</label>
+          <select id="pend-category">
+            <option value="Manutenção">Manutenção</option>
+            <option value="Pedido">Pedido</option>
+            <option value="Orçamento">Orçamento</option>
+            <option value="Financeiro">Financeiro</option>
+            <option value="Outro">Outro</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Prioridade</label>
+          <select id="pend-priority">
+            <option value="Alta">Alta</option>
+            <option value="Média">Média</option>
+            <option value="Baixa">Baixa</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Data</label>
+          <input type="date" id="pend-date">
+        </div>
+        <button class="btn-primary" onclick="addPending()">+ Add</button>
+      </div>
+    </div>
+    <div id="pending-list"></div>
+  </div>
+</div>
+
+<!-- =================== MANUTENÇÃO =================== -->
+<div class="page" id="page-manutencao">
+  <div class="mn-header">
+    <div class="mn-title">🔧 Manutenção — <span id="mn-mes-titulo">Janeiro</span></div>
+    <button class="btn-novo-atend" onclick="addManutRow()">＋ Nova Linha</button>
+  </div>
+
+  <!-- ABAS DOS MESES -->
+  <div class="mn-meses-wrap">
+    <div class="mn-meses" id="mn-meses"></div>
+  </div>
+
+  <!-- CONTROLES: busca + ordenar -->
+  <div class="mn-controls">
+    <div class="mn-search-wrap">
+      <span class="search-icon">🔍</span>
+      <input class="mn-search" id="mn-search-input" type="text"
+        placeholder="Buscar condomínio ou cliente..." oninput="renderManut()">
+    </div>
+    <button class="btn-sort" id="btn-sort-az" onclick="toggleSort()" title="Ordenar A→Z / Z→A">
+      <span id="sort-icon">A→Z</span> Ordenar
+    </button>
+    <span class="mn-search-count" id="mn-search-count" style="display:none"></span>
+  </div>
+
+  <!-- LEGENDA -->
+  <div class="mn-legend">
+    <div class="legend-item"><div class="legend-dot" style="background:#bbf7d0;border:1px solid #86efac"></div> Nome verde = preventiva feita</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#bbf7d0;border:1px solid #86efac"></div> Relatório verde = entregue</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#bbf7d0;border:1px solid #86efac"></div> Limpeza verde = realizada</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#bbf7d0;border:1px solid #86efac"></div> Proposta concluída</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#fde047;"></div> Observação preenchida</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#fee2e2;border:1px solid #fca5a5"></div> ⚠️ +30 dias sem preventiva</div>
+  </div>
+
+  <div class="mn-sheet-wrap">
+    <table class="mn-sheet">
+      <thead>
+        <tr>
+          <th class="th-num">#</th>
+          <th style="min-width:180px">Condomínio / Cliente</th>
+          <th style="min-width:130px">Dt. Preventiva</th>
+          <th style="min-width:130px">Dt. Corretiva</th>
+          <th style="min-width:200px">Observação</th>
+          <th style="min-width:130px">Nº Proposta</th>
+          <th style="min-width:140px">Dt. Envio Relatório</th>
+          <th style="min-width:130px">🧹 Limpeza Esteiras</th>
+          <th style="min-width:180px">📦 Pedidos</th>
+          <th style="width:36px"></th>
+        </tr>
+      </thead>
+      <tbody id="manut-list"></tbody>
+    </table>
+    <div class="mn-add-row" onclick="addManutRow()">
+      <span style="font-size:16px;line-height:1">＋</span> Adicionar linha
+    </div>
+  </div>
+</div>
+
+<!-- =================== ATENDIMENTOS =================== -->
+<div class="page" id="page-atendimentos">
+  <div class="at-header">
+    <div class="at-title">🛠 Atendimentos — <span id="at-count">0 registros</span></div>
+    <button class="btn-novo-atend" onclick="abrirAtModal()">＋ Novo Atendimento</button>
+  </div>
+
+  <!-- FILTROS + BUSCA -->
+  <div class="at-filters">
+    <div class="at-search-wrap">
+      <span class="search-icon">🔍</span>
+      <input class="at-search" id="at-search" type="text" placeholder="Buscar cliente, equipamento..." oninput="renderAt()">
+    </div>
+    <button class="at-filter-btn active" onclick="setAtFilter('urgencia','todas')">Todas urgências</button>
+    <button class="at-filter-btn urg-alta"  onclick="setAtFilter('urgencia','Alta')">🔴 Alta</button>
+    <button class="at-filter-btn urg-media" onclick="setAtFilter('urgencia','Média')">🟡 Média</button>
+    <button class="at-filter-btn urg-baixa" onclick="setAtFilter('urgencia','Baixa')">🟢 Baixa</button>
+    <button class="at-filter-btn active" onclick="setAtFilter('status','todos')" style="margin-left:8px">Todos status</button>
+    <button class="at-filter-btn" onclick="setAtFilter('status','Solicitação')">📥 Solicitação</button>
+    <button class="at-filter-btn" onclick="setAtFilter('status','Em andamento')">🔧 Em andamento</button>
+    <button class="at-filter-btn" onclick="setAtFilter('status','Concluído')">✅ Concluído</button>
+  </div>
+
+  <div class="at-grid" id="at-grid"></div>
+</div>
+
+<!-- =================== COMBUSTÍVEL =================== -->
+<div class="page" id="page-combustivel">
+
+  <div class="comb-header">
+    <div class="comb-title">⛽ Combustível — <span id="comb-count">0 registros</span></div>
+  </div>
+
+  <!-- MÉTRICAS -->
+  <div class="comb-metrics" id="comb-metrics"></div>
+
+  <!-- FORMULÁRIO -->
+  <div class="comb-form-card">
+    <h3>Registrar Abastecimento</h3>
+    <div class="comb-form-row">
+      <div class="comb-form-group" style="min-width:140px">
+        <label>Carro</label>
+        <select id="comb-f-carro">
+          <option value="Carro 1">🚗 Carro 1</option>
+          <option value="Carro 2">🚙 Carro 2</option>
+        </select>
+      </div>
+      <div class="comb-form-group">
+        <label>Data</label>
+        <input type="date" id="comb-f-data">
+      </div>
+      <div class="comb-form-group">
+        <label>KM atual</label>
+        <input type="number" id="comb-f-km" placeholder="Ex: 45230" min="0" step="1">
+      </div>
+      <div class="comb-form-group">
+        <label>Litros</label>
+        <input type="number" id="comb-f-litros" placeholder="Ex: 40,00" min="0" step="0.01" oninput="calcCombTotal()">
+      </div>
+      <div class="comb-form-group">
+        <label>Preço por litro (R$)</label>
+        <input type="number" id="comb-f-preco" placeholder="Ex: 5,89" min="0" step="0.01" oninput="calcCombTotal()">
+      </div>
+      <div class="comb-form-group">
+        <label>Total (R$)</label>
+        <input type="number" id="comb-f-total" placeholder="Calculado auto" min="0" step="0.01">
+      </div>
+      <button class="btn-primary" style="margin-left:4px;align-self:flex-end" onclick="addCombustivel()">+ Registrar</button>
+    </div>
+  </div>
+
+  <!-- ABAS DOS CARROS -->
+  <div class="comb-tabs">
+    <button class="comb-tab active" id="comb-tab-todos" onclick="setCombFiltro('todos')">🚘 Todos os carros</button>
+    <button class="comb-tab" id="comb-tab-1" onclick="setCombFiltro('Carro 1')">🚗 Carro 1</button>
+    <button class="comb-tab" id="comb-tab-2" onclick="setCombFiltro('Carro 2')">🚙 Carro 2</button>
+  </div>
+
+  <!-- TABELA -->
+  <div class="comb-table-wrap">
+    <table class="comb-table">
+      <thead>
+        <tr>
+          <th>Carro</th>
+          <th>Data</th>
+          <th>KM</th>
+          <th>Litros</th>
+          <th>Preço/L</th>
+          <th>Total</th>
+          <th style="width:40px"></th>
+        </tr>
+      </thead>
+      <tbody id="comb-tbody"></tbody>
+    </table>
+    <div id="comb-empty" class="comb-empty" style="display:none">Nenhum abastecimento registrado ainda.</div>
+  </div>
+
+</div>
+
+<!-- =================== FATURAMENTO =================== -->
+<div class="page" id="page-faturamento">
+  <div style="padding:24px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px">
+      <div style="font-size:17px;font-weight:700;color:var(--text)">🧾 Faturamento — <span id="fat-count" style="color:var(--green)">0 lançamentos</span></div>
+    </div>
+
+    <!-- métricas -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:14px;margin-bottom:24px" id="fat-metrics"></div>
+
+    <!-- formulário manual -->
+    <div class="comb-form-card">
+      <h3>➕ Lançar Faturamento</h3>
+      <div class="comb-form-row">
+        <div class="comb-form-group" style="flex:2;min-width:200px">
+          <label>Descrição / Cliente</label>
+          <input type="text" id="fat-f-desc" placeholder="Ex: Condomínio Central — Manutenção">
+        </div>
+        <div class="comb-form-group">
+          <label>Valor (R$)</label>
+          <input type="number" id="fat-f-valor" placeholder="0,00" min="0" step="0.01">
+        </div>
+        <div class="comb-form-group">
+          <label>Data</label>
+          <input type="date" id="fat-f-data">
+        </div>
+        <div class="comb-form-group">
+          <label>Categoria</label>
+          <select id="fat-f-cat">
+            <option value="Manutenção">🔧 Manutenção</option>
+            <option value="Locação">📦 Locação</option>
+            <option value="Venda">💰 Venda</option>
+            <option value="Serviço">🛠 Serviço</option>
+            <option value="Outro">📌 Outro</option>
+          </select>
+        </div>
+        <div class="comb-form-group">
+          <label>Status</label>
+          <select id="fat-f-status">
+            <option value="recebido">✅ Recebido</option>
+            <option value="pendente">⏳ Pendente</option>
+            <option value="atrasado">🔴 Atrasado</option>
+          </select>
+        </div>
+        <button class="btn-primary" style="align-self:flex-end" onclick="addFaturamento()">+ Lançar</button>
+      </div>
+    </div>
+
+    <!-- importar da manutenção -->
+    <div class="comb-form-card" style="margin-bottom:20px">
+      <h3 style="margin-bottom:12px">🔗 Importar da Manutenção</h3>
+      <p style="font-size:13px;color:var(--text-muted);margin-bottom:14px">Selecione o mês e importe os clientes com proposta preenchida na aba Manutenção.</p>
+      <div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap">
+        <div class="comb-form-group">
+          <label>Mês da Manutenção</label>
+          <select id="fat-import-mes"></select>
+        </div>
+        <button class="btn-primary" style="background:var(--green);align-self:flex-end" onclick="importarDaManutencao()">⬇️ Importar clientes</button>
+      </div>
+      <div id="fat-import-preview" style="margin-top:14px"></div>
+    </div>
+
+    <!-- abas dos meses -->
+    <div class="comb-tabs" style="flex-wrap:wrap" id="fat-meses-tabs"></div>
+
+    <!-- tabela -->
+    <div class="comb-table-wrap" style="margin-top:0">
+      <table class="comb-table">
+        <thead>
+          <tr>
+            <th>Descrição</th>
+            <th>Categoria</th>
+            <th>Data</th>
+            <th>Valor</th>
+            <th>Status</th>
+            <th style="width:40px"></th>
+          </tr>
+        </thead>
+        <tbody id="fat-tbody"></tbody>
+      </table>
+      <div id="fat-empty" class="comb-empty" style="display:none">Nenhum lançamento neste mês.</div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL ATENDIMENTO -->
+<div class="at-modal-overlay hidden" id="at-modal-overlay" onclick="fecharAtModal(event)">
+  <div class="at-modal">
+    <h3 id="at-modal-titulo">Novo Atendimento</h3>
+    <div class="at-form-row">
+      <div class="at-form-group">
+        <label>Condomínio / Cliente *</label>
+        <input id="at-f-cliente" placeholder="Nome do condomínio..." oninput="verificarCliente()">
+      </div>
+      <div class="at-form-group">
+        <label>Equipamento</label>
+        <input id="at-f-equip" placeholder="Ex: Esteira #2">
+      </div>
+    </div>
+    <div class="at-form-group">
+      <label>Problema / Assunto *</label>
+      <textarea id="at-f-assunto" placeholder="Descreva o problema..."></textarea>
+    </div>
+    <div class="at-form-group">
+      <label>Observação interna</label>
+      <textarea id="at-f-obs" placeholder="Observações adicionais..." rows="2"></textarea>
+    </div>
+    <div class="at-form-row">
+      <div class="at-form-group">
+        <label>Urgência</label>
+        <select id="at-f-urgencia">
+          <option value="Média">🟡 Média</option>
+          <option value="Alta">🔴 Alta</option>
+          <option value="Baixa">🟢 Baixa</option>
+        </select>
+      </div>
+      <div class="at-form-group">
+        <label>Status</label>
+        <select id="at-f-status">
+          <option value="Solicitação">📥 Solicitação</option>
+          <option value="Em andamento">🔧 Em andamento</option>
+          <option value="Em orçamento">📋 Em orçamento</option>
+          <option value="Pedido de peça">📦 Pedido de peça</option>
+          <option value="Concluído">✅ Concluído</option>
+        </select>
+      </div>
+    </div>
+    <div class="at-sync-info" id="at-sync-info">
+      ✅ Condomínio encontrado na aba Manutenção — observação será sincronizada automaticamente!
+    </div>
+    <div class="at-modal-footer">
+      <button class="btn-secondary" onclick="fecharAtModal()">Cancelar</button>
+      <button class="btn-primary" onclick="salvarAt()">Salvar atendimento</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL EDIÇÃO DE VENDA -->
+<div class="sale-edit-modal-overlay hidden" id="sale-edit-overlay" onclick="fecharEditSale(event)">
+  <div class="sale-edit-modal">
+    <h3>✏️ Editar Venda</h3>
+    <div class="sale-edit-group">
+      <label>Descrição</label>
+      <input id="se-desc" type="text" placeholder="Descrição da venda...">
+    </div>
+    <div class="sale-edit-row">
+      <div class="sale-edit-group">
+        <label>Valor (R$)</label>
+        <input id="se-value" type="number" min="0" step="0.01">
+      </div>
+      <div class="sale-edit-group">
+        <label>Data</label>
+        <input id="se-date" type="date">
+      </div>
+    </div>
+    <div class="sale-edit-row">
+      <div class="sale-edit-group">
+        <label>Tipo</label>
+        <select id="se-type">
+          <option value="Venda">Venda</option>
+          <option value="Locação">Locação</option>
+          <option value="Manutenção">Manutenção</option>
+        </select>
+      </div>
+      <div class="sale-edit-group">
+        <label>Pagamento</label>
+        <select id="se-payment">
+          <option value="Pix">Pix</option>
+          <option value="Boleto">Boleto</option>
+          <option value="Cartão">Cartão</option>
+          <option value="Dinheiro">Dinheiro</option>
+          <option value="Transferência">Transferência</option>
+        </select>
+      </div>
+    </div>
+    <div class="sale-edit-group">
+      <label>Status de Pagamento</label>
+      <select id="se-pago">
+        <option value="sim">✅ Pago</option>
+        <option value="nao">⏳ Pendente</option>
+      </select>
+    </div>
+    <div class="sale-edit-footer">
+      <button class="btn-secondary" onclick="fecharEditSale()">Cancelar</button>
+      <button class="btn-primary" onclick="confirmarEditSale()">Salvar alterações</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL LEAD -->
+<div class="modal-overlay" id="modal-lead">
+  <div class="modal" style="width:520px">
+    <h2 id="modal-lead-title">Novo Lead</h2>
+    <input type="hidden" id="l-edit-id">
+    <div class="form-row">
+      <div class="form-group" style="flex:2">
+        <label>Nome / Condomínio</label>
+        <input type="text" id="l-name" placeholder="Nome do lead">
+      </div>
+      <div class="form-group">
+        <label>Valor (R$)</label>
+        <input type="number" id="l-value" placeholder="0,00" min="0" step="0.01">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Etapa</label>
+        <select id="l-stage">
+          <option value="Prospecção">Prospecção</option>
+          <option value="Em Contato">Em Contato</option>
+          <option value="Proposta">Proposta</option>
+          <option value="Negociação">Negociação</option>
+          <option value="Fechado">Fechado</option>
+          <option value="Perdido">Perdido</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Tipo</label>
+        <select id="l-type">
+          <option value="Venda">Venda</option>
+          <option value="Locação">Locação</option>
+          <option value="Manutenção">Manutenção</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Data de Início</label>
+        <input type="date" id="l-inicio">
+      </div>
+      <div class="form-group">
+        <label>Próximo Follow-up</label>
+        <input type="date" id="l-followup">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Observações / Negociação</label>
+        <textarea id="l-obs" rows="3" placeholder="Detalhes da negociação, últimas atualizações..." style="resize:vertical"></textarea>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal()">Cancelar</button>
+      <button class="btn-primary" id="modal-lead-btn" onclick="saveLead()">Adicionar Lead</button>
+    </div>
+  </div>
+</div>
+
 <script>
-    // ===== GLOBAL STATE =====
-    let currentTab = 'dashboard';
-    let tabs = ['dashboard','funil','vendas','pendencias','manutencao','atendimentos','combustivel','faturamento','objetivos'];
-
-    // ===== UTILS =====
-    function getElement(id) {
-        return document.getElementById(id);
+// ===== STATE =====
+let leads    = JSON.parse(localStorage.getItem('crm_leads')    || '[]');
+// sales agora é objeto indexado por mês: { 0: [...], 1: [...], ... }
+let sales = (function() {
+  const raw = localStorage.getItem('crm_sales');
+  if (!raw) return {};
+  try {
+    const parsed = JSON.parse(raw);
+    // migração: se era array antigo, move tudo para o mês da data de cada venda
+    if (Array.isArray(parsed)) {
+      const obj = {};
+      parsed.forEach(s => {
+        const mes = s.date ? parseInt(s.date.split('-')[1]) - 1 : new Date().getMonth();
+        if (!obj[mes]) obj[mes] = [];
+        obj[mes].push(s);
+      });
+      return obj;
     }
+    return parsed;
+  } catch(e) { return {}; }
+})();
+let pendings = JSON.parse(localStorage.getItem('crm_pendings') || '[]');
+// manuts agora é objeto indexado por mês: { 0: [...], 1: [...], ... }
+let manuts = (function() {
+  const raw = localStorage.getItem('crm_manuts');
+  if (!raw) return {};
+  try {
+    const parsed = JSON.parse(raw);
+    // migração: se era array antigo, move tudo para mês 0
+    if (Array.isArray(parsed)) return parsed.length ? { 0: parsed } : {};
+    return parsed;
+  } catch(e) { return {}; }
+})();
 
-    function saveState(key, data) {
-        localStorage.setItem(key, JSON.stringify(data));
+// estado de ordenação da aba manutenção
+let manutSortAZ = false; // false = ordem de inserção, true = A→Z
+
+const STAGES = [
+  { id: 'Prospecção',  dot: 'dot-gray' },
+  { id: 'Em Contato',  dot: 'dot-blue' },
+  { id: 'Proposta',    dot: 'dot-orange' },
+  { id: 'Negociação',  dot: 'dot-purple' },
+  { id: 'Fechado',     dot: 'dot-green', label: 'Fechado ✓' },
+  { id: 'Perdido',     dot: 'dot-red',   label: 'Perdido ✗' },
+];
+
+function save() {
+  localStorage.setItem('crm_leads',    JSON.stringify(leads));
+  localStorage.setItem('crm_sales',    JSON.stringify(sales));
+  localStorage.setItem('crm_pendings', JSON.stringify(pendings));
+  localStorage.setItem('crm_manuts',   JSON.stringify(manuts));
+}
+
+function fmt(v) {
+  return 'R$ ' + Number(v).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+function fmtDate(d) {
+  if (!d) return '—';
+  const [y,m,day] = d.split('-');
+  return `${day}/${m}/${y}`;
+}
+
+// ===== TABS =====
+function showTab(tab) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('page-' + tab).classList.add('active');
+  const tabs = ['dashboard','funil','vendas','faturamento','pendencias','manutencao','atendimentos','combustivel'];
+  const idx = tabs.indexOf(tab);
+  if (idx !== -1) document.querySelectorAll('.nav-tab')[idx].classList.add('active');
+  if (tab === 'dashboard')    renderDashboard();
+  if (tab === 'funil')        renderFunil();
+  if (tab === 'vendas')       { buildVdTabs(); renderSales(); }
+  if (tab === 'faturamento')  { buildFatTabs(); renderFaturamento(); }
+  if (tab === 'pendencias')   renderPendings();
+  if (tab === 'manutencao')   { buildMesesTabs(); renderManut(); }
+  if (tab === 'atendimentos') renderAt();
+  if (tab === 'combustivel')  renderCombustivel();
+}
+
+// ===== FUNIL =====
+let dragLeadId = null;
+
+function renderFunil() {
+  const board = document.getElementById('funnel-board');
+  board.innerHTML = '';
+  const fechados  = leads.filter(l => l.stage === 'Fechado');
+  const andamento = leads.filter(l => !['Fechado','Perdido'].includes(l.stage));
+  const receita   = fechados.reduce((s, l) => s + Number(l.value || 0), 0);
+  document.getElementById('m-total').textContent    = leads.length;
+  document.getElementById('m-fechados').textContent  = fechados.length;
+  document.getElementById('m-andamento').textContent = andamento.length;
+  document.getElementById('m-receita').textContent   = fmt(receita);
+
+  STAGES.forEach(stage => {
+    const col = document.createElement('div');
+    col.className = 'funnel-col';
+    col.dataset.stage = stage.id;
+    const stageLeads = leads.filter(l => l.stage === stage.id);
+    col.innerHTML = `
+      <div class="funnel-header">
+        <span class="dot ${stage.dot}"></span>
+        <span>${stage.label || stage.id}</span>
+        <span class="col-count">${stageLeads.length}</span>
+      </div>`;
+    if (stageLeads.length === 0) {
+      col.innerHTML += `<div class="funnel-empty">Arraste um lead aqui</div>`;
+    } else {
+      stageLeads.forEach(lead => {
+        const card = document.createElement('div');
+        card.className = 'lead-card';
+        card.draggable = true;
+        card.dataset.id = lead.id;
+        const tagClass   = lead.type === 'Locação' ? 'tag-locacao' : lead.type === 'Manutenção' ? 'tag-manutencao' : 'tag-venda';
+        const followupStr = lead.followup ? `<div style="font-size:11px;color:var(--blue);margin-top:4px;font-weight:600">📅 Follow-up: ${fmtDate(lead.followup)}</div>` : '';
+        const obsStr      = lead.obs ? `<div style="font-size:11px;color:var(--text-muted);margin-top:3px;font-style:italic;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${lead.obs}">${lead.obs}</div>` : '';
+        card.innerHTML = `
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:4px">
+            <div class="lead-name" style="flex:1">${lead.name}</div>
+            <button class="btn-edit-lead" onclick="editLead('${lead.id}')" title="Editar">✏️</button>
+            <button class="btn-remove"    onclick="removeLead('${lead.id}')">×</button>
+          </div>
+          <div class="lead-value">${fmt(lead.value || 0)}</div>
+          <span class="lead-tag ${tagClass}">${lead.type || 'Venda'}</span>
+          ${followupStr}${obsStr}`;
+        card.addEventListener('dragstart', () => { dragLeadId = lead.id; card.classList.add('dragging'); });
+        card.addEventListener('dragend',   () => card.classList.remove('dragging'));
+        col.appendChild(card);
+      });
     }
-
-    function loadState(key, defaultValue) {
-        const data = localStorage.getItem(key);
-        return data ? JSON.parse(data) : defaultValue;
-    }
-
-    // ===== TAB NAVIGATION =====
-    function showTab(tabName) {
-        // Hide all pages
-        document.querySelectorAll('.page').forEach(page => {
-            page.classList.remove('active');
-        });
-
-        // Deactivate all nav buttons
-        document.querySelectorAll('.nav-tab').forEach(button => {
-            button.classList.remove('active');
-        });
-
-        // Show the selected page
-        const activePage = getElement(`page-${tabName}`);
-        if (activePage) {
-            activePage.classList.add('active');
-        }
-
-        // Activate the corresponding nav button
-        const activeButton = document.querySelector(`.nav-tab[onclick="showTab('${tabName}')"]`);
-        if (activeButton) {
-            activeButton.classList.add('active');
-        }
-
-        // Update header title
-        const tabTitleMap = {
-            'dashboard': '📊 Dashboard',<br/>
-            'funil': ' funnel Funil de Vendas',<br/>
-            'vendas': '💰 Vendas',<br/>
-            'pendencias': '⚠️ Pendências',<br/>
-            'manutencao': '🔧 Manutenção',<br/>
-            'atendimentos': '🛠 Atendimentos',<br/>
-            'combustivel': '⛽ Controle de Combustível',<br/>
-            'faturamento': '🧾 Faturamento',<br/>
-            'objetivos': '🎯 Objetivos'
-        };
-        getElement('current-tab-title').textContent = tabTitleMap[tabName] || 'CRM Total';
-
-        currentTab = tabName;
-
-        // Call specific render functions for each tab
-        if (tabName === 'dashboard') renderDashboard();
-        if (tabName === 'funil') renderFunil();
-        if (tabName === 'vendas') renderVendas();
-        if (tabName === 'pendencias') renderPendencias();
-        if (tabName === 'manutencao') renderManutencao();
-        if (tabName === 'atendimentos') renderAt();
-        if (tabName === 'combustivel') { renderCombustivel(); buildMesesTabsComb(); }
-        if (tabName === 'faturamento') renderFaturamento();
-        if (tabName === 'objetivos') renderObjetivos();
-    }
-
-    // ===== DASHBOARD FUNCTIONS =====
-    let salesChartInstance = null;
-    function renderDashboard() {
-        const ctx = getElement('salesChart').getContext('2d');
-        if (salesChartInstance) {
-            salesChartInstance.destroy();
-        }
-        salesChartInstance = new Chart(ctx, {
-            type: 'line',<br/>
-            data: {<br/>
-                labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],<br/>
-                datasets: [{<br/>
-                    label: 'Vendas (R$)',<br/>
-                    data: [12000, 15000, 13000, 18000, 16000, 20000, 22000, 19000, 21000, 23000, 25000, 28000],<br/>
-                    borderColor: 'var(--primary)',<br/>
-                    backgroundColor: 'rgba(79, 70, 229, 0.1)',<br/>
-                    tension: 0.3,<br/>
-                    fill: true
-                }]
-            },
-            options: {<br/>
-                responsive: true,<br/>
-                maintainAspectRatio: false,<br/>
-                plugins: {<br/>
-                    legend: {<br/>
-                        display: false
-                    }
-                },
-                scales: {<br/>
-                    y: {<br/>
-                        beginAtZero: true,<br/>
-                        grid: {<br/>
-                            color: 'var(--border)'
-                        }
-                    },
-                    x: {<br/>
-                        grid: {<br/>
-                            color: 'var(--border)'
-                        }
-                    }
-                }
-            }
-        });
-    }
-
-    // ===== FUNIL FUNCTIONS =====
-    function renderFunil() {
-        // Logic to render funil data
-        console.log('Rendering Funil de Vendas');
-    }
-
-    // ===== VENDAS FUNCTIONS =====
-    function renderVendas() {
-        // Logic to render vendas data
-        console.log('Rendering Vendas');
-    }
-
-    // ===== PENDÊNCIAS FUNCTIONS =====
-    function renderPendencias() {
-        // Logic to render pendencias data
-        console.log('Rendering Pendências');
-    }
-
-    // ===== MANUTENÇÃO FUNCTIONS =====
-    function renderManutencao() {
-        // Logic to render manutencao data
-        console.log('Rendering Manutenção');
-    }
-
-    // ===== ATENDIMENTOS FUNCTIONS =====
-    function renderAt() {
-        // Logic to render atendimentos data
-        console.log('Rendering Atendimentos');
-    }
-
-    // ===== COMBUSTÍVEL FUNCTIONS =====
-    let combustivelDados = JSON.parse(localStorage.getItem('crm_combustivel') || '[]');
-    function saveCombustivel() { localStorage.setItem('crm_combustivel', JSON.stringify(combustivelDados)); }
-    function buildMesesTabsComb() {
-        const today = new Date();
-        const mesAnoAtual = today.getFullYear() + '-' + (today.getMonth() + 1).toString().padStart(2, '0');
-        document.getElementById('combustivel-mes-ano').value = mesAnoAtual;
-        document.getElementById('combustivel-data').value = today.toISOString().split('T')[0];
-    }
-    function renderCombustivel() {
-        const carro = document.getElementById('combustivel-carro').value;
-        const mesAno = document.getElementById('combustivel-mes-ano').value;
-        if (!mesAno) return;
-        const filtrados = combustivelDados.filter(r => {
-            const rMesAno = r.data.substring(0, 7);
-            return r.carro === carro && rMesAno === mesAno;
-        }).sort((a,b) => new Date(a.data) - new Date(b.data));
-        const tabela = document.getElementById('combustivel-tabela');
-        const vazio = document.getElementById('combustivel-vazio');
-        tabela.innerHTML = '';
-        if (filtrados.length === 0) {
-            vazio.style.display = 'block';
-        } else {
-            vazio.style.display = 'none';
-            filtrados.forEach((r, idx) => {
-                const kmRodados = r.kmFinal - r.kmInicial;
-                const kmL = r.litros > 0 ? (kmRodados / r.litros).toFixed(2) : '—';
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td style="padding:12px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text);">${r.data}</td><br/>
-                    <td style="padding:12px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text);">${r.kmInicial}</td><br/>
-                    <td style="padding:12px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text);">${r.kmFinal}</td><br/>
-                    <td style="padding:12px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text);">${kmRodados}</td><br/>
-                    <td style="padding:12px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text);">${r.litros.toFixed(2)}</td><br/>
-                    <td style="padding:12px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text);">${kmL}</td><br/>
-                    <td style="padding:12px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text);">${r.obs || '—'}</td><br/>
-                    <td style="padding:12px;border-bottom:1px solid var(--border);text-align:center;"><button class="btn-remove" onclick="removerCombustivel(${idx})" title="Remover">×</button></td>
-                `;
-                tabela.appendChild(tr);
-            });
-        }
-        let totalKm = 0, totalLitros = 0;
-        filtrados.forEach(r => {
-            const km = r.kmFinal - r.kmInicial;
-            totalKm += km;
-            totalLitros += r.litros;
-        });
-        const consumoMedio = filtrados.length > 0 && totalLitros > 0 ? (totalKm / totalLitros).toFixed(2) : '0';
-        document.getElementById('combustivel-total-km').textContent = totalKm + ' KM';
-        document.getElementById('combustivel-total-litros').textContent = totalLitros.toFixed(2) + ' L';
-        document.getElementById('combustivel-consumo-medio').textContent = consumoMedio + ' KM/L';
-        document.getElementById('combustivel-num-abastecimentos').textContent = filtrados.length;
-    }
-    function adicionarCombustivel() {
-        const data = document.getElementById('combustivel-data').value;
-        const kmInicial = parseFloat(document.getElementById('combustivel-km-inicial').value);
-        const kmFinal = parseFloat(document.getElementById('combustivel-km-final').value);
-        const litros = parseFloat(document.getElementById('combustivel-litros').value);
-        const obs = document.getElementById('combustivel-obs').value.trim();
-        const carro = document.getElementById('combustivel-carro').value;
-            alert('Preencha todos os campos obrigatórios com valores válidos!');
-            return;
-        }
-        if (kmFinal < kmInicial) {
-            alert('KM Final não pode ser menor que KM Inicial!');
-            return;
-        }
-        if (litros <= 0) {
-            alert('Litros Abastecidos deve ser maior que zero!');
-            return;
-        }
-        combustivelDados.push({ carro, data, kmInicial, kmFinal, litros, obs, id: Date.now().toString() });
-        saveCombustivel();
-        document.getElementById('combustivel-data').value = '';
-        document.getElementById('combustivel-km-inicial').value = '';
-        document.getElementById('combustivel-km-final').value = '';
-        document.getElementById('combustivel-litros').value = '';
-        document.getElementById('combustivel-obs').value = '';
-        buildMesesTabsComb(); // Reset month/date after adding
-        renderCombustivel();
-    }
-    function removerCombustivel(idx) {
-        const carro = document.getElementById('combustivel-carro').value;
-        const mesAno = document.getElementById('combustivel-mes-ano').value;
-        const filtrados = combustivelDados.filter(r => {
-            const rMesAno = r.data.substring(0, 7);
-            return r.carro === carro && rMesAno === mesAno;
-        }).sort((a,b) => new Date(a.data) - new Date(b.data));
-        if (confirm('Confirma exclusão deste registro?')) {
-            const itemParaRemover = filtrados[idx];
-            combustivelDados = combustivelDados.filter(r => r.id !== itemParaRemover.id);
-            saveCombustivel();
-            renderCombustivel();
-        }
-    }
-
-    // ===== FATURAMENTO FUNCTIONS =====
-    function renderFaturamento() {
-        // Logic to render faturamento data
-        console.log('Rendering Faturamento');
-    }
-
-    // ===== OBJETIVOS FUNCTIONS =====
-    function renderObjetivos() {
-        // Logic to render objetivos data
-        console.log('Rendering Objetivos');
-    }
-
-    // ===== INIT =====
-    document.addEventListener('DOMContentLoaded', () => {
-        showTab(currentTab); // Show the initial tab (Dashboard)
-        // Initialize month/date for combustivel tab
-        buildMesesTabsComb();
+    col.addEventListener('dragover',  e => { e.preventDefault(); col.classList.add('drag-over'); });
+    col.addEventListener('dragleave', ()  => col.classList.remove('drag-over'));
+    col.addEventListener('drop', e => {
+      e.preventDefault(); col.classList.remove('drag-over');
+      const lead = leads.find(l => l.id === dragLeadId);
+      if (lead) { lead.stage = stage.id; save(); renderFunil(); }
     });
+    board.appendChild(col);
+  });
+}
+
+function openModal() {
+  document.getElementById('l-edit-id').value = '';
+  document.getElementById('modal-lead-title').textContent = 'Novo Lead';
+  document.getElementById('modal-lead-btn').textContent   = 'Adicionar Lead';
+  ['l-name','l-obs'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('l-value').value   = '';
+  document.getElementById('l-stage').value   = 'Prospecção';
+  document.getElementById('l-type').value    = 'Venda';
+  document.getElementById('l-inicio').value  = new Date().toISOString().slice(0,10);
+  document.getElementById('l-followup').value = '';
+  document.getElementById('modal-lead').classList.add('open');
+}
+function closeModal() { document.getElementById('modal-lead').classList.remove('open'); }
+
+function editLead(id) {
+  const lead = leads.find(l => l.id === id);
+  if (!lead) return;
+  document.getElementById('l-edit-id').value   = id;
+  document.getElementById('modal-lead-title').textContent = 'Editar Lead';
+  document.getElementById('modal-lead-btn').textContent   = 'Salvar Alterações';
+  document.getElementById('l-name').value     = lead.name     || '';
+  document.getElementById('l-value').value    = lead.value    || '';
+  document.getElementById('l-stage').value    = lead.stage    || 'Prospecção';
+  document.getElementById('l-type').value     = lead.type     || 'Venda';
+  document.getElementById('l-inicio').value   = lead.inicio   || '';
+  document.getElementById('l-followup').value = lead.followup || '';
+  document.getElementById('l-obs').value      = lead.obs      || '';
+  document.getElementById('modal-lead').classList.add('open');
+}
+
+function saveLead() {
+  const name = document.getElementById('l-name').value.trim();
+  if (!name) return;
+  const id   = document.getElementById('l-edit-id').value;
+  const data = {
+    name,
+    value:    document.getElementById('l-value').value,
+    stage:    document.getElementById('l-stage').value,
+    type:     document.getElementById('l-type').value,
+    inicio:   document.getElementById('l-inicio').value,
+    followup: document.getElementById('l-followup').value,
+    obs:      document.getElementById('l-obs').value.trim(),
+  };
+  if (id) {
+    const idx = leads.findIndex(l => l.id === id);
+    if (idx >= 0) leads[idx] = { ...leads[idx], ...data };
+  } else {
+    leads.push({ id: Date.now().toString(), ...data });
+  }
+  save(); closeModal(); renderFunil();
+}
+
+function removeLead(id) {
+  leads = leads.filter(l => l.id !== id);
+  save(); renderFunil();
+}
+
+// ===== VENDAS — abas por mês + busca =====
+
+let salesMesAtivo = new Date().getMonth(); // 0=Jan…11=Dez
+
+function getSalesMes(m) {
+  if (!sales[m]) sales[m] = [];
+  return sales[m];
+}
+
+function buildVdTabs() {
+  const wrap = document.getElementById('vd-meses');
+  if (!wrap) return;
+  wrap.innerHTML = MESES.map((nome, i) => {
+    const temDados = sales[i] && sales[i].length > 0;
+    const ativo    = i === salesMesAtivo ? 'active' : '';
+    const dados    = temDados && !ativo ? 'tem-dados' : '';
+    return `<button class="vd-mes-tab ${ativo} ${dados}" onclick="switchSalesMes(${i})">${nome}</button>`;
+  }).join('');
+  // total geral de todos os meses
+  let totalGeral = 0;
+  for (let i = 0; i < 12; i++) {
+    if (sales[i]) totalGeral += sales[i].reduce((s,x) => s + Number(x.value), 0);
+  }
+  document.getElementById('sales-total').textContent = fmt(totalGeral);
+}
+
+function switchSalesMes(idx) {
+  salesMesAtivo = idx;
+  buildVdTabs();
+  renderSales();
+  renderGrafico();
+  atualizarMeta();
+}
+
+function addSale() {
+  const desc    = document.getElementById('sale-desc').value.trim();
+  const value   = parseFloat(document.getElementById('sale-value').value) || 0;
+  const type    = document.getElementById('sale-type').value;
+  const payment = document.getElementById('sale-payment').value;
+  const date    = document.getElementById('sale-date').value;
+  const pago    = document.getElementById('sale-pago').value;
+  if (!desc) return;
+  let mes = salesMesAtivo;
+  if (date) mes = parseInt(date.split('-')[1]) - 1;
+  getSalesMes(mes).push({ id: Date.now().toString(), desc, value, type, payment, pago, date: date || new Date().toISOString().slice(0,10) });
+  save(); buildVdTabs(); renderSales();
+  document.getElementById('sale-desc').value  = '';
+  document.getElementById('sale-value').value = '';
+}
+
+function removeSale(id) {
+  const lista = getSalesMes(salesMesAtivo);
+  sales[salesMesAtivo] = lista.filter(s => s.id !== id);
+  save(); buildVdTabs(); renderSales();
+}
+
+function renderGrafico() {
+  const wrap = document.getElementById('vd-grafico');
+  if (!wrap) return;
+  // calcula totais por mês
+  const totais = MESES.map((_, i) => {
+    if (!sales[i]) return 0;
+    return sales[i].reduce((s, x) => s + Number(x.value), 0);
+  });
+  const max = Math.max(...totais, 1);
+  wrap.innerHTML = totais.map((val, i) => {
+    const h = Math.round((val / max) * 100);
+    const ativo = i === salesMesAtivo ? 'ativo' : '';
+    const valStr = val > 0 ? (val >= 1000 ? 'R$' + (val/1000).toFixed(1) + 'k' : 'R$' + val.toFixed(0)) : '';
+    return `<div class="vd-barra-wrap ${ativo}" onclick="switchSalesMes(${i})" title="${MESES[i]}: ${fmt(val)}">
+      ${val > 0 ? `<span class="vd-barra-valor">${valStr}</span>` : ''}
+      <div class="vd-barra" style="height:${Math.max(h,2)}%"></div>
+      <span class="vd-barra-label">${MESES[i].slice(0,3)}</span>
+    </div>`;
+  }).join('');
+}
+
+function salvarMeta() {
+  const val = document.getElementById('vd-meta-input').value;
+  localStorage.setItem('crm_meta_mes_' + salesMesAtivo, val);
+  atualizarMeta();
+}
+
+function atualizarMeta() {
+  const metaEl  = document.getElementById('vd-meta-input');
+  const fillEl  = document.getElementById('vd-meta-fill');
+  const pctEl   = document.getElementById('vd-meta-pct');
+  if (!metaEl) return;
+  // carregar meta salva do mês ativo
+  const salva = localStorage.getItem('crm_meta_mes_' + salesMesAtivo) || '';
+  metaEl.value = salva;
+  const meta = parseFloat(salva) || 0;
+  const totalMes = (sales[salesMesAtivo] || []).reduce((s,x) => s + Number(x.value), 0);
+  if (meta <= 0) { fillEl.style.width = '0%'; pctEl.textContent = '—'; pctEl.className = 'vd-meta-pct'; return; }
+  const pct = Math.min(Math.round((totalMes / meta) * 100), 100);
+  fillEl.style.width = pct + '%';
+  fillEl.className = 'vd-meta-barra-fill' + (pct >= 100 ? ' atingida' : '');
+  pctEl.textContent = pct + '% ' + (pct >= 100 ? '🎉' : 'da meta');
+  pctEl.className = 'vd-meta-pct' + (pct >= 100 ? ' atingida' : '');
+}
+
+function renderSales() {
+  const searchEl = document.getElementById('vd-search-input');
+  const countEl  = document.getElementById('vd-search-count');
+  const totalMesEl = document.getElementById('vd-total-mes');
+  const query    = searchEl ? searchEl.value.trim().toLowerCase() : '';
+  const list     = document.getElementById('sales-list');
+
+  let lista = [...getSalesMes(salesMesAtivo)];
+
+  // total do mês (sem filtro de busca)
+  const totalMes = lista.reduce((s,x) => s + Number(x.value), 0);
+  if (totalMesEl) totalMesEl.textContent = 'Total ' + MESES[salesMesAtivo] + ': ' + fmt(totalMes);
+
+  // filtrar por busca
+  if (query) lista = lista.filter(s => (s.desc || '').toLowerCase().includes(query));
+
+  // contador busca
+  if (query && countEl) {
+    countEl.style.display = 'inline-block';
+    countEl.textContent   = `${lista.length} resultado${lista.length !== 1 ? 's' : ''}`;
+  } else if (countEl) {
+    countEl.style.display = 'none';
+  }
+
+  renderGrafico();
+  atualizarMeta();
+
+  if (getSalesMes(salesMesAtivo).length === 0) {
+    list.innerHTML = `<div class="empty-state">Nenhuma venda em ${MESES[salesMesAtivo]}</div>`;
+    return;
+  }
+  if (lista.length === 0) {
+    list.innerHTML = `<div class="empty-state">🔍 Nenhum resultado para "${esc(query)}"</div>`;
+    return;
+  }
+
+  const groups = {};
+  lista.forEach(s => { if (!groups[s.date]) groups[s.date] = []; groups[s.date].push(s); });
+  const sortedDates = Object.keys(groups).sort((a,b) => b.localeCompare(a));
+  list.innerHTML = sortedDates.map(date => {
+    const dayTotal = groups[date].reduce((s,x) => s + Number(x.value), 0);
+    const items = groups[date].map(s => {
+      const tClass = s.type === 'Locação' ? 'tag-locacao' : s.type === 'Manutenção' ? 'tag-manutencao' : 'tag-venda';
+      const pClass = s.payment === 'Pix' ? 'tag-pix' : s.payment === 'Boleto' ? 'tag-boleto' : s.payment === 'Cartão' ? 'tag-cartao' : s.payment === 'Dinheiro' ? 'tag-dinheiro' : 'tag-transferencia';
+      const isPago = s.pago !== 'nao';
+      const pagoBadge = `<span class="sale-pago-badge ${isPago?'sale-pago-sim':'sale-pago-nao'}" onclick="toggleSalePago('${s.id}')" title="Clique para alternar">${isPago?'✅ Pago':'⏳ Pendente'}</span>`;
+      const hasPedidos = (pedidosDB['venda_'+s.id]||[]).length > 0;
+      return `<div class="sale-item" style="flex-wrap:wrap">
+        <div style="display:flex;align-items:center;gap:10px;width:100%">
+          <span>💰</span>
+          <div class="sale-info">
+            <div class="sale-name">${esc(s.desc)}</div>
+            <div class="sale-meta">
+              <span class="sale-tag ${tClass}">${s.type}</span>
+              <span class="sale-tag ${pClass}">${s.payment}</span>
+              ${pagoBadge}
+            </div>
+          </div>
+          <div class="sale-value">${fmt(s.value)}</div>
+          <button class="btn-edit-sale" onclick="abrirEditSale('${s.id}')" title="Editar">✏️</button>
+          <button class="btn-remove" onclick="removeSale('${s.id}')">×</button>
+        </div>
+        <div style="width:100%">${buildPedidosHTML('venda',s.id)}</div>
+      </div>`;
+    }).join('');
+    return `<div class="date-group">
+      <div class="date-header"><span>${fmtDate(date)}</span><span class="date-total">${fmt(dayTotal)}</span></div>
+      ${items}
+    </div>`;
+  }).join('');
+}
+
+// ===== EDIÇÃO DE VENDA =====
+let saleEditId = null;
+
+function abrirEditSale(id) {
+  saleEditId = id;
+  const s = getSalesMes(salesMesAtivo).find(x => x.id === id);
+  if (!s) return;
+  document.getElementById('se-desc').value    = s.desc || '';
+  document.getElementById('se-value').value   = s.value || '';
+  document.getElementById('se-date').value    = s.date || '';
+  document.getElementById('se-type').value    = s.type || 'Venda';
+  document.getElementById('se-payment').value = s.payment || 'Pix';
+  document.getElementById('se-pago').value    = s.pago || 'sim';
+  document.getElementById('sale-edit-overlay').classList.remove('hidden');
+}
+
+function fecharEditSale(e) {
+  if (e && e.target !== document.getElementById('sale-edit-overlay')) return;
+  document.getElementById('sale-edit-overlay').classList.add('hidden');
+  saleEditId = null;
+}
+
+function confirmarEditSale() {
+  const lista = getSalesMes(salesMesAtivo);
+  const idx = lista.findIndex(x => x.id === saleEditId);
+  if (idx === -1) return;
+  lista[idx].desc    = document.getElementById('se-desc').value.trim();
+  lista[idx].value   = parseFloat(document.getElementById('se-value').value) || 0;
+  lista[idx].date    = document.getElementById('se-date').value;
+  lista[idx].type    = document.getElementById('se-type').value;
+  lista[idx].payment = document.getElementById('se-payment').value;
+  lista[idx].pago    = document.getElementById('se-pago').value;
+  save(); buildVdTabs(); renderSales();
+  document.getElementById('sale-edit-overlay').classList.add('hidden');
+  saleEditId = null;
+}
+
+// ===== PEDIDOS =====
+// pedidos ficam em localStorage separado: { 'tipo_id': [{id,num,data,valor,status},...] }
+let pedidosDB = JSON.parse(localStorage.getItem('crm_pedidos') || '{}');
+
+function savePedidos() { localStorage.setItem('crm_pedidos', JSON.stringify(pedidosDB)); }
+
+function getPedidos(tipo, id) {
+  const key = tipo + '_' + id;
+  if (!pedidosDB[key]) pedidosDB[key] = [];
+  return pedidosDB[key];
+}
+
+function addPedido(tipo, refId) {
+  const num   = document.getElementById('pf-num-'   + refId)?.value.trim();
+  const data  = document.getElementById('pf-data-'  + refId)?.value;
+  const valor = document.getElementById('pf-valor-' + refId)?.value;
+  if (!num) return;
+  const lista = getPedidos(tipo, refId);
+  lista.push({ id: Date.now().toString(), num, data: data || '', valor: parseFloat(valor)||0, status:'aguardando' });
+  savePedidos();
+  renderPedidos(tipo, refId);
+}
+
+function togglePedidoStatus(tipo, refId, pedidoId) {
+  const lista = getPedidos(tipo, refId);
+  const p = lista.find(x => x.id === pedidoId);
+  if (p) { p.status = p.status === 'aguardando' ? 'recebido' : 'aguardando'; savePedidos(); renderPedidos(tipo, refId); }
+}
+
+function removePedido(tipo, refId, pedidoId) {
+  const key = tipo + '_' + refId;
+  pedidosDB[key] = (pedidosDB[key]||[]).filter(x => x.id !== pedidoId);
+  savePedidos(); renderPedidos(tipo, refId);
+}
+
+function renderPedidos(tipo, refId) {
+  const wrap = document.getElementById('pedidos-wrap-' + refId);
+  if (!wrap) return;
+  const lista = getPedidos(tipo, refId);
+  const itens = lista.map(p => `
+    <div class="pedido-item">
+      <span class="pedido-num">#${esc(p.num)}</span>
+      ${p.data ? `<span class="pedido-data">${fmtDate(p.data)}</span>` : ''}
+      ${p.valor ? `<span class="pedido-val">${fmt(p.valor)}</span>` : '<span class="pedido-val" style="visibility:hidden">-</span>'}
+      <span class="${p.status==='recebido'?'pedido-badge-rec':'pedido-badge-ag'}"
+            onclick="togglePedidoStatus('${tipo}','${refId}','${p.id}')"
+            title="Clique para alternar status">
+        ${p.status==='recebido'?'✅ Recebido':'⏳ Aguardando'}
+      </span>
+      <button class="pedido-del" onclick="removePedido('${tipo}','${refId}','${p.id}')" title="Remover">×</button>
+    </div>`).join('');
+  const form = `
+    <div class="pedido-form">
+      <input class="pf-num"  id="pf-num-${refId}"   placeholder="Nº pedido" type="text">
+      <input class="pf-data" id="pf-data-${refId}"  type="date">
+      <input class="pf-val"  id="pf-valor-${refId}" type="number" placeholder="Valor R$" min="0" step="0.01">
+      <button class="btn-pedido-save"   onclick="addPedido('${tipo}','${refId}')">＋ Add</button>
+    </div>`;
+  wrap.innerHTML = `
+    <div class="pedidos-titulo">
+      📦 Pedidos <span style="color:var(--text-light);font-weight:400">(${lista.length})</span>
+    </div>
+    ${itens}
+    ${form}`;
+}
+
+function buildPedidosHTML(tipo, refId) {
+  return `<div class="pedidos-wrap" id="pedidos-wrap-${refId}"></div>`;
+}
+
+// ===== PENDÊNCIAS =====
+function addPending() {
+  const desc     = document.getElementById('pend-desc').value.trim();
+  const category = document.getElementById('pend-category').value;
+  const priority = document.getElementById('pend-priority').value;
+  const date     = document.getElementById('pend-date').value;
+  if (!desc) return;
+  pendings.push({ id: Date.now().toString(), desc, category, priority, date: date || new Date().toISOString().slice(0,10), done: false });
+  save(); renderPendings();
+  document.getElementById('pend-desc').value = '';
+}
+
+function togglePending(id) {
+  const p = pendings.find(x => x.id === id);
+  if (p) { p.done = !p.done; save(); renderPendings(); }
+}
+
+function removePending(id) {
+  pendings = pendings.filter(x => x.id !== id);
+  save(); renderPendings();
+}
+
+function renderPendings() {
+  const open = pendings.filter(p => !p.done).length;
+  document.getElementById('badge-count').textContent = open;
+  document.getElementById('tab-pendencias').querySelector('.badge').textContent = open;
+  const list = document.getElementById('pending-list');
+  const priorities = ['Alta','Média','Baixa'];
+  const dotColors  = { Alta: 'dot-red', Média: 'dot-orange', Baixa: 'dot-blue' };
+  list.innerHTML = priorities.map(prio => {
+    const items     = pendings.filter(p => p.priority === prio);
+    const openCount = items.filter(p => !p.done).length;
+    const catClass  = c => c === 'Manutenção' ? 'cat-manutencao' : c === 'Pedido' ? 'cat-pedido' : c === 'Orçamento' ? 'cat-orcamento' : c === 'Financeiro' ? 'cat-financeiro' : 'cat-outro';
+    return `<div class="priority-group">
+      <div class="priority-header">
+        <span class="dot ${dotColors[prio]}"></span>
+        Prioridade ${prio} <span style="color:var(--text-light);font-weight:500">(${openCount} abertas)</span>
+      </div>
+      ${items.length === 0
+        ? '<div class="empty-state" style="padding:12px">Nenhuma pendência</div>'
+        : items.map(p => `<div class="pending-item ${p.done ? 'done' : ''}">
+            <div class="pending-check ${p.done ? 'checked' : ''}" onclick="togglePending('${p.id}')"></div>
+            <div class="pend-info">
+              <div class="pend-name">${p.desc}</div>
+              <div class="pend-meta">
+                <span class="pend-category ${catClass(p.category)}">${p.category}</span>
+                <span class="pend-date">${fmtDate(p.date)}</span>
+              </div>
+            </div>
+            <button class="btn-remove" onclick="removePending('${p.id}')">×</button>
+          </div>`).join('')
+      }
+    </div>`;
+  }).join('');
+}
+
+// ===== MANUTENÇÃO — abas por mês, cores, obs automática =====
+
+const MESES = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho',
+               'Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+
+// manutSortAZ já declarado acima
+let manutMesAtivo = new Date().getMonth(); // 0=Jan … 11=Dez
+
+// Garante que cada mês tem seu array no objeto manuts
+function getManutsMes(m) {
+  if (!manuts[m]) manuts[m] = [];
+  return manuts[m];
+}
+
+function buildMesesTabs() {
+  const wrap = document.getElementById('mn-meses');
+  wrap.innerHTML = MESES.map((nome, i) => {
+    const temDados = manuts[i] && manuts[i].length > 0;
+    const ativo    = i === manutMesAtivo ? 'active' : '';
+    const dados    = temDados && !ativo ? 'tem-dados' : '';
+    return `<button class="mn-mes-tab ${ativo} ${dados}" onclick="switchMes(${i})">${nome}</button>`;
+  }).join('');
+  document.getElementById('mn-mes-titulo').textContent = MESES[manutMesAtivo];
+}
+
+function switchMes(idx) {
+  manutMesAtivo = idx;
+  buildMesesTabs();
+  renderManut();
+}
+
+function addManutRow() {
+  const lista = getManutsMes(manutMesAtivo);
+  lista.push({ id: Date.now().toString(), cliente:'', preventiva:'', corretiva:'', obs:'', proposta:'', relatorio:'', limpeza:'' });
+  save(); renderManut();
+  setTimeout(() => {
+    const inputs = document.querySelectorAll('#manut-list .cell-cliente');
+    if (inputs.length) inputs[inputs.length - 1].focus();
+  }, 50);
+}
+
+function updateManut(id, field, val) {
+  const lista = getManutsMes(manutMesAtivo);
+  const m = lista.find(x => x.id === id);
+  if (m) {
+    m[field] = val;
+    save();
+    // Se for obs, propaga automaticamente para o próximo mês
+    if (field === 'obs' && val.trim()) {
+      propagarObs(m, manutMesAtivo);
+    }
+    if (field === 'preventiva' || field === 'relatorio' || field === 'limpeza') renderManut();
+  }
+}
+
+// Propaga a observação para o mês seguinte (cria entrada se não existir)
+function propagarObs(original, mesAtual) {
+  const proximo = (mesAtual + 1) % 12;
+  const listaProx = getManutsMes(proximo);
+  // Verifica se já existe entrada com mesmo cliente no próximo mês
+  let entrada = listaProx.find(x => x.cliente && x.cliente === original.cliente);
+  if (!entrada) {
+    // Cria nova entrada no próximo mês com mesmo cliente e obs
+    entrada = {
+      id: 'prop_' + Date.now() + '_' + Math.random().toString(36).slice(2),
+      cliente: original.cliente,
+      preventiva: '', corretiva: '',
+      obs: '⬆️ ' + original.obs,
+      proposta: '', relatorio: '', limpeza: ''
+    };
+    listaProx.push(entrada);
+  } else if (!entrada.obs) {
+    // Se entrada existe mas sem obs, preenche
+    entrada.obs = '⬆️ ' + original.obs;
+  }
+  save();
+  buildMesesTabs(); // atualiza indicador de dados no mês seguinte
+}
+
+function toggleMoveMenu(id, btn) {
+  // fecha todos os outros abertos
+  document.querySelectorAll('.mn-move-dropdown').forEach(d => {
+    if (d.id !== 'move-menu-' + id) d.style.display = 'none';
+  });
+  const menu = document.getElementById('move-menu-' + id);
+  if (menu) menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+  // fechar ao clicar fora
+  setTimeout(() => {
+    document.addEventListener('click', function handler(e) {
+      if (!e.target.closest('.mn-move-wrap')) {
+        document.querySelectorAll('.mn-move-dropdown').forEach(d => d.style.display = 'none');
+        document.removeEventListener('click', handler);
+      }
+    });
+  }, 10);
+}
+
+function moverParaMes(id, mesDestino) {
+  if (mesDestino === manutMesAtivo) {
+    document.querySelectorAll('.mn-move-dropdown').forEach(d => d.style.display = 'none');
+    return;
+  }
+  const listaAtual = getManutsMes(manutMesAtivo);
+  const idx = listaAtual.findIndex(x => x.id === id);
+  if (idx === -1) return;
+  const [item] = listaAtual.splice(idx, 1);
+  manuts[manutMesAtivo] = listaAtual;
+  getManutsMes(mesDestino).push(item);
+  save();
+  buildMesesTabs();
+  renderManut();
+  document.querySelectorAll('.mn-move-dropdown').forEach(d => d.style.display = 'none');
+}
+
+function removeManut(id) {
+  const lista = getManutsMes(manutMesAtivo);
+  manuts[manutMesAtivo] = lista.filter(x => x.id !== id);
+  save(); buildMesesTabs(); renderManut();
+}
+
+// Alterna ordenação A→Z
+function toggleSort() {
+  manutSortAZ = !manutSortAZ;
+  const btn  = document.getElementById('btn-sort-az');
+  const icon = document.getElementById('sort-icon');
+  if (manutSortAZ) {
+    btn.classList.add('active');
+    icon.textContent = 'Z→A';
+  } else {
+    btn.classList.remove('active');
+    icon.textContent = 'A→Z';
+  }
+  renderManut();
+}
+
+function renderManut() {
+  const tbody    = document.getElementById('manut-list');
+  const searchEl = document.getElementById('mn-search-input');
+  const countEl  = document.getElementById('mn-search-count');
+  const query    = searchEl ? searchEl.value.trim().toLowerCase() : '';
+  let lista      = [...getManutsMes(manutMesAtivo)];
+
+  // 1. Filtrar busca
+  if (query) lista = lista.filter(m => (m.cliente || '').toLowerCase().includes(query));
+
+  // 2. Ordenar
+  if (manutSortAZ) {
+    lista.sort((a, b) => (a.cliente || '').localeCompare(b.cliente || '', 'pt-BR', { sensitivity: 'base' }));
+  }
+
+  // Contador busca
+  if (query) {
+    countEl.style.display = 'inline-block';
+    countEl.textContent   = `${lista.length} resultado${lista.length !== 1 ? 's' : ''}`;
+  } else {
+    countEl.style.display = 'none';
+  }
+
+  const total = getManutsMes(manutMesAtivo).length;
+
+  // 3. Sem dados
+  if (total === 0) {
+    tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;color:var(--text-light);padding:32px;font-size:13px">Clique em "Nova Linha" para começar em ${MESES[manutMesAtivo]}</td></tr>`;
+    return;
+  }
+
+  // 4. Sem resultados na busca
+  if (lista.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="9"><div class="mn-no-results">🔍 Nenhum resultado para "<strong>${esc(query)}</strong>"</div></td></tr>`;
+    return;
+  }
+
+  // 5. Renderizar linhas
+  tbody.innerHTML = lista.map((m, i) => {
+    const clienteOk  = m.preventiva ? 'cell-cliente-ok' : '';
+    // alerta vermelho se preventiva há mais de 30 dias ou sem data
+    const hoje = new Date(); hoje.setHours(0,0,0,0);
+    const diasSemPrev = m.preventiva
+      ? Math.floor((hoje - new Date(m.preventiva + 'T00:00:00')) / 86400000)
+      : 999;
+    const alertaVenc = (!m.preventiva || diasSemPrev > 30) && m.cliente ? 'cell-cliente-vencido' : '';
+    const alertaVencFinal = clienteOk ? '' : alertaVenc; // se já tem preventiva ok, não alerta
+    const relatorioOk = m.relatorio ? 'td-relatorio-ok' : '';
+    return `
+    <tr>
+      <td class="td-num">${i + 1}</td>
+      <td><input class="cell-input cell-cliente ${clienteOk} ${alertaVencFinal}"
+            value="${alertaVencFinal ? '⚠️ ' + esc(m.cliente) : esc(m.cliente)}"
+            placeholder="Nome do condomínio..."
+            title="${alertaVencFinal ? 'Atenção: mais de 30 dias sem preventiva!' : ''}"
+            oninput="updateManut('${m.id}','cliente',this.value.replace(/^⚠️\s*/,''))"></td>
+      <td>
+        <div style="display:flex;align-items:center">
+          <input class="cell-input"
+                 type="date"
+                 value="${m.preventiva || ''}"
+                 oninput="updateManut('${m.id}','preventiva',this.value)"
+                 title="${m.preventiva ? 'Preventiva realizada em ' + fmtDate(m.preventiva) : 'Sem data'}">
+          ${m.preventiva ? '<span style="color:var(--green);font-size:13px;padding-right:8px;flex-shrink:0">✓</span>' : ''}
+        </div>
+      </td>
+      <td><input class="cell-input" type="date" value="${m.corretiva || ''}"
+            oninput="updateManut('${m.id}','corretiva',this.value)"></td>
+      <td style="${m.obs ? 'background:#fde047;' : ''}">
+        <input class="cell-input" value="${esc(m.obs)}"
+            placeholder="Observações..."
+            style="${m.obs ? 'background:transparent;' : ''}"
+            oninput="updateManut('${m.id}','obs',this.value)"
+            onblur="renderManut()"></td>
+      <td style="${/(conclu[ií]do)/i.test(m.proposta||'') ? 'background:#dcfce7;' : ''}">
+        <input class="cell-input" value="${esc(m.proposta)}"
+            placeholder="Ex: 2495"
+            style="${/(conclu[ií]do)/i.test(m.proposta||'') ? 'background:transparent;color:#15803d;font-weight:700;' : ''}"
+            oninput="updateManut('${m.id}','proposta',this.value)"
+            onblur="renderManut()"></td>
+      <td class="${relatorioOk}">
+        <input class="cell-input" type="date" value="${m.relatorio || ''}"
+            oninput="updateManut('${m.id}','relatorio',this.value)"></td>
+      <td class="${m.limpeza ? 'td-limpeza-ok' : ''}">
+        <input class="cell-input" type="date" value="${m.limpeza || ''}"
+            title="${m.limpeza ? 'Limpeza realizada em ' + fmtDate(m.limpeza) : 'Sem data'}"
+            oninput="updateManut('${m.id}','limpeza',this.value)"></td>
+      <td style="padding:6px 8px;vertical-align:top;min-width:180px">
+        ${buildPedidosHTML('manut', m.id)}
+      </td>
+      <td style="padding:0 4px;display:flex;align-items:center;gap:3px;min-height:38px">
+        <div class="mn-move-wrap">
+          <button class="mn-move-btn" onclick="toggleMoveMenu('${m.id}',this)" title="Mover para outro mês">↗ Mês</button>
+          <div class="mn-move-dropdown" id="move-menu-${m.id}" style="display:none">
+            ${MESES.map((nm,idx) => `<button class="${idx===manutMesAtivo?'active-mes':''}" onclick="moverParaMes('${m.id}',${idx})">${nm}</button>`).join('')}
+          </div>
+        </div>
+        <button class="mn-row-del" onclick="removeManut('${m.id}')" title="Remover linha">×</button>
+      </td>
+    </tr>`;
+  }).join('');
+  // inicializar pedidos de manutenção
+  lista.forEach(m => renderPedidos('manut', m.id));
+}
+
+function esc(s) {
+  return (s || '').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// ===== ATENDIMENTOS =====
+
+let atendimentos = JSON.parse(localStorage.getItem('crm_atendimentos') || '[]');
+let atEditId = null;
+let atFiltros = { urgencia: 'todas', status: 'todos' };
+
+function saveAt() { localStorage.setItem('crm_atendimentos', JSON.stringify(atendimentos)); }
+
+function setAtFilter(tipo, val) {
+  atFiltros[tipo] = val;
+  // atualizar botões ativos
+  const grupos = { urgencia: ['todas','Alta','Média','Baixa'], status: ['todos','Solicitação','Em andamento','Concluído'] };
+  document.querySelectorAll('.at-filter-btn').forEach(btn => {
+    const txt = btn.textContent.replace(/[🔴🟡🟢📥🔧✅📋📦]/g,'').trim();
+    if (grupos[tipo].some(v => txt === v || txt === v.replace(/[^a-zA-ZÀ-ú ]/g,''))) {
+      btn.classList.toggle('active', txt === val || (val === 'todas' && txt === 'Todas urgências') || (val === 'todos' && txt === 'Todos status'));
+    }
+  });
+  renderAt();
+}
+
+function abrirAtModal(id) {
+  atEditId = id || null;
+  const overlay = document.getElementById('at-modal-overlay');
+  overlay.classList.remove('hidden');
+  document.getElementById('at-modal-titulo').textContent = id ? 'Editar Atendimento' : 'Novo Atendimento';
+  if (id) {
+    const a = atendimentos.find(x => x.id === id);
+    if (a) {
+      document.getElementById('at-f-cliente').value  = a.cliente || '';
+      document.getElementById('at-f-equip').value    = a.equip || '';
+      document.getElementById('at-f-assunto').value  = a.assunto || '';
+      document.getElementById('at-f-obs').value      = a.obs || '';
+      document.getElementById('at-f-urgencia').value = a.urgencia || 'Média';
+      document.getElementById('at-f-status').value   = a.status || 'Solicitação';
+    }
+  } else {
+    ['at-f-cliente','at-f-equip','at-f-assunto','at-f-obs'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('at-f-urgencia').value = 'Média';
+    document.getElementById('at-f-status').value   = 'Solicitação';
+  }
+  verificarCliente();
+}
+
+function fecharAtModal(e) {
+  if (e && e.target !== document.getElementById('at-modal-overlay')) return;
+  document.getElementById('at-modal-overlay').classList.add('hidden');
+  atEditId = null;
+}
+
+function verificarCliente() {
+  const nome = document.getElementById('at-f-cliente').value.trim().toLowerCase();
+  const syncInfo = document.getElementById('at-sync-info');
+  if (!nome) { syncInfo.style.display = 'none'; return; }
+  // busca em todos os meses de manutenção
+  const encontrado = Object.values(manuts).flat().some(m =>
+    m.cliente && m.cliente.toLowerCase().includes(nome)
+  );
+  syncInfo.style.display = encontrado ? 'block' : 'none';
+}
+
+function sincronizarComManut(atend) {
+  // busca o condomínio no mês ativo de manutenção
+  const nomeBusca = (atend.cliente || '').toLowerCase();
+  if (!nomeBusca) return;
+  for (let mes = 0; mes < 12; mes++) {
+    if (!manuts[mes]) continue;
+    const entry = manuts[mes].find(m => m.cliente && m.cliente.toLowerCase().includes(nomeBusca));
+    if (entry) {
+      const obsNova = `🛠 ${atend.assunto}${atend.equip ? ' — ' + atend.equip : ''} [${atend.status}]`;
+      entry.obs = obsNova;
+      save();
+      break;
+    }
+  }
+}
+
+function salvarAt() {
+  const cliente = document.getElementById('at-f-cliente').value.trim();
+  const assunto = document.getElementById('at-f-assunto').value.trim();
+  if (!cliente || !assunto) { alert('Preencha cliente e assunto!'); return; }
+  const atend = {
+    id:       atEditId || Date.now().toString(),
+    cliente,
+    equip:    document.getElementById('at-f-equip').value.trim(),
+    assunto,
+    obs:      document.getElementById('at-f-obs').value.trim(),
+    urgencia: document.getElementById('at-f-urgencia').value,
+    status:   document.getElementById('at-f-status').value,
+    data:     new Date().toISOString().slice(0,10),
+  };
+  if (atEditId) {
+    const idx = atendimentos.findIndex(x => x.id === atEditId);
+    if (idx !== -1) atendimentos[idx] = atend;
+  } else {
+    atendimentos.unshift(atend);
+  }
+  saveAt();
+  sincronizarComManut(atend);
+  document.getElementById('at-modal-overlay').classList.add('hidden');
+  atEditId = null;
+  renderAt();
+}
+
+function removerAt(id) {
+  if (!confirm('Remover este atendimento?')) return;
+  atendimentos = atendimentos.filter(x => x.id !== id);
+  saveAt(); renderAt();
+}
+
+function renderAt() {
+  const grid    = document.getElementById('at-grid');
+  const query   = (document.getElementById('at-search')?.value || '').toLowerCase().trim();
+  const urgFilt = atFiltros.urgencia;
+  const stFilt  = atFiltros.status;
+
+  let lista = atendimentos.filter(a => {
+    const matchUrg = urgFilt === 'todas' || a.urgencia === urgFilt;
+    const matchSt  = stFilt  === 'todos' || a.status   === stFilt;
+    const matchQ   = !query  || (a.cliente+a.equip+a.assunto).toLowerCase().includes(query);
+    return matchUrg && matchSt && matchQ;
+  });
+
+  document.getElementById('at-count').textContent = `${lista.length} registro${lista.length !== 1 ? 's' : ''}`;
+
+  if (lista.length === 0) {
+    grid.innerHTML = `<div class="at-empty">Nenhum atendimento encontrado</div>`;
+    return;
+  }
+
+  const urgClass  = { 'Alta':'urg-alta', 'Média':'urg-media', 'Baixa':'urg-baixa' };
+  const urgBadge  = { 'Alta':'at-badge-alta', 'Média':'at-badge-media', 'Baixa':'at-badge-baixa' };
+  const stBadge   = {
+    'Solicitação':'at-badge-solicitacao', 'Em andamento':'at-badge-andamento',
+    'Em orçamento':'at-badge-orcamento', 'Pedido de peça':'at-badge-peca', 'Concluído':'at-badge-concluido'
+  };
+
+  grid.innerHTML = lista.map(a => {
+    const uc = urgClass[a.urgencia] || '';
+    const ub = urgBadge[a.urgencia] || '';
+    const sb = stBadge[a.status]    || '';
+    const temObs = a.obs ? `<span class="at-obs-tag">obs</span>` : '';
+    return `<div class="at-card ${uc}" onclick="abrirAtModal('${a.id}')">
+      <div class="at-card-top">
+        <div>
+          <div class="at-card-nome">${esc(a.cliente)}</div>
+          ${a.equip ? `<div class="at-card-equip">🔩 ${esc(a.equip)}</div>` : ''}
+        </div>
+        <button class="at-card-del" onclick="event.stopPropagation();removerAt('${a.id}')" title="Remover">×</button>
+      </div>
+      <div class="at-card-assunto">${esc(a.assunto)}</div>
+      <div class="at-card-footer">
+        <span class="at-badge ${ub}">${a.urgencia}</span>
+        <span class="at-badge ${sb}">${a.status}</span>
+        ${temObs}
+        <span class="at-card-date">${fmtDate(a.data)}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ===== TOGGLE PAGO =====
+function toggleSalePago(id) {
+  const lista = getSalesMes(salesMesAtivo);
+  const s = lista.find(x => x.id === id);
+  if (s) { s.pago = (s.pago === 'nao') ? 'sim' : 'nao'; save(); renderSales(); }
+}
+
+// ===== FATURAMENTO =====
+let faturamentos = JSON.parse(localStorage.getItem('crm_faturamentos') || '{}'); // { mes: [{...}] }
+let fatMesAtivo  = new Date().getMonth();
+
+function getFatMes(m) { if (!faturamentos[m]) faturamentos[m] = []; return faturamentos[m]; }
+function saveFat() { localStorage.setItem('crm_faturamentos', JSON.stringify(faturamentos)); }
+
+function buildFatTabs() {
+  const wrap = document.getElementById('fat-meses-tabs');
+  if (!wrap) return;
+  // preencher select de importação
+  const sel = document.getElementById('fat-import-mes');
+  if (sel) sel.innerHTML = MESES.map((n,i) => `<option value="${i}" ${i===fatMesAtivo?'selected':''}>${n}</option>`).join('');
+
+  wrap.innerHTML = MESES.map((nome, i) => {
+    const temDados = faturamentos[i] && faturamentos[i].length > 0;
+    const ativo  = i === fatMesAtivo ? 'active' : '';
+    const dados  = temDados && !ativo ? 'tem-dados' : '';
+    return `<button class="comb-tab ${ativo} ${dados}" onclick="switchFatMes(${i})" style="${ativo?'background:var(--green);border-color:var(--green);':''}">${nome}</button>`;
+  }).join('');
+}
+
+function switchFatMes(idx) {
+  fatMesAtivo = idx;
+  buildFatTabs();
+  renderFaturamento();
+}
+
+function addFaturamento(obj) {
+  const desc   = obj ? obj.desc   : document.getElementById('fat-f-desc').value.trim();
+  const valor  = obj ? obj.valor  : parseFloat(document.getElementById('fat-f-valor').value) || 0;
+  const data   = obj ? obj.data   : document.getElementById('fat-f-data').value;
+  const cat    = obj ? obj.cat    : document.getElementById('fat-f-cat').value;
+  const status = obj ? obj.status : document.getElementById('fat-f-status').value;
+  if (!desc || !valor) { if (!obj) alert('Preencha descrição e valor!'); return; }
+  const mes = obj ? obj.mes : fatMesAtivo;
+  getFatMes(mes).push({ id: Date.now().toString() + Math.random(), desc, valor, data: data || new Date().toISOString().slice(0,10), cat, status });
+  saveFat();
+  if (!obj) {
+    document.getElementById('fat-f-desc').value  = '';
+    document.getElementById('fat-f-valor').value = '';
+  }
+  buildFatTabs();
+  renderFaturamento();
+}
+
+function toggleFatStatus(mes, id) {
+  const lista = getFatMes(mes);
+  const f = lista.find(x => x.id === id);
+  if (!f) return;
+  const cycle = { recebido:'pendente', pendente:'atrasado', atrasado:'recebido' };
+  f.status = cycle[f.status] || 'recebido';
+  saveFat(); renderFaturamento();
+}
+
+function removerFat(mes, id) {
+  if (!confirm('Remover lançamento?')) return;
+  faturamentos[mes] = (faturamentos[mes] || []).filter(x => x.id !== id);
+  saveFat(); buildFatTabs(); renderFaturamento();
+}
+
+function importarDaManutencao() {
+  const mes = parseInt(document.getElementById('fat-import-mes').value);
+  const lista = getManutsMes(mes);
+  const clientes = lista.filter(m => m.cliente && m.proposta);
+  const preview = document.getElementById('fat-import-preview');
+  if (clientes.length === 0) {
+    preview.innerHTML = `<div style="font-size:13px;color:var(--text-muted);padding:8px 0">Nenhum cliente com proposta preenchida em ${MESES[mes]}.</div>`;
+    return;
+  }
+  // verificar quais já foram importados
+  const jaImportados = new Set((faturamentos[mes]||[]).map(f => f._manutId).filter(Boolean));
+  preview.innerHTML = clientes.map(m => {
+    const jaImp = jaImportados.has(m.id);
+    return `<div class="fat-import-item ${jaImp?'importado':''}">
+      <div>
+        <strong style="font-size:13px">${esc(m.cliente)}</strong>
+        <span style="font-size:11px;color:var(--text-muted);margin-left:8px">Proposta: ${esc(m.proposta)}</span>
+      </div>
+      ${jaImp
+        ? `<span style="font-size:11px;color:var(--green);font-weight:600">✅ Já importado</span>`
+        : `<button class="btn-primary" style="font-size:12px;padding:5px 12px" onclick="importarItem(${mes},'${m.id}','${esc(m.cliente)}','${esc(m.proposta)}')">Importar</button>`
+      }
+    </div>`;
+  }).join('');
+}
+
+function importarItem(mes, manutId, cliente, proposta) {
+  const data = MESES[mes] + '/' + new Date().getFullYear();
+  getFatMes(mes).push({
+    id: Date.now().toString() + Math.random(),
+    _manutId: manutId,
+    desc: cliente + (proposta ? ' — Proposta ' + proposta : ''),
+    valor: 0,
+    data: new Date().toISOString().slice(0,10),
+    cat: 'Manutenção',
+    status: 'pendente'
+  });
+  saveFat(); buildFatTabs(); renderFaturamento();
+  importarDaManutencao(); // atualiza preview
+}
+
+function renderFaturamento() {
+  const lista = getFatMes(fatMesAtivo);
+  document.getElementById('fat-count').textContent = `${lista.length} lançamento${lista.length !== 1 ? 's' : ''}`;
+
+  // métricas
+  let totalRecebido = 0, totalPendente = 0, totalAtrasado = 0;
+  for (let i = 0; i < 12; i++) {
+    (faturamentos[i]||[]).forEach(f => {
+      if (f.status === 'recebido') totalRecebido += f.valor;
+      else if (f.status === 'pendente') totalPendente += f.valor;
+      else if (f.status === 'atrasado') totalAtrasado += f.valor;
+    });
+  }
+  const totalMes = lista.reduce((s,f) => s + (f.valor||0), 0);
+  document.getElementById('fat-metrics').innerHTML = `
+    <div class="metric-card"><div class="metric-label">Total este mês</div><div class="metric-value" style="font-size:22px;color:var(--primary)">${fmt(totalMes)}</div><div style="font-size:11px;color:var(--text-muted);margin-top:4px">${MESES[fatMesAtivo]}</div></div>
+    <div class="metric-card"><div class="metric-label">Recebido (geral)</div><div class="metric-value green" style="font-size:22px">${fmt(totalRecebido)}</div></div>
+    <div class="metric-card"><div class="metric-label">Pendente (geral)</div><div class="metric-value orange" style="font-size:22px">${fmt(totalPendente)}</div></div>
+    <div class="metric-card"><div class="metric-label">Atrasado (geral)</div><div class="metric-value" style="font-size:22px;color:var(--red)">${fmt(totalAtrasado)}</div></div>`;
+
+  const tbody = document.getElementById('fat-tbody');
+  const empty = document.getElementById('fat-empty');
+  if (lista.length === 0) { tbody.innerHTML = ''; empty.style.display = 'block'; return; }
+  empty.style.display = 'none';
+
+  const catClass = { Manutenção:'fat-cat-manutencao', Locação:'fat-cat-locacao', Venda:'fat-cat-venda', Serviço:'fat-cat-servico', Outro:'fat-cat-outro' };
+  tbody.innerHTML = [...lista].reverse().map(f => {
+    const stClass = f.status === 'recebido' ? 'fat-badge-recebido' : f.status === 'atrasado' ? 'fat-badge-atrasado' : 'fat-badge-pendente';
+    const stLabel = f.status === 'recebido' ? '✅ Recebido' : f.status === 'atrasado' ? '🔴 Atrasado' : '⏳ Pendente';
+    const cc = catClass[f.cat] || 'fat-cat-outro';
+    return `<tr>
+      <td style="font-weight:600">${esc(f.desc)}</td>
+      <td><span class="fat-cat-badge ${cc}">${esc(f.cat)}</span></td>
+      <td style="color:var(--text-muted);font-family:'DM Mono',monospace;font-size:12px">${fmtDate(f.data)}</td>
+      <td class="comb-val-total">${fmt(f.valor)}</td>
+      <td><span class="${stClass}" onclick="toggleFatStatus(${fatMesAtivo},'${f.id}')" title="Clique para alternar">${stLabel}</span></td>
+      <td><button class="comb-del" onclick="removerFat(${fatMesAtivo},'${f.id}')">×</button></td>
+    </tr>`;
+  }).join('');
+}
+
+// ===== DASHBOARD =====
+function renderDashboard() {
+  const mesAtual = new Date().getMonth();
+  const anoAtual = new Date().getFullYear();
+
+  // KPIs
+  let totalVendasMes = 0, totalVendasGeral = 0, vendasPagas = 0, vendasPendentes = 0;
+  for (let i = 0; i < 12; i++) {
+    (sales[i]||[]).forEach(s => {
+      totalVendasGeral += Number(s.value||0);
+      if (i === mesAtual) totalVendasMes += Number(s.value||0);
+      if (s.pago !== 'nao') vendasPagas += Number(s.value||0);
+      else vendasPendentes += Number(s.value||0);
+    });
+  }
+  let totalFatMes = 0, totalFatRecebido = 0, totalFatPendente = 0;
+  for (let i = 0; i < 12; i++) {
+    (faturamentos[i]||[]).forEach(f => {
+      if (i === mesAtual) totalFatMes += f.valor||0;
+      if (f.status === 'recebido') totalFatRecebido += f.valor||0;
+      else totalFatPendente += f.valor||0;
+    });
+  }
+  const pendOpen = pendings.filter(p => !p.done).length;
+  const atTotal  = atendimentos.length;
+  const leads_fechados = leads.filter(l => l.stage === 'Fechado').length;
+
+  document.getElementById('dash-kpis').innerHTML = `
+    <div class="dash-kpi-card" style="border-top:3px solid var(--primary)">
+      <div class="dash-kpi-label">💰 Vendas este mês</div>
+      <div class="dash-kpi-value" style="color:var(--primary)">${fmt(totalVendasMes)}</div>
+      <div class="dash-kpi-sub">${MESES[mesAtual]} / ${anoAtual}</div>
+    </div>
+    <div class="dash-kpi-card" style="border-top:3px solid var(--green)">
+      <div class="dash-kpi-label">🧾 Faturamento recebido</div>
+      <div class="dash-kpi-value" style="color:var(--green)">${fmt(totalFatRecebido)}</div>
+      <div class="dash-kpi-sub">Total geral confirmado</div>
+    </div>
+    <div class="dash-kpi-card" style="border-top:3px solid var(--orange)">
+      <div class="dash-kpi-label">⏳ A receber</div>
+      <div class="dash-kpi-value" style="color:var(--orange)">${fmt(totalFatPendente + vendasPendentes)}</div>
+      <div class="dash-kpi-sub">Faturamento + vendas pendentes</div>
+    </div>
+    <div class="dash-kpi-card" style="border-top:3px solid var(--red)">
+      <div class="dash-kpi-label">📋 Pendências abertas</div>
+      <div class="dash-kpi-value" style="color:var(--red)">${pendOpen}</div>
+      <div class="dash-kpi-sub">de ${pendings.length} total</div>
+    </div>
+    <div class="dash-kpi-card" style="border-top:3px solid var(--purple)">
+      <div class="dash-kpi-label">🗂 Leads fechados</div>
+      <div class="dash-kpi-value" style="color:var(--purple)">${leads_fechados}</div>
+      <div class="dash-kpi-sub">de ${leads.length} leads</div>
+    </div>
+    <div class="dash-kpi-card" style="border-top:3px solid var(--blue)">
+      <div class="dash-kpi-label">🛠 Atendimentos</div>
+      <div class="dash-kpi-value" style="color:var(--blue)">${atTotal}</div>
+      <div class="dash-kpi-sub">registrados</div>
+    </div>`;
+
+  // Gráfico vendas + faturamento por mês
+  const totaisV = MESES.map((_,i) => (sales[i]||[]).reduce((s,x) => s+Number(x.value||0), 0));
+  const totaisF = MESES.map((_,i) => (faturamentos[i]||[]).reduce((s,x) => s+(x.valor||0), 0));
+  const maxVal  = Math.max(...totaisV, ...totaisF, 1);
+  const grafico = document.getElementById('dash-grafico');
+  if (grafico) grafico.innerHTML = MESES.map((nome,i) => {
+    const hV = Math.round((totaisV[i]/maxVal)*90);
+    const hF = Math.round((totaisF[i]/maxVal)*90);
+    const isHoje = i === mesAtual;
+    return `<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;position:relative;cursor:pointer" onclick="showTab('vendas')" title="${nome}: Vendas ${fmt(totaisV[i])} / Fat. ${fmt(totaisF[i])}">
+      <div style="display:flex;align-items:flex-end;gap:2px;height:90px">
+        <div style="width:10px;border-radius:3px 3px 0 0;background:${isHoje?'var(--primary)':'#c7d2fe'};height:${Math.max(hV,2)}px;transition:height 0.3s" title="Vendas"></div>
+        <div style="width:10px;border-radius:3px 3px 0 0;background:${isHoje?'var(--green)':'#bbf7d0'};height:${Math.max(hF,2)}px;transition:height 0.3s" title="Faturamento"></div>
+      </div>
+      <span style="font-size:9px;color:${isHoje?'var(--primary)':'var(--text-muted)'};font-weight:${isHoje?700:500}">${nome.slice(0,3)}</span>
+    </div>`;
+  }).join('');
+
+  // Pendências abertas
+  const dashPend = document.getElementById('dash-pend');
+  const pendAbertos = pendings.filter(p => !p.done).sort((a,b) => {
+    const ordem = { Alta:0, Média:1, Baixa:2 };
+    return (ordem[a.priority]||1) - (ordem[b.priority]||1);
+  }).slice(0,6);
+  dashPend.innerHTML = pendAbertos.length === 0
+    ? `<div style="font-size:13px;color:var(--text-light)">Nenhuma pendência aberta 🎉</div>`
+    : pendAbertos.map(p => `<div class="dash-pend-item dash-pend-${(p.priority||'media').toLowerCase().replace('é','e')}">${esc(p.desc)}<br><span style="font-size:10px;color:var(--text-muted)">${p.category} • ${fmtDate(p.date)}</span></div>`).join('');
+
+  // Últimas vendas (do mês atual)
+  const dashVendas = document.getElementById('dash-vendas');
+  const ultimasVendas = [...(sales[mesAtual]||[])].sort((a,b) => (b.date||'').localeCompare(a.date||'')).slice(0,5);
+  dashVendas.innerHTML = ultimasVendas.length === 0
+    ? `<div style="font-size:13px;color:var(--text-light)">Sem vendas em ${MESES[mesAtual]}</div>`
+    : ultimasVendas.map(s => {
+        const isPago = s.pago !== 'nao';
+        return `<div class="dash-sale-row">
+          <div style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600">${esc(s.desc)}</div>
+          <span class="sale-pago-badge ${isPago?'sale-pago-sim':'sale-pago-nao'}" style="cursor:default">${isPago?'✅':'⏳'}</span>
+          <span style="font-family:'DM Mono',monospace;font-weight:700;color:var(--green);font-size:13px;margin-left:8px">${fmt(s.value)}</span>
+        </div>`;
+      }).join('');
+
+  // Atendimentos recentes
+  const dashAtend = document.getElementById('dash-atend');
+  const ultimosAt = [...atendimentos].slice(0,5);
+  const urgCor = { Alta:'var(--red)', Média:'var(--orange)', Baixa:'var(--green)' };
+  dashAtend.innerHTML = ultimosAt.length === 0
+    ? `<div style="font-size:13px;color:var(--text-light)">Nenhum atendimento registrado</div>`
+    : ultimosAt.map(a => `<div class="dash-sale-row">
+        <div style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
+          <strong style="font-size:13px">${esc(a.cliente)}</strong>
+          <span style="font-size:11px;color:var(--text-muted);margin-left:6px">${esc(a.assunto)}</span>
+        </div>
+        <span style="font-size:11px;font-weight:700;color:${urgCor[a.urgencia]||'var(--text-muted)'}">● ${a.urgencia}</span>
+      </div>`).join('');
+
+  // subtítulo com data
+  const hoje = new Date();
+  const sub = document.getElementById('dash-subtitle');
+  if (sub) sub.textContent = `${hoje.toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}`;
+}
+
+// ===== COMBUSTÍVEL =====
+
+let combustiveis = JSON.parse(localStorage.getItem('crm_combustiveis') || '[]');
+let combFiltro = 'todos';
+
+function saveComb() { localStorage.setItem('crm_combustiveis', JSON.stringify(combustiveis)); }
+
+function calcCombTotal() {
+  const litros = parseFloat(document.getElementById('comb-f-litros').value) || 0;
+  const preco  = parseFloat(document.getElementById('comb-f-preco').value)  || 0;
+  if (litros && preco) document.getElementById('comb-f-total').value = (litros * preco).toFixed(2);
+}
+
+function setCombFiltro(val) {
+  combFiltro = val;
+  document.querySelectorAll('.comb-tab').forEach(t => t.classList.remove('active'));
+  const map = { todos: 'comb-tab-todos', 'Carro 1': 'comb-tab-1', 'Carro 2': 'comb-tab-2' };
+  document.getElementById(map[val])?.classList.add('active');
+  renderCombustivel();
+}
+
+function addCombustivel() {
+  const carro  = document.getElementById('comb-f-carro').value;
+  const data   = document.getElementById('comb-f-data').value;
+  const km     = parseFloat(document.getElementById('comb-f-km').value);
+  const litros = parseFloat(document.getElementById('comb-f-litros').value);
+  const preco  = parseFloat(document.getElementById('comb-f-preco').value);
+  const total  = parseFloat(document.getElementById('comb-f-total').value);
+  if (!data || !litros || !total) { alert('Preencha pelo menos: Data, Litros e Total!'); return; }
+  combustiveis.unshift({
+    id: Date.now().toString(), carro, data,
+    km: km || null, litros, preco: preco || null, total
+  });
+  saveComb();
+  renderCombustivel();
+  ['comb-f-km','comb-f-litros','comb-f-preco','comb-f-total'].forEach(id => document.getElementById(id).value = '');
+}
+
+function removerComb(id) {
+  if (!confirm('Remover este registro?')) return;
+  combustiveis = combustiveis.filter(c => c.id !== id);
+  saveComb(); renderCombustivel();
+}
+
+function renderCombustivel() {
+  const lista = combFiltro === 'todos' ? combustiveis : combustiveis.filter(c => c.carro === combFiltro);
+  document.getElementById('comb-count').textContent = `${lista.length} registro${lista.length !== 1 ? 's' : ''}`;
+
+  // métricas
+  const carros = ['Carro 1', 'Carro 2'];
+  let metricsHtml = '';
+  carros.forEach((car, i) => {
+    const regs = combustiveis.filter(c => c.carro === car);
+    const totalGasto = regs.reduce((s, c) => s + (c.total || 0), 0);
+    const totalLitros = regs.reduce((s, c) => s + (c.litros || 0), 0);
+    const cls = i === 0 ? 'comb-car-1' : 'comb-car-2';
+    metricsHtml += `
+      <div class="metric-card">
+        <div class="metric-label"><span class="comb-car-badge ${cls}">${car}</span></div>
+        <div class="metric-value" style="font-size:20px;margin-top:8px">${fmt(totalGasto)}</div>
+        <div style="font-size:12px;color:var(--text-muted);margin-top:4px">${totalLitros.toFixed(1)} L abastecidos</div>
+      </div>`;
+  });
+  const totalGeral = combustiveis.reduce((s, c) => s + (c.total || 0), 0);
+  metricsHtml += `
+    <div class="metric-card">
+      <div class="metric-label">Total Geral</div>
+      <div class="metric-value green" style="font-size:20px;margin-top:8px">${fmt(totalGeral)}</div>
+      <div style="font-size:12px;color:var(--text-muted);margin-top:4px">${combustiveis.length} abastecimentos</div>
+    </div>`;
+  document.getElementById('comb-metrics').innerHTML = metricsHtml;
+
+  // tabela
+  const tbody = document.getElementById('comb-tbody');
+  const empty = document.getElementById('comb-empty');
+  if (lista.length === 0) {
+    tbody.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+  tbody.innerHTML = lista.map(c => {
+    const cls = c.carro === 'Carro 1' ? 'comb-car-1' : 'comb-car-2';
+    const icon = c.carro === 'Carro 1' ? '🚗' : '🚙';
+    return `<tr>
+      <td><span class="comb-car-badge ${cls}">${icon} ${esc(c.carro)}</span></td>
+      <td>${fmtDate(c.data)}</td>
+      <td class="comb-val-km">${c.km ? c.km.toLocaleString('pt-BR') + ' km' : '—'}</td>
+      <td class="comb-val-litros">${c.litros.toFixed(2)} L</td>
+      <td style="color:var(--text-muted);font-family:'DM Mono',monospace">${c.preco ? 'R$ ' + c.preco.toFixed(3) : '—'}</td>
+      <td class="comb-val-total">${fmt(c.total)}</td>
+      <td><button class="comb-del" onclick="removerComb('${c.id}')" title="Remover">×</button></td>
+    </tr>`;
+  }).join('');
+}
+
+// ===== INIT =====
+const today = new Date().toISOString().slice(0,10);
+document.getElementById('sale-date').value    = today;
+document.getElementById('pend-date').value    = today;
+document.getElementById('comb-f-data').value  = today;
+document.getElementById('fat-f-data').value   = today;
+renderDashboard();
+renderFunil();
+updateBadge();
+buildMesesTabs();
+buildVdTabs();
+buildFatTabs();
+renderGrafico();
+atualizarMeta();
+renderAt();
+
+function updateBadge() {
+  const open = pendings.filter(p => !p.done).length;
+  document.getElementById('badge-count').textContent = open;
+}
+
+document.getElementById('modal-lead').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
 </script>
+</body>
+</html>
