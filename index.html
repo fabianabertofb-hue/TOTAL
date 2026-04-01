@@ -2056,7 +2056,10 @@ function renderSales() {
   if (totalMesEl) totalMesEl.textContent = 'Total ' + MESES[salesMesAtivo] + ': ' + fmt(totalMes);
 
   // filtrar por busca
-  if (query) lista = lista.filter(s => (s.desc || '').toLowerCase().includes(query));
+  if (query) lista = lista.filter(s =>
+    (s.desc || '').toLowerCase().includes(query) ||
+    (s.numped || '').toLowerCase().includes(query)
+  );
 
   // contador busca
   if (query && countEl) {
