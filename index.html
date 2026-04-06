@@ -162,6 +162,7 @@
   .pedido-badge-ag { background:#fef3c7; color:#92400e; font-size:10px; font-weight:700; padding:2px 7px; border-radius:20px; }
   .pedido-badge-rec { background:#d1fae5; color:#065f46; font-size:10px; font-weight:700; padding:2px 7px; border-radius:20px; cursor:pointer; }
   .pedido-badge-ag { cursor:pointer; }
+  .pedido-badge-fat { background:#dbeafe; color:#1e40af; font-size:10px; font-weight:700; padding:2px 7px; border-radius:20px; cursor:pointer; }
   .pedido-del { background:none; border:none; color:var(--text-light); cursor:pointer; font-size:13px; padding:0 2px; }
   .pedido-del:hover { color:var(--red); }
   .pedido-form { display:flex; gap:6px; flex-wrap:wrap; align-items:flex-end; padding:8px 0 4px; }
@@ -1162,14 +1163,6 @@
           <option value="nao">⏳ Pendente</option>
         </select>
       </div>
-      <div class="form-group">
-        <label>Nº Pedido</label>
-        <input type="text" id="sale-numped" placeholder="Ex: 00123">
-      </div>
-      <div class="form-group">
-        <label>Data Pedido</label>
-        <input type="date" id="sale-dataped">
-      </div>
       <button class="btn-green" onclick="addSale()">+ Add</button>
     </div>
   </div>
@@ -1323,7 +1316,15 @@
           <th class="th-num">#</th>
           <th style="min-width:180px">Condomínio / Cliente</th>
           <th style="min-width:130px">Dt. Preventiva</th>
-          <th style="min-width:130px">Dt. Corretiva</th>
+          <th style="min-width:200px;padding:0!important">
+            <div style="display:flex;flex-direction:column">
+              <div style="padding:6px 10px;text-align:center;font-size:11px;font-weight:700;color:var(--text-muted);border-bottom:1px solid var(--border)">Dt. Corretiva</div>
+              <div style="display:flex">
+                <div style="flex:1;padding:5px 8px;text-align:center;font-size:10px;font-weight:700;color:var(--text-muted);border-right:1px solid var(--border)">1ª</div>
+                <div style="flex:1;padding:5px 8px;text-align:center;font-size:10px;font-weight:700;color:var(--text-muted)">2ª</div>
+              </div>
+            </div>
+          </th>
           <th style="min-width:200px">Observação</th>
           <th style="min-width:130px">Nº Proposta</th>
           <th style="min-width:140px">Dt. Envio Relatório</th>
@@ -1662,16 +1663,6 @@
         <option value="nao">⏳ Pendente</option>
       </select>
     </div>
-    <div class="sale-edit-row">
-      <div class="sale-edit-group">
-        <label>Nº Pedido</label>
-        <input id="se-numped" type="text" placeholder="Ex: 00123">
-      </div>
-      <div class="sale-edit-group">
-        <label>Data Pedido</label>
-        <input id="se-dataped" type="date">
-      </div>
-    </div>
     <div class="sale-edit-footer">
       <button class="btn-secondary" onclick="fecharEditSale()">Cancelar</button>
       <button class="btn-primary" onclick="confirmarEditSale()">Salvar alterações</button>
@@ -1978,17 +1969,13 @@ function addSale() {
   const payment = document.getElementById('sale-payment').value;
   const date    = document.getElementById('sale-date').value;
   const pago    = document.getElementById('sale-pago').value;
-  const numped  = document.getElementById('sale-numped').value.trim();
-  const dataped = document.getElementById('sale-dataped').value;
   if (!desc) return;
   let mes = salesMesAtivo;
   if (date) mes = parseInt(date.split('-')[1]) - 1;
-  getSalesMes(mes).push({ id: Date.now().toString(), desc, value, type, payment, pago, date: date || new Date().toISOString().slice(0,10), numped, dataped });
+  getSalesMes(mes).push({ id: Date.now().toString(), desc, value, type, payment, pago, date: date || new Date().toISOString().slice(0,10) });
   save(); buildVdTabs(); renderSales();
-  document.getElementById('sale-desc').value   = '';
-  document.getElementById('sale-value').value  = '';
-  document.getElementById('sale-numped').value = '';
-  document.getElementById('sale-dataped').value = '';
+  document.getElementById('sale-desc').value  = '';
+  document.getElementById('sale-value').value = '';
 }
 
 function removeSale(id) {
@@ -2056,10 +2043,7 @@ function renderSales() {
   if (totalMesEl) totalMesEl.textContent = 'Total ' + MESES[salesMesAtivo] + ': ' + fmt(totalMes);
 
   // filtrar por busca
-  if (query) lista = lista.filter(s =>
-    (s.desc || '').toLowerCase().includes(query) ||
-    (s.numped || '').toLowerCase().includes(query)
-  );
+  if (query) lista = lista.filter(s => (s.desc || '').toLowerCase().includes(query));
 
   // contador busca
   if (query && countEl) {
@@ -2091,7 +2075,6 @@ function renderSales() {
       const pClass = s.payment === 'Pix' ? 'tag-pix' : s.payment === 'Boleto' ? 'tag-boleto' : s.payment === 'Cartão' ? 'tag-cartao' : s.payment === 'Dinheiro' ? 'tag-dinheiro' : 'tag-transferencia';
       const isPago = s.pago !== 'nao';
       const pagoBadge = `<span class="sale-pago-badge ${isPago?'sale-pago-sim':'sale-pago-nao'}" onclick="toggleSalePago('${s.id}')" title="Clique para alternar">${isPago?'✅ Pago':'⏳ Pendente'}</span>`;
-      const pedidoBadge = s.numped ? `<span class="sale-tag" style="background:#f0f4ff;color:#4f46e5;font-family:'DM Mono',monospace">📋 Ped. #${esc(s.numped)}${s.dataped?' · '+fmtDate(s.dataped):''}</span>` : '';
       const hasPedidos = (pedidosDB['venda_'+s.id]||[]).length > 0;
       return `<div class="sale-item" style="flex-wrap:wrap">
         <div style="display:flex;align-items:center;gap:10px;width:100%">
@@ -2102,7 +2085,6 @@ function renderSales() {
               <span class="sale-tag ${tClass}">${s.type}</span>
               <span class="sale-tag ${pClass}">${s.payment}</span>
               ${pagoBadge}
-              ${pedidoBadge}
             </div>
           </div>
           <div class="sale-value">${fmt(s.value)}</div>
@@ -2132,8 +2114,6 @@ function abrirEditSale(id) {
   document.getElementById('se-type').value    = s.type || 'Venda';
   document.getElementById('se-payment').value = s.payment || 'Pix';
   document.getElementById('se-pago').value    = s.pago || 'sim';
-  document.getElementById('se-numped').value  = s.numped || '';
-  document.getElementById('se-dataped').value = s.dataped || '';
   document.getElementById('sale-edit-overlay').classList.remove('hidden');
 }
 
@@ -2153,8 +2133,6 @@ function confirmarEditSale() {
   lista[idx].type    = document.getElementById('se-type').value;
   lista[idx].payment = document.getElementById('se-payment').value;
   lista[idx].pago    = document.getElementById('se-pago').value;
-  lista[idx].numped  = document.getElementById('se-numped').value.trim();
-  lista[idx].dataped = document.getElementById('se-dataped').value;
   save(); buildVdTabs(); renderSales();
   document.getElementById('sale-edit-overlay').classList.add('hidden');
   saleEditId = null;
@@ -2186,7 +2164,49 @@ function addPedido(tipo, refId) {
 function togglePedidoStatus(tipo, refId, pedidoId) {
   const lista = getPedidos(tipo, refId);
   const p = lista.find(x => x.id === pedidoId);
-  if (p) { p.status = p.status === 'aguardando' ? 'recebido' : 'aguardando'; savePedidos(); renderPedidos(tipo, refId); }
+  if (!p) return;
+  const ciclo = { aguardando: 'recebido', recebido: 'faturado', faturado: 'aguardando' };
+  p.status = ciclo[p.status] || 'aguardando';
+  savePedidos();
+  // Se virou "faturado" e é pedido de manutenção, envia ao faturamento automaticamente
+  if (p.status === 'faturado' && tipo === 'manut') {
+    enviarPedidoAoFaturamento(refId, p);
+  }
+  renderPedidos(tipo, refId);
+}
+
+function enviarPedidoAoFaturamento(manutId, pedido) {
+  // Busca o cliente associado a este registro de manutenção
+  let clienteNome = '';
+  for (let mes = 0; mes < 12; mes++) {
+    if (!manuts[mes]) continue;
+    const entry = manuts[mes].find(m => m.id === manutId);
+    if (entry) { clienteNome = entry.cliente || ''; break; }
+  }
+  // Mês atual para lançar no faturamento
+  const mesDestino = fatMesAtivo;
+  const desc = (clienteNome ? clienteNome + ' — ' : '') + 'Peça faturada #' + pedido.num;
+  getFatMes(mesDestino).push({
+    id: Date.now().toString() + Math.random(),
+    _pedidoId: pedido.id,
+    desc,
+    valor: pedido.valor || 0,
+    data: pedido.data || new Date().toISOString().slice(0,10),
+    cat: 'Manutenção',
+    status: 'pendente'
+  });
+  saveFat();
+  buildFatTabs();
+  // Notificação discreta
+  const aviso = document.createElement('div');
+  aviso.textContent = '✅ Peça enviada ao Faturamento!';
+  Object.assign(aviso.style, {
+    position:'fixed', bottom:'24px', right:'24px', background:'#10b981', color:'#fff',
+    padding:'10px 18px', borderRadius:'8px', fontWeight:'700', fontSize:'13px',
+    zIndex:'9999', boxShadow:'0 4px 12px rgba(0,0,0,0.15)', transition:'opacity 0.4s'
+  });
+  document.body.appendChild(aviso);
+  setTimeout(() => { aviso.style.opacity = '0'; setTimeout(() => aviso.remove(), 400); }, 2500);
 }
 
 function removePedido(tipo, refId, pedidoId) {
@@ -2204,10 +2224,10 @@ function renderPedidos(tipo, refId) {
       <span class="pedido-num">#${esc(p.num)}</span>
       ${p.data ? `<span class="pedido-data">${fmtDate(p.data)}</span>` : ''}
       ${p.valor ? `<span class="pedido-val">${fmt(p.valor)}</span>` : '<span class="pedido-val" style="visibility:hidden">-</span>'}
-      <span class="${p.status==='recebido'?'pedido-badge-rec':'pedido-badge-ag'}"
+      <span class="${p.status==='recebido'?'pedido-badge-rec':p.status==='faturado'?'pedido-badge-fat':'pedido-badge-ag'}"
             onclick="togglePedidoStatus('${tipo}','${refId}','${p.id}')"
             title="Clique para alternar status">
-        ${p.status==='recebido'?'✅ Recebido':'⏳ Aguardando'}
+        ${p.status==='recebido'?'✅ Recebido':p.status==='faturado'?'🧾 Faturado':'⏳ Aguardando'}
       </span>
       <button class="pedido-del" onclick="removePedido('${tipo}','${refId}','${p.id}')" title="Remover">×</button>
     </div>`).join('');
@@ -2319,7 +2339,7 @@ function switchMes(idx) {
 
 function addManutRow() {
   const lista = getManutsMes(manutMesAtivo);
-  lista.push({ id: Date.now().toString(), cliente:'', preventiva:'', corretiva:'', obs:'', proposta:'', relatorio:'', limpeza:'' });
+  lista.push({ id: Date.now().toString(), cliente:'', preventiva:'', corretiva:'', corretiva2:'', obs:'', proposta:'', relatorio:'', limpeza:'' });
   save(); renderManut();
   setTimeout(() => {
     const inputs = document.querySelectorAll('#manut-list .cell-cliente');
@@ -2352,7 +2372,7 @@ function propagarObs(original, mesAtual) {
     entrada = {
       id: 'prop_' + Date.now() + '_' + Math.random().toString(36).slice(2),
       cliente: original.cliente,
-      preventiva: '', corretiva: '',
+      preventiva: '', corretiva: '', corretiva2: '',
       obs: '⬆️ ' + original.obs,
       proposta: '', relatorio: '', limpeza: ''
     };
@@ -2448,13 +2468,13 @@ function renderManut() {
 
   // 3. Sem dados
   if (total === 0) {
-    tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;color:var(--text-light);padding:32px;font-size:13px">Clique em "Nova Linha" para começar em ${MESES[manutMesAtivo]}</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="10" style="text-align:center;color:var(--text-light);padding:32px;font-size:13px">Clique em "Nova Linha" para começar em ${MESES[manutMesAtivo]}</td></tr>`;
     return;
   }
 
   // 4. Sem resultados na busca
   if (lista.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="9"><div class="mn-no-results">🔍 Nenhum resultado para "<strong>${esc(query)}</strong>"</div></td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="10"><div class="mn-no-results">🔍 Nenhum resultado para "<strong>${esc(query)}</strong>"</div></td></tr>`;
     return;
   }
 
@@ -2487,8 +2507,18 @@ function renderManut() {
           ${m.preventiva ? '<span style="color:var(--green);font-size:13px;padding-right:8px;flex-shrink:0">✓</span>' : ''}
         </div>
       </td>
-      <td><input class="cell-input" type="date" value="${m.corretiva || ''}"
-            oninput="updateManut('${m.id}','corretiva',this.value)"></td>
+      <td style="padding:0!important;vertical-align:middle">
+        <div style="display:flex;flex-direction:column;gap:0">
+          <input class="cell-input" type="date" value="${m.corretiva || ''}"
+              style="border-bottom:1px solid var(--border);border-radius:0;margin:0"
+              placeholder="1ª corretiva"
+              oninput="updateManut('${m.id}','corretiva',this.value)">
+          <input class="cell-input" type="date" value="${m.corretiva2 || ''}"
+              style="border-radius:0;margin:0"
+              placeholder="2ª corretiva"
+              oninput="updateManut('${m.id}','corretiva2',this.value)">
+        </div>
+      </td>
       <td style="${m.obs ? 'background:#fde047;' : ''}">
         <input class="cell-input" value="${esc(m.obs)}"
             placeholder="Observações..."
