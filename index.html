@@ -2848,12 +2848,14 @@ function switchFatMes(idx) {
 function addFaturamento(obj) {
   const desc   = obj ? obj.desc   : document.getElementById('fat-f-desc').value.trim();
   const valorRaw = obj ? obj.valor : document.getElementById('fat-f-valor').value;
-  const valor  = obj ? obj.valor  : parseFloat(String(valorRaw).replace(',', '.')) || 0;
+  // Suporta tanto vírgula quanto ponto como separador decimal (ex: 1.500,00 ou 1500.00)
+  const valorStr = String(valorRaw).trim().replace(/\./g, '').replace(',', '.');
+  const valor  = obj ? (parseFloat(String(obj.valor).replace(',','.')) || 0) : (parseFloat(valorStr) || 0);
   const data   = obj ? obj.data   : document.getElementById('fat-f-data').value;
   const cat    = obj ? obj.cat    : document.getElementById('fat-f-cat').value;
   const status = obj ? obj.status : document.getElementById('fat-f-status').value;
   if (!desc) { if (!obj) alert('Preencha a descrição!'); return; }
-  if (!valor || valor <= 0) { if (!obj) alert('Preencha um valor válido maior que zero!'); return; }
+  if (!obj && (!valor || valor <= 0)) { alert('Preencha um valor válido maior que zero!'); return; }
   const mes = obj ? obj.mes : fatMesAtivo;
   const novoId = Date.now().toString() + '_' + Math.floor(Math.random() * 1000000);
   getFatMes(mes).push({ id: novoId, desc, valor, data: data || new Date().toISOString().slice(0,10), cat, status });
