@@ -2847,17 +2847,21 @@ function switchFatMes(idx) {
 
 function addFaturamento(obj) {
   const desc   = obj ? obj.desc   : document.getElementById('fat-f-desc').value.trim();
-  const valor  = obj ? obj.valor  : parseFloat(document.getElementById('fat-f-valor').value) || 0;
+  const valorRaw = obj ? obj.valor : document.getElementById('fat-f-valor').value;
+  const valor  = obj ? obj.valor  : parseFloat(String(valorRaw).replace(',', '.')) || 0;
   const data   = obj ? obj.data   : document.getElementById('fat-f-data').value;
   const cat    = obj ? obj.cat    : document.getElementById('fat-f-cat').value;
   const status = obj ? obj.status : document.getElementById('fat-f-status').value;
-  if (!desc || !valor) { if (!obj) alert('Preencha descrição e valor!'); return; }
+  if (!desc) { if (!obj) alert('Preencha a descrição!'); return; }
+  if (!valor || valor <= 0) { if (!obj) alert('Preencha um valor válido maior que zero!'); return; }
   const mes = obj ? obj.mes : fatMesAtivo;
-  getFatMes(mes).push({ id: Date.now().toString() + Math.random(), desc, valor, data: data || new Date().toISOString().slice(0,10), cat, status });
+  const novoId = Date.now().toString() + '_' + Math.floor(Math.random() * 1000000);
+  getFatMes(mes).push({ id: novoId, desc, valor, data: data || new Date().toISOString().slice(0,10), cat, status });
   saveFat();
   if (!obj) {
     document.getElementById('fat-f-desc').value  = '';
     document.getElementById('fat-f-valor').value = '';
+    document.getElementById('fat-f-data').value  = new Date().toISOString().slice(0,10);
   }
   buildFatTabs();
   renderFaturamento();
