@@ -1730,6 +1730,7 @@
 </div>
 
 <script>
+// ===== CONSTANTES GLOBAIS =====
 // ===== STATE =====
 let leads    = JSON.parse(localStorage.getItem('crm_leads')    || '[]');
 // sales agora é objeto indexado por mês: { 0: [...], 1: [...], ... }
@@ -2848,9 +2849,13 @@ function switchFatMes(idx) {
 function addFaturamento(obj) {
   const desc   = obj ? obj.desc   : document.getElementById('fat-f-desc').value.trim();
   const valorRaw = obj ? obj.valor : document.getElementById('fat-f-valor').value;
-  // Suporta tanto vírgula quanto ponto como separador decimal (ex: 1.500,00 ou 1500.00)
-  const valorStr = String(valorRaw).trim().replace(/\./g, '').replace(',', '.');
-  const valor  = obj ? (parseFloat(String(obj.valor).replace(',','.')) || 0) : (parseFloat(valorStr) || 0);
+  function _parseValor(raw) {
+    const s = String(raw).trim();
+    if (s.includes(',') && s.includes('.')) return parseFloat(s.replace(/\./g,'').replace(',','.')) || 0;
+    if (s.includes(',')) return parseFloat(s.replace(',','.')) || 0;
+    return parseFloat(s) || 0;
+  }
+  const valor = _parseValor(valorRaw);
   const data   = obj ? obj.data   : document.getElementById('fat-f-data').value;
   const cat    = obj ? obj.cat    : document.getElementById('fat-f-cat').value;
   const status = obj ? obj.status : document.getElementById('fat-f-status').value;
