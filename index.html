@@ -1474,8 +1474,22 @@
     <div class="legend-item"><div class="legend-dot" style="background:#bbf7d0;border:1px solid #86efac"></div> Limpeza verde = realizada</div>
     <div class="legend-item"><div class="legend-dot" style="background:#dcfce7;border:1px solid #86efac"></div> Proposta aprovada</div>
     <div class="legend-item"><div class="legend-dot" style="background:#fee2e2;border:1px solid #fca5a5"></div> Proposta recusada</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#fef3c7;border:1px solid #fbbf24"></div> 🟡 Vence amanhã</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#fee2e2;border:1px solid #fca5a5"></div> 🔴 Vencido</div>
     <div class="legend-item"><div class="legend-dot" style="background:#fee2e2;border:1px solid #fca5a5"></div> ⚠️ +30 dias sem preventiva</div>
     <div class="legend-item"><div class="legend-dot" style="background:#fde68a;border:1px solid #fbbf24"></div> 📋 Pendências abertas por condomínio</div>
+  </div>
+
+  <!-- PAINEL VENCIMENTOS -->
+  <div id="mn-venc-painel" style="display:none;margin-bottom:14px;background:var(--white);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-sm);overflow:hidden">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:11px 18px;background:#fffbeb;border-bottom:1px solid #fde68a;cursor:pointer" onclick="toggleVencPainel()">
+      <div style="display:flex;align-items:center;gap:10px;font-size:13.5px;font-weight:700;color:var(--text)">
+        🔔 Vencimentos próximos
+        <span id="mn-venc-badge" style="background:var(--orange);color:white;font-size:11px;font-weight:700;padding:2px 9px;border-radius:20px">0</span>
+      </div>
+      <span id="mn-venc-toggle" style="font-size:11px;color:var(--text-muted);transition:transform 0.2s">▼</span>
+    </div>
+    <div id="mn-venc-body" style="display:flex;flex-wrap:wrap;gap:10px;padding:14px 18px"></div>
   </div>
 
   <div class="mn-sheet-wrap">
@@ -1494,6 +1508,7 @@
               </div>
             </div>
           </th>
+          <th style="min-width:90px">📅 Periodicidade</th>
           <th style="min-width:100px">Nº Proposta</th>
           <th style="min-width:100px">Dt. Relatório</th>
           <th style="min-width:90px">🧹 Limpeza</th>
@@ -2679,7 +2694,7 @@ function switchMes(idx) {
 
 function addManutRow() {
   const lista = getManutsMes(manutMesAtivo);
-  lista.push({ id: Date.now().toString(), cliente:'', preventiva:'', corretiva:'', corretiva2:'', proposta:'', propostaStatus:'', relatorio:'', limpeza:'' });
+  lista.push({ id: Date.now().toString(), cliente:'', preventiva:'', corretiva:'', corretiva2:'', proposta:'', propostaStatus:'', relatorio:'', limpeza:'', periodicidade:'' });
   save(); renderManut();
   setTimeout(() => {
     const inputs = document.querySelectorAll('#manut-list .cell-cliente');
@@ -2698,6 +2713,7 @@ function updateManut(id, field, val) {
       propagarObs(m, manutMesAtivo);
     }
     if (field === 'preventiva' || field === 'relatorio' || field === 'limpeza') renderManut();
+    if (field === 'periodicidade') renderVencimentos();
     // Quando preventiva é preenchida, cria rascunho no Faturamento automaticamente
     if (field === 'preventiva' && val) {
       criarFaturamentoManut(m, manutMesAtivo);
@@ -2815,6 +2831,92 @@ function toggleSort() {
   renderManut();
 }
 
+// ===== VENCIMENTOS =====
+const PERIODO_DIAS = { mensal: 30, bimestral: 60, semestral: 180 };
+
+function calcProxVenc(m) {
+  if (!m.preventiva || !m.periodicidade) return null;
+  const dias = PERIODO_DIAS[m.periodicidade];
+  if (!dias) return null;
+  const ultima = new Date(m.preventiva + 'T00:00:00');
+  return new Date(ultima.getTime() + dias * 86400000);
+}
+
+function calcDiasParaVenc(m) {
+  const venc = calcProxVenc(m);
+  if (!venc) return null;
+  const hoje = new Date(); hoje.setHours(0,0,0,0);
+  return Math.floor((venc - hoje) / 86400000);
+}
+
+function calcVencStyle(m) {
+  const dias = calcDiasParaVenc(m);
+  if (dias === null) return '';
+  if (dias < 0)  return 'background:#fee2e2;'; // vencido
+  if (dias <= 1) return 'background:#fef3c7;'; // vence amanhã ou hoje
+  return '';
+}
+
+function calcVencBadge(m) {
+  const dias = calcDiasParaVenc(m);
+  if (dias === null) return '';
+  if (dias < 0)  return `<div style="font-size:9px;font-weight:700;color:#b91c1c;margin-top:2px">🔴 Vencido há ${Math.abs(dias)}d</div>`;
+  if (dias === 0) return `<div style="font-size:9px;font-weight:700;color:#92400e;margin-top:2px">🟠 Vence hoje!</div>`;
+  if (dias === 1) return `<div style="font-size:9px;font-weight:700;color:#92400e;margin-top:2px">🟡 Vence amanhã</div>`;
+  return `<div style="font-size:9px;color:var(--text-muted);margin-top:2px">Vence em ${dias}d</div>`;
+}
+
+let vencPainelCollapsed = false;
+function toggleVencPainel() {
+  vencPainelCollapsed = !vencPainelCollapsed;
+  const body   = document.getElementById('mn-venc-body');
+  const toggle = document.getElementById('mn-venc-toggle');
+  if (body)   body.style.display = vencPainelCollapsed ? 'none' : 'flex';
+  if (toggle) toggle.style.transform = vencPainelCollapsed ? 'rotate(-90deg)' : '';
+}
+
+function renderVencimentos() {
+  const painel = document.getElementById('mn-venc-painel');
+  const body   = document.getElementById('mn-venc-body');
+  const badge  = document.getElementById('mn-venc-badge');
+  if (!painel || !body || !badge) return;
+
+  // Busca em todos os meses clientes com vencimento próximo (até 7 dias) ou já vencido
+  const alertas = [];
+  for (let mes = 0; mes < 12; mes++) {
+    (manuts[mes] || []).forEach(m => {
+      if (!m.cliente || !m.periodicidade || !m.preventiva) return;
+      const dias = calcDiasParaVenc(m);
+      if (dias !== null && dias <= 7) {
+        alertas.push({ ...m, mes, dias });
+      }
+    });
+  }
+  alertas.sort((a, b) => a.dias - b.dias);
+
+  badge.textContent = alertas.length;
+  badge.style.background = alertas.some(a => a.dias < 0) ? 'var(--red)' : 'var(--orange)';
+  painel.style.display = alertas.length > 0 ? 'block' : 'none';
+
+  if (alertas.length === 0) return;
+
+  body.innerHTML = alertas.map(a => {
+    const cor   = a.dias < 0 ? '#b91c1c' : a.dias <= 1 ? '#92400e' : '#6b21a8';
+    const bg    = a.dias < 0 ? '#fee2e2' : a.dias <= 1 ? '#fef3c7' : '#ede9fe';
+    const label = a.dias < 0 ? `Vencido há ${Math.abs(a.dias)} dia${Math.abs(a.dias)>1?'s':''}` : a.dias === 0 ? 'Vence hoje!' : a.dias === 1 ? 'Vence amanhã' : `Vence em ${a.dias} dias`;
+    const venc  = calcProxVenc(a);
+    return `<div style="background:${bg};border:1px solid;border-color:${cor}33;border-radius:10px;padding:10px 14px;min-width:200px;flex:1;max-width:280px">
+      <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:3px">🏢 ${esc(a.cliente)}</div>
+      <div style="font-size:11px;color:${cor};font-weight:700;margin-bottom:2px">⏰ ${label}</div>
+      <div style="font-size:10px;color:var(--text-muted)">
+        ${a.periodicidade.charAt(0).toUpperCase()+a.periodicidade.slice(1)} · 
+        Última: ${fmtDate(a.preventiva)} · 
+        ${venc ? 'Próxima: '+fmtDate(venc.toISOString().slice(0,10)) : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
 function renderManut() {
   const tbody    = document.getElementById('manut-list');
   const searchEl = document.getElementById('mn-search-input');
@@ -2894,6 +2996,16 @@ function renderManut() {
               oninput="updateManut('${m.id}','corretiva2',this.value)">
         </div>
       </td>
+      <td style="padding:4px 6px;text-align:center;${calcVencStyle(m)}">
+        <select style="font-size:11px;padding:3px 4px;border:1px solid var(--border);border-radius:5px;font-family:'DM Sans',sans-serif;color:var(--text);background:transparent;cursor:pointer;width:100%"
+            onchange="updateManut('${m.id}','periodicidade',this.value)">
+          <option value=""         ${!m.periodicidade?'selected':''}>—</option>
+          <option value="mensal"   ${m.periodicidade==='mensal'?'selected':''}>Mensal</option>
+          <option value="bimestral"${m.periodicidade==='bimestral'?'selected':''}>Bimestral</option>
+          <option value="semestral"${m.periodicidade==='semestral'?'selected':''}>Semestral</option>
+        </select>
+        ${calcVencBadge(m)}
+      </td>
       <td style="padding:4px 6px;${/(aprovad)/i.test(m.propostaStatus||'') ? 'background:#dcfce7;' : /(recusad)/i.test(m.propostaStatus||'') ? 'background:#fee2e2;' : ''}">
         <div style="display:flex;flex-direction:column;gap:3px">
           <input class="cell-input" value="${esc(m.proposta)}"
@@ -2941,6 +3053,8 @@ function renderManut() {
   lista.forEach(m => renderMnPend(m.id));
   // atualizar painel resumo de pendências
   renderPainelPends();
+  // atualizar painel de vencimentos
+  renderVencimentos();
 }
 
 // ===== PENDÊNCIAS DE MANUTENÇÃO (por condomínio) =====
@@ -3916,6 +4030,7 @@ renderGrafico();
 atualizarMeta();
 renderAt();
 renderBoletos();
+renderVencimentos();
 
 function updateBadge() {
   const hoje = new Date(); hoje.setHours(0,0,0,0);
