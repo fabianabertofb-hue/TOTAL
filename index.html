@@ -1212,6 +1212,8 @@
     <button class="nav-tab" onclick="showTab('atendimentos')">🛠 Atendimentos</button>
   </div>
   <button class="btn-primary" onclick="openModal()">+ Novo Lead</button>
+  <button onclick="exportarDados()" style="padding:7px 13px;background:var(--green);color:white;border:none;border-radius:var(--radius-sm);font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap" title="Exportar todos os dados">⬇️ Exportar</button>
+  <label style="padding:7px 13px;background:var(--blue);color:white;border-radius:var(--radius-sm);font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap" title="Importar dados de um backup">⬆️ Importar<input type="file" accept=".json" onchange="importarDados(event)" style="display:none"></label>
 </nav>
 
 <!-- =================== FUNIL =================== -->
@@ -1381,7 +1383,8 @@
     <div style="overflow-x:auto">
       <table id="mn-rel-tabela" style="width:100%;border-collapse:collapse;font-size:13px"></table>
     </div>
-    <div style="display:flex;justify-content:flex-end;margin-top:20px">
+    <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:20px">
+      <button onclick="imprimirRelatorio()" style="padding:8px 20px;background:var(--green);color:white;border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer">🖨️ Imprimir / PDF</button>
       <button onclick="fecharRelatorioMensal()" style="padding:8px 20px;background:var(--primary);color:white;border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer">Fechar</button>
     </div>
   </div>
@@ -1440,7 +1443,8 @@
     <div class="legend-item"><div class="legend-dot" style="background:#bbf7d0;border:1px solid #86efac"></div> Nome verde = preventiva feita</div>
     <div class="legend-item"><div class="legend-dot" style="background:#bbf7d0;border:1px solid #86efac"></div> Relatório verde = entregue</div>
     <div class="legend-item"><div class="legend-dot" style="background:#bbf7d0;border:1px solid #86efac"></div> Limpeza verde = realizada</div>
-    <div class="legend-item"><div class="legend-dot" style="background:#bbf7d0;border:1px solid #86efac"></div> Proposta concluída</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#dcfce7;border:1px solid #86efac"></div> Proposta aprovada</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#fee2e2;border:1px solid #fca5a5"></div> Proposta recusada</div>
     <div class="legend-item"><div class="legend-dot" style="background:#fee2e2;border:1px solid #fca5a5"></div> ⚠️ +30 dias sem preventiva</div>
     <div class="legend-item"><div class="legend-dot" style="background:#fde68a;border:1px solid #fbbf24"></div> 📋 Pendências abertas por condomínio</div>
   </div>
@@ -1745,6 +1749,10 @@
           <option value="Pedido de peça">📦 Pedido de peça</option>
           <option value="Concluído">✅ Concluído</option>
         </select>
+      </div>
+      <div class="at-form-group">
+        <label>Data</label>
+        <input type="date" id="at-f-data">
       </div>
     </div>
     <div class="at-sync-info" id="at-sync-info">
@@ -2501,7 +2509,7 @@ function switchMes(idx) {
 
 function addManutRow() {
   const lista = getManutsMes(manutMesAtivo);
-  lista.push({ id: Date.now().toString(), cliente:'', preventiva:'', corretiva:'', corretiva2:'', obs:'', proposta:'', relatorio:'', limpeza:'' });
+  lista.push({ id: Date.now().toString(), cliente:'', preventiva:'', corretiva:'', corretiva2:'', proposta:'', propostaStatus:'', relatorio:'', limpeza:'' });
   save(); renderManut();
   setTimeout(() => {
     const inputs = document.querySelectorAll('#manut-list .cell-cliente');
@@ -2716,12 +2724,21 @@ function renderManut() {
               oninput="updateManut('${m.id}','corretiva2',this.value)">
         </div>
       </td>
-      <td style="${/(conclu[ií]do)/i.test(m.proposta||'') ? 'background:#dcfce7;' : ''}">
-        <input class="cell-input" value="${esc(m.proposta)}"
-            placeholder="Ex: 2495"
-            style="${/(conclu[ií]do)/i.test(m.proposta||'') ? 'background:transparent;color:#15803d;font-weight:700;' : ''}"
-            oninput="updateManut('${m.id}','proposta',this.value)"
-            onblur="renderManut()"></td>
+      <td style="padding:4px 6px;${/(aprovad)/i.test(m.propostaStatus||'') ? 'background:#dcfce7;' : /(recusad)/i.test(m.propostaStatus||'') ? 'background:#fee2e2;' : ''}">
+        <div style="display:flex;flex-direction:column;gap:3px">
+          <input class="cell-input" value="${esc(m.proposta)}"
+              placeholder="Nº proposta"
+              style="font-size:12px;padding:5px 6px;"
+              oninput="updateManut('${m.id}','proposta',this.value)">
+          <select style="font-size:10px;padding:2px 4px;border:1px solid var(--border);border-radius:4px;font-family:'DM Sans',sans-serif;color:var(--text);background:transparent;cursor:pointer;width:100%"
+              onchange="updateManut('${m.id}','propostaStatus',this.value)">
+            <option value="" ${!m.propostaStatus?'selected':''}>— status —</option>
+            <option value="Enviada"  ${m.propostaStatus==='Enviada'?'selected':''}>📤 Enviada</option>
+            <option value="Aprovada" ${m.propostaStatus==='Aprovada'?'selected':''}>✅ Aprovada</option>
+            <option value="Recusada" ${m.propostaStatus==='Recusada'?'selected':''}>❌ Recusada</option>
+          </select>
+        </div>
+      </td>
       <td class="${relatorioOk}">
         <input class="cell-input" type="date" value="${m.relatorio || ''}"
             style="font-size:11px;padding:7px 4px;"
@@ -3009,6 +3026,38 @@ function fecharRelatorioMensal() {
   document.getElementById('mn-relatorio-overlay').style.display = 'none';
 }
 
+function imprimirRelatorio() {
+  const titulo   = document.getElementById('mn-rel-titulo').textContent;
+  const cards    = document.getElementById('mn-rel-cards').innerHTML;
+  const tabela   = document.getElementById('mn-rel-tabela').outerHTML;
+  const janela   = window.open('', '_blank');
+  janela.document.write(`<!DOCTYPE html><html lang="pt-BR"><head>
+    <meta charset="UTF-8">
+    <title>Relatório Manutenção — ${titulo}</title>
+    <style>
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      body { font-family: Arial, sans-serif; font-size: 13px; color: #1a1d27; padding: 32px; }
+      h1 { font-size: 18px; font-weight: 700; margin-bottom: 6px; }
+      .sub { font-size: 12px; color: #8b90a0; margin-bottom: 24px; }
+      .cards { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin-bottom: 24px; }
+      .cards > div { border-radius: 10px; padding: 14px; }
+      table { width: 100%; border-collapse: collapse; font-size: 12px; }
+      th { background: #f1f3f8; padding: 9px 12px; text-align: left; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #8b90a0; border-bottom: 2px solid #e8eaef; }
+      td { padding: 9px 12px; border-bottom: 1px solid #f0f1f5; }
+      .sec-title { font-size: 11px; font-weight: 700; color: #8b90a0; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 10px; }
+      @media print { body { padding: 16px; } }
+    </style>
+  </head><body>
+    <h1>📋 Relatório Mensal de Manutenção</h1>
+    <div class="sub">${titulo} — emitido em ${new Date().toLocaleDateString('pt-BR')}</div>
+    <div class="cards">${cards}</div>
+    <div class="sec-title">Detalhamento por condomínio</div>
+    ${tabela}
+    <script>window.onload = function(){ window.print(); }<\/script>
+  </body></html>`);
+  janela.document.close();
+}
+
 function esc(s) {
   return (s || '').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
@@ -3039,6 +3088,7 @@ function abrirAtModal(id) {
   const overlay = document.getElementById('at-modal-overlay');
   overlay.classList.remove('hidden');
   document.getElementById('at-modal-titulo').textContent = id ? 'Editar Atendimento' : 'Novo Atendimento';
+  const hoje = new Date().toISOString().slice(0,10);
   if (id) {
     const a = atendimentos.find(x => x.id === id);
     if (a) {
@@ -3048,11 +3098,13 @@ function abrirAtModal(id) {
       document.getElementById('at-f-obs').value      = a.obs || '';
       document.getElementById('at-f-urgencia').value = a.urgencia || 'Média';
       document.getElementById('at-f-status').value   = a.status || 'Solicitação';
+      document.getElementById('at-f-data').value     = a.data || hoje;
     }
   } else {
     ['at-f-cliente','at-f-equip','at-f-assunto','at-f-obs'].forEach(id => document.getElementById(id).value = '');
     document.getElementById('at-f-urgencia').value = 'Média';
     document.getElementById('at-f-status').value   = 'Solicitação';
+    document.getElementById('at-f-data').value     = hoje;
   }
   verificarCliente();
 }
@@ -3102,7 +3154,7 @@ function salvarAt() {
     obs:      document.getElementById('at-f-obs').value.trim(),
     urgencia: document.getElementById('at-f-urgencia').value,
     status:   document.getElementById('at-f-status').value,
-    data:     new Date().toISOString().slice(0,10),
+    data:     document.getElementById('at-f-data').value || new Date().toISOString().slice(0,10),
   };
   if (atEditId) {
     const idx = atendimentos.findIndex(x => x.id === atEditId);
@@ -3703,6 +3755,59 @@ function updateBadge() {
   badge.textContent = open;
   badge.style.background = vencidas > 0 ? 'var(--red)' : '';
   badge.title = vencidas > 0 ? `${vencidas} vencida${vencidas > 1 ? 's' : ''}` : '';
+}
+
+// ===== EXPORTAR / IMPORTAR =====
+function exportarDados() {
+  const chaves = ['crm_leads','crm_sales','crm_pendings','crm_manuts',
+                  'crm_faturamentos','crm_atendimentos','crm_combustiveis',
+                  'crm_pedidos','crm_mn_pends'];
+  const dados = {};
+  chaves.forEach(k => {
+    const v = localStorage.getItem(k);
+    if (v) dados[k] = JSON.parse(v);
+  });
+  // metas mensais
+  for (let i = 0; i < 12; i++) {
+    const v = localStorage.getItem('crm_meta_mes_' + i);
+    if (v) dados['crm_meta_mes_' + i] = v;
+  }
+  dados._exportadoEm = new Date().toLocaleString('pt-BR');
+  const blob = new Blob([JSON.stringify(dados, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'crm_backup_' + new Date().toISOString().slice(0,10) + '.json';
+  a.click();
+}
+
+function importarDados(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const dados = JSON.parse(e.target.result);
+      const chaves = ['crm_leads','crm_sales','crm_pendings','crm_manuts',
+                      'crm_faturamentos','crm_atendimentos','crm_combustiveis',
+                      'crm_pedidos','crm_mn_pends'];
+      let importados = 0;
+      chaves.forEach(k => {
+        if (dados[k] !== undefined) {
+          localStorage.setItem(k, JSON.stringify(dados[k]));
+          importados++;
+        }
+      });
+      for (let i = 0; i < 12; i++) {
+        const k = 'crm_meta_mes_' + i;
+        if (dados[k] !== undefined) localStorage.setItem(k, dados[k]);
+      }
+      alert('✅ Dados importados com sucesso! (' + importados + ' seções carregadas)\nA página será recarregada.');
+      location.reload();
+    } catch(err) {
+      alert('❌ Erro ao importar: arquivo inválido ou corrompido.');
+    }
+  };
+  reader.readAsText(file);
 }
 
 document.getElementById('modal-lead').addEventListener('click', function(e) {
