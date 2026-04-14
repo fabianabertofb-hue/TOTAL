@@ -632,6 +632,8 @@
   .cat-financeiro  { background: var(--green-light);   color: var(--green); }
   .cat-outro       { background: var(--bg);            color: var(--text-muted); }
   .pend-date { font-size: 11px; color: var(--text-light); font-family: 'DM Mono', monospace; }
+  .pend-vencida { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 20px; background: #fee2e2; color: #b91c1c; white-space: nowrap; }
+  .pending-item.vencida { border-left-color: var(--red); background: #fff8f8; }
 
   /* MANUTENÇÃO */
   #page-manutencao {
@@ -852,7 +854,7 @@
   }
   .cell-input:focus { background: #eef2ff; }
   .cell-input::placeholder { color: var(--text-light); font-style: italic; }
-  .cell-input[type="date"] { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--text-muted); }
+  .cell-input[type="date"] { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text-muted); padding: 7px 4px; }
   .cell-input[type="date"]:focus { color: var(--text); }
 
   /* badge de realizado na célula de data preventiva */
@@ -906,6 +908,74 @@
     font-size: 13px;
   }
 
+  /* ── PENDÊNCIAS DE MANUTENÇÃO ── */
+  .mn-pend-wrap {
+    padding: 6px 8px;
+    min-width: 210px;
+  }
+  .mn-pend-header {
+    display: flex; align-items: center; justify-content: space-between;
+    font-size: 10.5px; font-weight: 700; color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: 0.04em;
+    margin-bottom: 6px;
+  }
+  .mn-pend-count {
+    background: var(--orange-light); color: var(--orange);
+    border-radius: 20px; padding: 1px 7px; font-size: 10px; font-weight: 700;
+  }
+  .mn-pend-count.zero { background: var(--bg); color: var(--text-light); }
+  .mn-pend-item {
+    display: flex; align-items: flex-start; gap: 6px;
+    padding: 4px 0; border-bottom: 1px solid #f5f5f5;
+  }
+  .mn-pend-item:last-of-type { border-bottom: none; }
+  .mn-pend-check {
+    width: 15px; height: 15px; min-width: 15px; border: 2px solid var(--border);
+    border-radius: 3px; cursor: pointer; display: flex; align-items: center;
+    justify-content: center; margin-top: 1px; transition: all 0.15s; flex-shrink: 0;
+  }
+  .mn-pend-check.done { background: var(--green); border-color: var(--green); }
+  .mn-pend-check.done::after { content: '✓'; color: white; font-size: 9px; font-weight: 700; }
+  .mn-pend-text {
+    font-size: 12px; color: var(--text); flex: 1; line-height: 1.3;
+    word-break: break-word;
+  }
+  .mn-pend-text.done { text-decoration: line-through; color: var(--text-light); }
+  .mn-pend-prio {
+    font-size: 9px; font-weight: 700; padding: 1px 5px; border-radius: 20px;
+    white-space: nowrap; flex-shrink: 0; margin-top: 2px;
+  }
+  .mn-prio-alta   { background: #fee2e2; color: #b91c1c; }
+  .mn-prio-media  { background: #fef3c7; color: #92400e; }
+  .mn-prio-baixa  { background: #d1fae5; color: #065f46; }
+  .mn-pend-del {
+    background: none; border: none; color: var(--text-light);
+    cursor: pointer; font-size: 13px; padding: 0 1px; line-height: 1;
+    transition: color 0.1s; flex-shrink: 0;
+  }
+  .mn-pend-del:hover { color: var(--red); }
+  .mn-pend-form {
+    display: flex; gap: 4px; flex-wrap: wrap;
+    align-items: flex-end; padding-top: 6px; margin-top: 4px;
+    border-top: 1px dashed var(--border);
+  }
+  .mn-pend-form input, .mn-pend-form select {
+    padding: 4px 7px; border: 1.5px solid var(--border);
+    border-radius: 5px; font-family: 'DM Sans', sans-serif;
+    font-size: 11px; color: var(--text); background: var(--white);
+    outline: none; transition: border 0.15s;
+  }
+  .mn-pend-form input:focus, .mn-pend-form select:focus { border-color: var(--primary); }
+  .mn-pend-input-desc { flex: 1; min-width: 100px; }
+  .mn-pend-select-prio { width: 76px; }
+  .btn-mn-pend-add {
+    padding: 4px 9px; background: var(--primary); color: white;
+    border: none; border-radius: 5px; font-family: 'DM Sans', sans-serif;
+    font-size: 11px; font-weight: 700; cursor: pointer; white-space: nowrap;
+    transition: background 0.15s;
+  }
+  .btn-mn-pend-add:hover { background: #4338ca; }
+
   /* STATUS PILL */
   .mn-status-pill {
     display: inline-block; padding: 3px 9px; border-radius: 20px;
@@ -934,7 +1004,7 @@
   .funnel-col.drag-over { border-color: var(--primary); background: var(--primary-light); }
 
   /* ── COMBUSTÍVEL ── */
-  #page-combustivel { background: var(--bg); min-height: calc(100vh - 58px); padding: 24px; }
+
   .comb-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; flex-wrap:wrap; gap:12px; }
   .comb-title { font-size:17px; font-weight:700; color:var(--text); }
   .comb-title span { color:#f59e0b; }
@@ -1035,6 +1105,94 @@
   .sale-pago-badge { font-size:10.5px; font-weight:700; padding:2px 8px; border-radius:20px; cursor:pointer; white-space:nowrap; }
   .sale-pago-sim { background:var(--green-light); color:var(--green); }
   .sale-pago-nao { background:var(--orange-light); color:var(--orange); }
+
+  /* ── PAINEL DE RESUMO DE PENDÊNCIAS DE MANUTENÇÃO ── */
+  .mn-pend-painel {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 16px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .mn-pend-painel.sem-pends { border-color: var(--green); }
+  .mn-pend-painel-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 13px 18px; cursor: pointer; user-select: none;
+    border-bottom: 1px solid var(--border);
+    transition: background 0.15s;
+  }
+  .mn-pend-painel-header:hover { background: #fafbfc; }
+  .mn-pend-painel.sem-pends .mn-pend-painel-header { border-bottom-color: transparent; }
+  .mn-pend-painel-titulo {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 13.5px; font-weight: 700; color: var(--text);
+  }
+  .mn-pend-painel-badge {
+    background: var(--red); color: white;
+    font-size: 11px; font-weight: 700; padding: 2px 9px;
+    border-radius: 20px; min-width: 22px; text-align: center;
+    transition: background 0.2s;
+  }
+  .mn-pend-painel-badge.zero { background: var(--green); }
+  .mn-pend-painel-toggle-icon {
+    font-size: 11px; color: var(--text-muted);
+    transition: transform 0.2s; display: inline-block;
+  }
+  .mn-pend-painel-toggle-icon.collapsed { transform: rotate(-90deg); }
+  .mn-pend-painel-body {
+    display: flex; flex-wrap: wrap; gap: 10px;
+    padding: 14px 18px;
+  }
+  .mn-pend-painel-body.hidden { display: none; }
+  .mn-pend-painel-empty {
+    font-size: 13px; color: var(--text-muted);
+    padding: 12px 0; width: 100%; text-align: center;
+  }
+  /* filtros do painel */
+  .mn-pend-f-btns {
+    display: flex; gap: 5px; flex-wrap: wrap;
+  }
+  .mn-pend-f-btn {
+    padding: 4px 12px; border-radius: 20px;
+    border: 1.5px solid var(--border);
+    background: var(--white); font-family: 'DM Sans', sans-serif;
+    font-size: 11.5px; font-weight: 600; color: var(--text-muted);
+    cursor: pointer; transition: all 0.15s;
+  }
+  .mn-pend-f-btn:hover { border-color: var(--primary); color: var(--primary); }
+  .mn-pend-f-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+  .mn-pend-f-btn.alta.active  { background: var(--red);    border-color: var(--red); }
+  .mn-pend-f-btn.media.active { background: var(--orange); border-color: var(--orange); }
+  .mn-pend-f-btn.baixa.active { background: var(--green);  border-color: var(--green); }
+  /* cards de pendência no painel */
+  .mn-pend-card {
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); padding: 10px 14px;
+    border-left: 4px solid var(--orange);
+    min-width: 220px; flex: 1; max-width: 320px;
+    display: flex; flex-direction: column; gap: 6px;
+  }
+  .mn-pend-card.prio-alta  { border-left-color: var(--red); }
+  .mn-pend-card.prio-baixa { border-left-color: var(--green); }
+  .mn-pend-card-top {
+    display: flex; align-items: center; justify-content: space-between; gap: 6px;
+  }
+  .mn-pend-card-condo { font-size: 12px; font-weight: 700; color: var(--text); }
+  .mn-pend-card-prio  { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 20px; white-space: nowrap; }
+  .mn-prio-alta  { background: var(--red-light);    color: #b91c1c; }
+  .mn-prio-media { background: var(--orange-light);  color: #92400e; }
+  .mn-prio-baixa { background: var(--green-light);   color: #065f46; }
+  .mn-pend-card-desc { font-size: 12.5px; color: var(--text); line-height: 1.4; flex: 1; }
+  .mn-pend-card-resolve {
+    align-self: flex-start; margin-top: 2px;
+    padding: 3px 10px; background: var(--green-light); color: var(--green);
+    border: 1px solid #bbf7d0; border-radius: 6px;
+    font-family: 'DM Sans', sans-serif; font-size: 11px; font-weight: 700;
+    cursor: pointer; transition: all 0.15s;
+  }
+  .mn-pend-card-resolve:hover { background: var(--green); color: white; border-color: var(--green); }
 </style>
 </head>
 <body>
@@ -1046,60 +1204,18 @@
     CRM Vendas
   </div>
   <div class="nav-tabs">
-    <button class="nav-tab active" onclick="showTab('dashboard')">🏠 Dashboard</button>
-    <button class="nav-tab" onclick="showTab('funil')">🗂 Funil</button>
+    <button class="nav-tab active" onclick="showTab('funil')">🗂 Funil</button>
     <button class="nav-tab" onclick="showTab('vendas')">💰 Vendas</button>
     <button class="nav-tab" onclick="showTab('faturamento')">🧾 Faturamento</button>
     <button class="nav-tab" id="tab-pendencias" onclick="showTab('pendencias')">📋 Pendências <span class="badge" id="badge-count">0</span></button>
     <button class="nav-tab" onclick="showTab('manutencao')">🔧 Manutenção</button>
     <button class="nav-tab" onclick="showTab('atendimentos')">🛠 Atendimentos</button>
-    <button class="nav-tab" onclick="showTab('combustivel')">⛽ Combustível</button>
   </div>
   <button class="btn-primary" onclick="openModal()">+ Novo Lead</button>
 </nav>
 
-<!-- =================== DASHBOARD =================== -->
-<div class="page active" id="page-dashboard">
-  <div style="padding:24px">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px">
-      <div>
-        <div style="font-size:20px;font-weight:700;color:var(--text)">Olá! 👋 Bem-vindo ao CRM</div>
-        <div style="font-size:13px;color:var(--text-muted);margin-top:4px" id="dash-subtitle">Resumo geral do negócio</div>
-      </div>
-      <button class="btn-primary" onclick="showTab('faturamento')" style="font-size:13px">🧾 Lançar Faturamento</button>
-    </div>
-
-    <!-- KPIs principais -->
-    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;margin-bottom:28px" id="dash-kpis"></div>
-
-    <!-- Linha 2: gráfico faturamento + pendências abertas -->
-    <div style="display:grid;grid-template-columns:1fr 340px;gap:16px;margin-bottom:20px;flex-wrap:wrap" id="dash-row2">
-      <div class="metric-card" style="padding:20px 24px">
-        <div class="metric-label" style="margin-bottom:16px">📊 Faturamento por mês (ano)</div>
-        <div id="dash-grafico" style="display:flex;align-items:flex-end;gap:6px;height:110px;padding-bottom:22px;position:relative"></div>
-      </div>
-      <div class="metric-card" style="padding:20px 24px;overflow:hidden">
-        <div class="metric-label" style="margin-bottom:14px">📋 Pendências abertas</div>
-        <div id="dash-pend" style="display:flex;flex-direction:column;gap:6px;max-height:200px;overflow-y:auto"></div>
-      </div>
-    </div>
-
-    <!-- Linha 3: últimas vendas + atendimentos recentes -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
-      <div class="metric-card" style="padding:20px 24px">
-        <div class="metric-label" style="margin-bottom:14px">💰 Últimas vendas</div>
-        <div id="dash-vendas"></div>
-      </div>
-      <div class="metric-card" style="padding:20px 24px">
-        <div class="metric-label" style="margin-bottom:14px">🛠 Atendimentos recentes</div>
-        <div id="dash-atend"></div>
-      </div>
-    </div>
-  </div>
-</div>
-
 <!-- =================== FUNIL =================== -->
-<div class="page" id="page-funil">
+<div class="page active" id="page-funil">
   <div class="metrics-grid">
     <div class="metric-card">
       <div class="metric-label">Total de Leads</div>
@@ -1281,6 +1397,26 @@
     </div>
   </div>
 
+  <!-- PAINEL RESUMO PENDÊNCIAS -->
+  <div class="mn-pend-painel" id="mn-pend-painel">
+    <div class="mn-pend-painel-header" onclick="togglePainelPends()">
+      <div class="mn-pend-painel-titulo">
+        ⚠️ Pendências em aberto
+        <span class="mn-pend-painel-badge" id="mn-pend-painel-badge">0</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px">
+        <div class="mn-pend-f-btns">
+          <button class="mn-pend-f-btn active" onclick="event.stopPropagation();setPainelFiltro('todas')">Todas</button>
+          <button class="mn-pend-f-btn alta"   onclick="event.stopPropagation();setPainelFiltro('Alta')">🔴 Alta</button>
+          <button class="mn-pend-f-btn media"  onclick="event.stopPropagation();setPainelFiltro('Média')">🟡 Média</button>
+          <button class="mn-pend-f-btn baixa"  onclick="event.stopPropagation();setPainelFiltro('Baixa')">🟢 Baixa</button>
+        </div>
+        <span class="mn-pend-painel-toggle-icon" id="mn-pend-painel-toggle">▼</span>
+      </div>
+    </div>
+    <div class="mn-pend-painel-body" id="mn-pend-painel-body"></div>
+  </div>
+
   <!-- ABAS DOS MESES -->
   <div class="mn-meses-wrap">
     <div class="mn-meses" id="mn-meses"></div>
@@ -1305,8 +1441,8 @@
     <div class="legend-item"><div class="legend-dot" style="background:#bbf7d0;border:1px solid #86efac"></div> Relatório verde = entregue</div>
     <div class="legend-item"><div class="legend-dot" style="background:#bbf7d0;border:1px solid #86efac"></div> Limpeza verde = realizada</div>
     <div class="legend-item"><div class="legend-dot" style="background:#bbf7d0;border:1px solid #86efac"></div> Proposta concluída</div>
-    <div class="legend-item"><div class="legend-dot" style="background:#fde047;"></div> Observação preenchida</div>
     <div class="legend-item"><div class="legend-dot" style="background:#fee2e2;border:1px solid #fca5a5"></div> ⚠️ +30 dias sem preventiva</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#fde68a;border:1px solid #fbbf24"></div> 📋 Pendências abertas por condomínio</div>
   </div>
 
   <div class="mn-sheet-wrap">
@@ -1314,22 +1450,22 @@
       <thead>
         <tr>
           <th class="th-num">#</th>
-          <th style="min-width:180px">Condomínio / Cliente</th>
-          <th style="min-width:130px">Dt. Preventiva</th>
-          <th style="min-width:200px;padding:0!important">
+          <th style="min-width:160px">Condomínio / Cliente</th>
+          <th style="min-width:100px">Dt. Preventiva</th>
+          <th style="min-width:160px;padding:0!important">
             <div style="display:flex;flex-direction:column">
-              <div style="padding:6px 10px;text-align:center;font-size:11px;font-weight:700;color:var(--text-muted);border-bottom:1px solid var(--border)">Dt. Corretiva</div>
+              <div style="padding:4px 6px;text-align:center;font-size:11px;font-weight:700;color:var(--text-muted);border-bottom:1px solid var(--border)">Dt. Corretiva</div>
               <div style="display:flex">
-                <div style="flex:1;padding:5px 8px;text-align:center;font-size:10px;font-weight:700;color:var(--text-muted);border-right:1px solid var(--border)">1ª</div>
-                <div style="flex:1;padding:5px 8px;text-align:center;font-size:10px;font-weight:700;color:var(--text-muted)">2ª</div>
+                <div style="flex:1;padding:4px 4px;text-align:center;font-size:10px;font-weight:700;color:var(--text-muted);border-right:1px solid var(--border)">1ª</div>
+                <div style="flex:1;padding:4px 4px;text-align:center;font-size:10px;font-weight:700;color:var(--text-muted)">2ª</div>
               </div>
             </div>
           </th>
-          <th style="min-width:200px">Observação</th>
-          <th style="min-width:130px">Nº Proposta</th>
-          <th style="min-width:140px">Dt. Envio Relatório</th>
-          <th style="min-width:130px">🧹 Limpeza Esteiras</th>
-          <th style="min-width:180px">📦 Pedidos</th>
+          <th style="min-width:100px">Nº Proposta</th>
+          <th style="min-width:100px">Dt. Relatório</th>
+          <th style="min-width:90px">🧹 Limpeza</th>
+          <th style="min-width:160px">📦 Pedidos</th>
+          <th style="min-width:200px">⚠️ Pendências</th>
           <th style="width:36px"></th>
         </tr>
       </thead>
@@ -1338,40 +1474,21 @@
     <div class="mn-add-row" onclick="addManutRow()">
       <span style="font-size:16px;line-height:1">＋</span> Adicionar linha
     </div>
-  </div>
-</div>
+  
 
-<!-- =================== ATENDIMENTOS =================== -->
-<div class="page" id="page-atendimentos">
-  <div class="at-header">
-    <div class="at-title">🛠 Atendimentos — <span id="at-count">0 registros</span></div>
-    <button class="btn-novo-atend" onclick="abrirAtModal()">＋ Novo Atendimento</button>
-  </div>
-
-  <!-- FILTROS + BUSCA -->
-  <div class="at-filters">
-    <div class="at-search-wrap">
-      <span class="search-icon">🔍</span>
-      <input class="at-search" id="at-search" type="text" placeholder="Buscar cliente, equipamento..." oninput="renderAt()">
+  <!-- =================== BOLETOS EM ABERTO =================== -->
+  <div style="margin-top:28px;border-top:2px solid var(--border);padding-top:20px" id="mn-boletos-wrap">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:10px">
+      <div style="font-size:15px;font-weight:700;color:var(--text)">📄 Boletos em Aberto <span id="mn-boletos-count" style="font-size:12px;font-weight:600;color:var(--orange);background:var(--orange-light);padding:2px 9px;border-radius:20px;margin-left:6px">0</span></div>
+      <div style="font-size:12px;color:var(--text-muted)">Vendas com pagamento Boleto ainda não pagas</div>
     </div>
-    <button class="at-filter-btn active" onclick="setAtFilter('urgencia','todas')">Todas urgências</button>
-    <button class="at-filter-btn urg-alta"  onclick="setAtFilter('urgencia','Alta')">🔴 Alta</button>
-    <button class="at-filter-btn urg-media" onclick="setAtFilter('urgencia','Média')">🟡 Média</button>
-    <button class="at-filter-btn urg-baixa" onclick="setAtFilter('urgencia','Baixa')">🟢 Baixa</button>
-    <button class="at-filter-btn active" onclick="setAtFilter('status','todos')" style="margin-left:8px">Todos status</button>
-    <button class="at-filter-btn" onclick="setAtFilter('status','Solicitação')">📥 Solicitação</button>
-    <button class="at-filter-btn" onclick="setAtFilter('status','Em andamento')">🔧 Em andamento</button>
-    <button class="at-filter-btn" onclick="setAtFilter('status','Concluído')">✅ Concluído</button>
+    <div id="mn-boletos-lista">
+      <div style="font-size:13px;color:var(--text-light);padding:16px 0;text-align:center">Nenhum boleto em aberto.</div>
+    </div>
   </div>
 
-  <div class="at-grid" id="at-grid"></div>
-</div>
-
-<!-- =================== COMBUSTÍVEL =================== -->
-<div class="page" id="page-combustivel">
-  <div style="padding:24px">
-
-    <!-- HEADER -->
+  <!-- =================== COMBUSTÍVEL (dentro de Manutenção) =================== -->
+  <div style="margin-top:32px;border-top:2px solid var(--border);padding-top:24px">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px">
       <div>
         <div style="font-size:17px;font-weight:700;color:var(--text)">⛽ Combustível — <span id="comb-count" style="color:var(--orange)">0 registros</span></div>
@@ -1380,10 +1497,8 @@
       <button class="btn-primary" style="background:var(--orange);font-size:13px" onclick="gerarRelatorio()">📊 Relatório do Mês</button>
     </div>
 
-    <!-- MÉTRICAS -->
     <div id="comb-metrics" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px;margin-bottom:22px"></div>
 
-    <!-- FORMULÁRIO -->
     <div class="comb-form-card">
       <h3>➕ Registrar Abastecimento</h3>
       <div class="comb-form-row">
@@ -1422,7 +1537,6 @@
       </div>
     </div>
 
-    <!-- ABAS MESES + CARROS -->
     <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:12px">
       <div style="overflow-x:auto;flex:1">
         <div style="display:flex;gap:4px;min-width:max-content" id="comb-meses-tabs"></div>
@@ -1434,7 +1548,6 @@
       </div>
     </div>
 
-    <!-- TABELA -->
     <div class="comb-table-wrap">
       <table class="comb-table">
         <thead>
@@ -1455,7 +1568,6 @@
       <div id="comb-empty" class="comb-empty" style="display:none">Nenhum abastecimento registrado ainda.</div>
     </div>
 
-    <!-- RELATÓRIO MENSAL (oculto por padrão) -->
     <div id="comb-relatorio" style="display:none;margin-top:24px">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
         <div style="font-size:15px;font-weight:700;color:var(--text)">📊 Relatório — <span id="rel-titulo"></span></div>
@@ -1477,8 +1589,35 @@
         <div id="rel-lista"></div>
       </div>
     </div>
-
   </div>
+
+</div>
+</div>
+
+<!-- =================== ATENDIMENTOS =================== -->
+<div class="page" id="page-atendimentos">
+  <div class="at-header">
+    <div class="at-title">🛠 Atendimentos — <span id="at-count">0 registros</span></div>
+    <button class="btn-novo-atend" onclick="abrirAtModal()">＋ Novo Atendimento</button>
+  </div>
+
+  <!-- FILTROS + BUSCA -->
+  <div class="at-filters">
+    <div class="at-search-wrap">
+      <span class="search-icon">🔍</span>
+      <input class="at-search" id="at-search" type="text" placeholder="Buscar cliente, equipamento..." oninput="renderAt()">
+    </div>
+    <button class="at-filter-btn active" onclick="setAtFilter('urgencia','todas')">Todas urgências</button>
+    <button class="at-filter-btn urg-alta"  onclick="setAtFilter('urgencia','Alta')">🔴 Alta</button>
+    <button class="at-filter-btn urg-media" onclick="setAtFilter('urgencia','Média')">🟡 Média</button>
+    <button class="at-filter-btn urg-baixa" onclick="setAtFilter('urgencia','Baixa')">🟢 Baixa</button>
+    <button class="at-filter-btn active" onclick="setAtFilter('status','todos')" style="margin-left:8px">Todos status</button>
+    <button class="at-filter-btn" onclick="setAtFilter('status','Solicitação')">📥 Solicitação</button>
+    <button class="at-filter-btn" onclick="setAtFilter('status','Em andamento')">🔧 Em andamento</button>
+    <button class="at-filter-btn" onclick="setAtFilter('status','Concluído')">✅ Concluído</button>
+  </div>
+
+  <div class="at-grid" id="at-grid"></div>
 </div>
 
 <!-- =================== FATURAMENTO =================== -->
@@ -1730,7 +1869,6 @@
 </div>
 
 <script>
-// ===== CONSTANTES GLOBAIS =====
 // ===== STATE =====
 let leads    = JSON.parse(localStorage.getItem('crm_leads')    || '[]');
 // sales agora é objeto indexado por mês: { 0: [...], 1: [...], ... }
@@ -1798,17 +1936,15 @@ function showTab(tab) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
   document.getElementById('page-' + tab).classList.add('active');
-  const tabs = ['dashboard','funil','vendas','faturamento','pendencias','manutencao','atendimentos','combustivel'];
+  const tabs = ['funil','vendas','faturamento','pendencias','manutencao','atendimentos'];
   const idx = tabs.indexOf(tab);
   if (idx !== -1) document.querySelectorAll('.nav-tab')[idx].classList.add('active');
-  if (tab === 'dashboard')    renderDashboard();
   if (tab === 'funil')        renderFunil();
   if (tab === 'vendas')       { buildVdTabs(); renderSales(); }
   if (tab === 'faturamento')  { buildFatTabs(); renderFaturamento(); }
   if (tab === 'pendencias')   renderPendings();
-  if (tab === 'manutencao')   { buildMesesTabs(); renderManut(); }
+  if (tab === 'manutencao')   { buildMesesTabs(); renderManut(); renderBoletos(); }
   if (tab === 'atendimentos') renderAt();
-  if (tab === 'combustivel')  renderCombustivel();
 }
 
 // ===== FUNIL =====
@@ -1925,6 +2061,7 @@ function saveLead() {
 }
 
 function removeLead(id) {
+  if (!confirm('Remover este lead?')) return;
   leads = leads.filter(l => l.id !== id);
   save(); renderFunil();
 }
@@ -1974,15 +2111,16 @@ function addSale() {
   let mes = salesMesAtivo;
   if (date) mes = parseInt(date.split('-')[1]) - 1;
   getSalesMes(mes).push({ id: Date.now().toString(), desc, value, type, payment, pago, date: date || new Date().toISOString().slice(0,10) });
-  save(); buildVdTabs(); renderSales();
+  save(); buildVdTabs(); renderSales(); renderBoletos();
   document.getElementById('sale-desc').value  = '';
   document.getElementById('sale-value').value = '';
 }
 
 function removeSale(id) {
+  if (!confirm('Remover esta venda?')) return;
   const lista = getSalesMes(salesMesAtivo);
   sales[salesMesAtivo] = lista.filter(s => s.id !== id);
-  save(); buildVdTabs(); renderSales();
+  save(); buildVdTabs(); renderSales(); renderBoletos();
 }
 
 function renderGrafico() {
@@ -2134,7 +2272,7 @@ function confirmarEditSale() {
   lista[idx].type    = document.getElementById('se-type').value;
   lista[idx].payment = document.getElementById('se-payment').value;
   lista[idx].pago    = document.getElementById('se-pago').value;
-  save(); buildVdTabs(); renderSales();
+  save(); buildVdTabs(); renderSales(); renderBoletos();
   document.getElementById('sale-edit-overlay').classList.add('hidden');
   saleEditId = null;
 }
@@ -2211,6 +2349,7 @@ function enviarPedidoAoFaturamento(manutId, pedido) {
 }
 
 function removePedido(tipo, refId, pedidoId) {
+  if (!confirm('Remover este pedido?')) return;
   const key = tipo + '_' + refId;
   pedidosDB[key] = (pedidosDB[key]||[]).filter(x => x.id !== pedidoId);
   savePedidos(); renderPedidos(tipo, refId);
@@ -2265,10 +2404,27 @@ function addPending() {
 
 function togglePending(id) {
   const p = pendings.find(x => x.id === id);
-  if (p) { p.done = !p.done; save(); renderPendings(); }
+  if (!p || p.done) return;
+  // marca visualmente como feito
+  const itemEl = document.querySelector(`.pending-item[data-pend-id="${id}"]`);
+  if (itemEl) {
+    itemEl.classList.add('done');
+    itemEl.querySelector('.pending-check')?.classList.add('checked');
+    itemEl.querySelector('.pend-name') && (itemEl.querySelector('.pend-name').style.textDecoration = 'line-through');
+  }
+  p.done = true;
+  save();
+  updateBadge();
+  // remove da lista após 3 segundos
+  setTimeout(() => {
+    pendings = pendings.filter(x => x.id !== id);
+    save();
+    renderPendings();
+  }, 3000);
 }
 
 function removePending(id) {
+  if (!confirm('Remover esta pendência?')) return;
   pendings = pendings.filter(x => x.id !== id);
   save(); renderPendings();
 }
@@ -2278,33 +2434,37 @@ function renderPendings() {
   document.getElementById('badge-count').textContent = open;
   document.getElementById('tab-pendencias').querySelector('.badge').textContent = open;
   const list = document.getElementById('pending-list');
+  const hoje = new Date(); hoje.setHours(0,0,0,0);
   const priorities = ['Alta','Média','Baixa'];
   const dotColors  = { Alta: 'dot-red', Média: 'dot-orange', Baixa: 'dot-blue' };
+  // mostra apenas pendências NÃO concluídas
   list.innerHTML = priorities.map(prio => {
-    const items     = pendings.filter(p => p.priority === prio);
-    const openCount = items.filter(p => !p.done).length;
+    const items     = pendings.filter(p => p.priority === prio && !p.done);
     const catClass  = c => c === 'Manutenção' ? 'cat-manutencao' : c === 'Pedido' ? 'cat-pedido' : c === 'Orçamento' ? 'cat-orcamento' : c === 'Financeiro' ? 'cat-financeiro' : 'cat-outro';
+    if (items.length === 0) return '';
     return `<div class="priority-group">
       <div class="priority-header">
         <span class="dot ${dotColors[prio]}"></span>
-        Prioridade ${prio} <span style="color:var(--text-light);font-weight:500">(${openCount} abertas)</span>
+        Prioridade ${prio} <span style="color:var(--text-light);font-weight:500">(${items.length})</span>
       </div>
-      ${items.length === 0
-        ? '<div class="empty-state" style="padding:12px">Nenhuma pendência</div>'
-        : items.map(p => `<div class="pending-item ${p.done ? 'done' : ''}">
-            <div class="pending-check ${p.done ? 'checked' : ''}" onclick="togglePending('${p.id}')"></div>
-            <div class="pend-info">
-              <div class="pend-name">${p.desc}</div>
-              <div class="pend-meta">
-                <span class="pend-category ${catClass(p.category)}">${p.category}</span>
-                <span class="pend-date">${fmtDate(p.date)}</span>
-              </div>
+      ${items.map(p => {
+        const dataVenc = p.date ? new Date(p.date + 'T00:00:00') : null;
+        const vencida  = dataVenc && dataVenc < hoje;
+        return `<div class="pending-item ${vencida ? 'vencida' : ''}" data-pend-id="${p.id}">
+          <div class="pending-check" onclick="togglePending('${p.id}')"></div>
+          <div class="pend-info">
+            <div class="pend-name">${p.desc}</div>
+            <div class="pend-meta">
+              <span class="pend-category ${catClass(p.category)}">${p.category}</span>
+              <span class="pend-date" style="${vencida ? 'color:var(--red);font-weight:700;' : ''}">${fmtDate(p.date)}</span>
+              ${vencida ? '<span class="pend-vencida">⚠️ Vencida</span>' : ''}
             </div>
-            <button class="btn-remove" onclick="removePending('${p.id}')">×</button>
-          </div>`).join('')
-      }
+          </div>
+          <button class="btn-remove" onclick="removePending('${p.id}')">×</button>
+        </div>`;
+      }).join('')}
     </div>`;
-  }).join('');
+  }).filter(Boolean).join('') || '<div class="empty-state" style="padding:24px;text-align:center">🎉 Nenhuma pendência em aberto!</div>';
 }
 
 // ===== MANUTENÇÃO — abas por mês, cores, obs automática =====
@@ -2336,6 +2496,7 @@ function switchMes(idx) {
   manutMesAtivo = idx;
   buildMesesTabs();
   renderManut();
+  renderBoletos();
 }
 
 function addManutRow() {
@@ -2359,7 +2520,40 @@ function updateManut(id, field, val) {
       propagarObs(m, manutMesAtivo);
     }
     if (field === 'preventiva' || field === 'relatorio' || field === 'limpeza') renderManut();
+    // Quando preventiva é preenchida, cria rascunho no Faturamento automaticamente
+    if (field === 'preventiva' && val) {
+      criarFaturamentoManut(m, manutMesAtivo);
+    }
   }
+}
+
+function criarFaturamentoManut(m, mes) {
+  if (!m.cliente) return;
+  // Verifica se já existe entrada para este registro no faturamento deste mês
+  const jaExiste = (faturamentos[mes] || []).some(f => f._manutId === m.id && f._tipo === 'preventiva');
+  if (jaExiste) return;
+  getFatMes(mes).push({
+    id: Date.now().toString() + Math.random(),
+    _manutId: m.id,
+    _tipo: 'preventiva',
+    desc: m.cliente + ' — Preventiva ' + MESES[mes],
+    valor: 0,
+    data: m.preventiva || new Date().toISOString().slice(0,10),
+    cat: 'Manutenção',
+    status: 'pendente'
+  });
+  saveFat();
+  buildFatTabs();
+  // Notificação discreta
+  const aviso = document.createElement('div');
+  aviso.textContent = '🧾 Lançado no Faturamento! Preencha o valor.';
+  Object.assign(aviso.style, {
+    position:'fixed', bottom:'24px', right:'24px', background:'var(--primary)', color:'#fff',
+    padding:'10px 18px', borderRadius:'8px', fontWeight:'700', fontSize:'13px',
+    zIndex:'9999', boxShadow:'0 4px 12px rgba(0,0,0,0.15)', transition:'opacity 0.4s'
+  });
+  document.body.appendChild(aviso);
+  setTimeout(() => { aviso.style.opacity = '0'; setTimeout(() => aviso.remove(), 400); }, 3000);
 }
 
 // Propaga a observação para o mês seguinte (cria entrada se não existir)
@@ -2422,6 +2616,7 @@ function moverParaMes(id, mesDestino) {
 }
 
 function removeManut(id) {
+  if (!confirm('Remover esta linha de manutenção?')) return;
   const lista = getManutsMes(manutMesAtivo);
   manuts[manutMesAtivo] = lista.filter(x => x.id !== id);
   save(); buildMesesTabs(); renderManut();
@@ -2469,13 +2664,13 @@ function renderManut() {
 
   // 3. Sem dados
   if (total === 0) {
-    tbody.innerHTML = `<tr><td colspan="10" style="text-align:center;color:var(--text-light);padding:32px;font-size:13px">Clique em "Nova Linha" para começar em ${MESES[manutMesAtivo]}</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="11" style="text-align:center;color:var(--text-light);padding:32px;font-size:13px">Clique em "Nova Linha" para começar em ${MESES[manutMesAtivo]}</td></tr>`;
     return;
   }
 
   // 4. Sem resultados na busca
   if (lista.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="10"><div class="mn-no-results">🔍 Nenhum resultado para "<strong>${esc(query)}</strong>"</div></td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="11"><div class="mn-no-results">🔍 Nenhum resultado para "<strong>${esc(query)}</strong>"</div></td></tr>`;
     return;
   }
 
@@ -2503,29 +2698,24 @@ function renderManut() {
           <input class="cell-input"
                  type="date"
                  value="${m.preventiva || ''}"
+                 style="font-size:11px;padding:7px 4px;"
                  oninput="updateManut('${m.id}','preventiva',this.value)"
                  title="${m.preventiva ? 'Preventiva realizada em ' + fmtDate(m.preventiva) : 'Sem data'}">
-          ${m.preventiva ? '<span style="color:var(--green);font-size:13px;padding-right:8px;flex-shrink:0">✓</span>' : ''}
+          ${m.preventiva ? '<span style="color:var(--green);font-size:12px;padding-right:4px;flex-shrink:0">✓</span>' : ''}
         </div>
       </td>
       <td style="padding:0!important;vertical-align:middle">
         <div style="display:flex;flex-direction:column;gap:0">
           <input class="cell-input" type="date" value="${m.corretiva || ''}"
-              style="border-bottom:1px solid var(--border);border-radius:0;margin:0"
+              style="border-bottom:1px solid var(--border);border-radius:0;margin:0;font-size:11px;padding:7px 4px;"
               placeholder="1ª corretiva"
               oninput="updateManut('${m.id}','corretiva',this.value)">
           <input class="cell-input" type="date" value="${m.corretiva2 || ''}"
-              style="border-radius:0;margin:0"
+              style="border-radius:0;margin:0;font-size:11px;padding:7px 4px;"
               placeholder="2ª corretiva"
               oninput="updateManut('${m.id}','corretiva2',this.value)">
         </div>
       </td>
-      <td style="${m.obs ? 'background:#fde047;' : ''}">
-        <input class="cell-input" value="${esc(m.obs)}"
-            placeholder="Observações..."
-            style="${m.obs ? 'background:transparent;' : ''}"
-            oninput="updateManut('${m.id}','obs',this.value)"
-            onblur="renderManut()"></td>
       <td style="${/(conclu[ií]do)/i.test(m.proposta||'') ? 'background:#dcfce7;' : ''}">
         <input class="cell-input" value="${esc(m.proposta)}"
             placeholder="Ex: 2495"
@@ -2534,13 +2724,18 @@ function renderManut() {
             onblur="renderManut()"></td>
       <td class="${relatorioOk}">
         <input class="cell-input" type="date" value="${m.relatorio || ''}"
+            style="font-size:11px;padding:7px 4px;"
             oninput="updateManut('${m.id}','relatorio',this.value)"></td>
       <td class="${m.limpeza ? 'td-limpeza-ok' : ''}">
         <input class="cell-input" type="date" value="${m.limpeza || ''}"
+            style="font-size:11px;padding:7px 4px;"
             title="${m.limpeza ? 'Limpeza realizada em ' + fmtDate(m.limpeza) : 'Sem data'}"
             oninput="updateManut('${m.id}','limpeza',this.value)"></td>
       <td style="padding:6px 8px;vertical-align:top;min-width:180px">
         ${buildPedidosHTML('manut', m.id)}
+      </td>
+      <td style="padding:0;vertical-align:top;min-width:220px">
+        <div class="mn-pend-wrap" id="mn-pend-wrap-${m.id}"></div>
       </td>
       <td style="padding:0 4px;display:flex;align-items:center;gap:3px;min-height:38px">
         <div class="mn-move-wrap">
@@ -2555,9 +2750,158 @@ function renderManut() {
   }).join('');
   // inicializar pedidos de manutenção
   lista.forEach(m => renderPedidos('manut', m.id));
+  // inicializar pendências de manutenção
+  lista.forEach(m => renderMnPend(m.id));
+  // atualizar painel resumo de pendências
+  renderPainelPends();
 }
 
-// ===== RELATÓRIO MENSAL DE MANUTENÇÃO =====
+// ===== PENDÊNCIAS DE MANUTENÇÃO (por condomínio) =====
+// Armazenadas em localStorage separado: { 'manut_ID': [{id, desc, prio, done},...] }
+let mnPendsDB = JSON.parse(localStorage.getItem('crm_mn_pends') || '{}');
+
+function saveMnPends() { localStorage.setItem('crm_mn_pends', JSON.stringify(mnPendsDB)); }
+
+function getMnPends(manutId) {
+  if (!mnPendsDB[manutId]) mnPendsDB[manutId] = [];
+  return mnPendsDB[manutId];
+}
+
+function addMnPend(manutId) {
+  const inp  = document.getElementById('mnp-desc-' + manutId);
+  const sel  = document.getElementById('mnp-prio-' + manutId);
+  const desc = inp ? inp.value.trim() : '';
+  if (!desc) return;
+  getMnPends(manutId).push({ id: Date.now().toString(), desc, prio: sel ? sel.value : 'Média', done: false });
+  saveMnPends();
+  inp.value = '';
+  renderMnPend(manutId);
+  renderPainelPends();
+}
+
+function toggleMnPend(manutId, pendId) {
+  const p = getMnPends(manutId).find(x => x.id === pendId);
+  if (p) { p.done = !p.done; saveMnPends(); renderMnPend(manutId); renderPainelPends(); }
+}
+
+function removeMnPend(manutId, pendId) {
+  if (!confirm('Remover esta pendência?')) return;
+  mnPendsDB[manutId] = (mnPendsDB[manutId] || []).filter(x => x.id !== pendId);
+  saveMnPends(); renderMnPend(manutId); renderPainelPends();
+}
+
+function renderMnPend(manutId) {
+  const wrap = document.getElementById('mn-pend-wrap-' + manutId);
+  if (!wrap) return;
+  const lista = getMnPends(manutId);
+  const abertas = lista.filter(p => !p.done).length;
+  const prioCls = p => p.prio === 'Alta' ? 'mn-prio-alta' : p.prio === 'Baixa' ? 'mn-prio-baixa' : 'mn-prio-media';
+  const itens = lista.map(p => `
+    <div class="mn-pend-item">
+      <div class="mn-pend-check ${p.done ? 'done' : ''}" onclick="toggleMnPend('${manutId}','${p.id}')"></div>
+      <span class="mn-pend-text ${p.done ? 'done' : ''}" title="${esc(p.desc)}">${esc(p.desc)}</span>
+      <span class="mn-pend-prio ${prioCls(p)}">${p.prio}</span>
+      <button class="mn-pend-del" onclick="removeMnPend('${manutId}','${p.id}')" title="Remover">×</button>
+    </div>`).join('');
+  wrap.innerHTML = `
+    <div class="mn-pend-header">
+      ⚠️ Pendências
+      <span class="mn-pend-count ${abertas === 0 ? 'zero' : ''}">${abertas} aberta${abertas !== 1 ? 's' : ''}</span>
+    </div>
+    ${itens || '<div style="font-size:11px;color:var(--text-light);padding:2px 0 6px">Nenhuma pendência</div>'}
+    <div class="mn-pend-form">
+      <input class="mn-pend-input-desc" id="mnp-desc-${manutId}" type="text"
+        placeholder="Descrever pendência..."
+        onkeydown="if(event.key==='Enter')addMnPend('${manutId}')">
+      <select class="mn-pend-select-prio" id="mnp-prio-${manutId}">
+        <option value="Alta">🔴 Alta</option>
+        <option value="Média" selected>🟡 Média</option>
+        <option value="Baixa">🟢 Baixa</option>
+      </select>
+      <button class="btn-mn-pend-add" onclick="addMnPend('${manutId}')">＋</button>
+    </div>`;
+}
+
+// ===== PAINEL RESUMO DE PENDÊNCIAS =====
+let painelFiltroAtivo = 'todas';
+let painelCollapsed = false;
+
+function renderPainelPends() {
+  const lista = getManutsMes(manutMesAtivo);
+  const body  = document.getElementById('mn-pend-painel-body');
+  const badge = document.getElementById('mn-pend-painel-badge');
+  const painel = document.getElementById('mn-pend-painel');
+  if (!body || !badge) return;
+
+  // Coletar todas as pendências abertas do mês
+  let todasAbertas = [];
+  lista.forEach(m => {
+    if (!m.cliente) return;
+    const pends = getMnPends(m.id).filter(p => !p.done);
+    pends.forEach(p => {
+      todasAbertas.push({ ...p, manutId: m.id, condo: m.cliente });
+    });
+  });
+
+  // Ordenar: Alta > Média > Baixa
+  const ordemPrio = { 'Alta': 0, 'Média': 1, 'Baixa': 2 };
+  todasAbertas.sort((a, b) => (ordemPrio[a.prio] ?? 1) - (ordemPrio[b.prio] ?? 1));
+
+  badge.textContent = todasAbertas.length;
+  badge.className = 'mn-pend-painel-badge' + (todasAbertas.length === 0 ? ' zero' : '');
+  painel.className = 'mn-pend-painel' + (todasAbertas.length === 0 ? ' sem-pends' : '');
+
+  // Filtrar
+  const filtradas = painelFiltroAtivo === 'todas'
+    ? todasAbertas
+    : todasAbertas.filter(p => p.prio === painelFiltroAtivo);
+
+  if (filtradas.length === 0) {
+    body.innerHTML = `<div class="mn-pend-painel-empty">${
+      todasAbertas.length === 0
+        ? '✅ Nenhuma pendência aberta neste mês!'
+        : '🔍 Nenhuma pendência com essa prioridade.'
+    }</div>`;
+    return;
+  }
+
+  const prioCls = p => p.prio === 'Alta' ? 'mn-prio-alta' : p.prio === 'Baixa' ? 'mn-prio-baixa' : 'mn-prio-media';
+  const cardCls = p => p.prio === 'Alta' ? 'prio-alta' : p.prio === 'Baixa' ? 'prio-baixa' : 'prio-media';
+
+  body.innerHTML = filtradas.map(p => `
+    <div class="mn-pend-card ${cardCls(p)}" title="Clique para resolver">
+      <div class="mn-pend-card-top">
+        <span class="mn-pend-card-condo">🏢 ${esc(p.condo)}</span>
+        <span class="mn-pend-card-prio ${prioCls(p)}">${p.prio}</span>
+      </div>
+      <div class="mn-pend-card-desc">${esc(p.desc)}</div>
+      <button class="mn-pend-card-resolve" onclick="resolverPainelPend('${p.manutId}','${p.id}')">✓ Resolver</button>
+    </div>`).join('');
+}
+
+function resolverPainelPend(manutId, pendId) {
+  const p = getMnPends(manutId).find(x => x.id === pendId);
+  if (p) { p.done = true; saveMnPends(); renderMnPend(manutId); renderPainelPends(); }
+}
+
+function setPainelFiltro(filtro) {
+  painelFiltroAtivo = filtro;
+  document.querySelectorAll('.mn-pend-f-btn').forEach(b => b.classList.remove('active'));
+  const mapa = { 'todas': 0, 'Alta': 1, 'Média': 2, 'Baixa': 3 };
+  const btns = document.querySelectorAll('.mn-pend-f-btn');
+  if (btns[mapa[filtro]]) btns[mapa[filtro]].classList.add('active');
+  renderPainelPends();
+}
+
+function togglePainelPends() {
+  painelCollapsed = !painelCollapsed;
+  const body   = document.getElementById('mn-pend-painel-body');
+  const toggle = document.getElementById('mn-pend-painel-toggle');
+  if (body)   body.classList.toggle('hidden', painelCollapsed);
+  if (toggle) toggle.classList.toggle('collapsed', painelCollapsed);
+}
+
+
 function abrirRelatorioMensal() {
   const lista = getManutsMes(manutMesAtivo);
   const nomeMes = MESES[manutMesAtivo];
@@ -2570,6 +2914,9 @@ function abrirRelatorioMensal() {
   const semPreventiva = lista.filter(m => !m.preventiva && m.cliente).length;
   const comProposta   = lista.filter(m => m.proposta).length;
   const pendObs       = lista.filter(m => m.obs && m.obs.trim()).length;
+
+  // Pendências dos condomínios (campo pendências por cliente)
+  const totalMnPends = lista.reduce((s, m) => s + getMnPends(m.id).filter(p => !p.done).length, 0);
 
   // Pendências: sem preventiva OU com obs preenchida
   const pendencias = lista.filter(m => (!m.preventiva && m.cliente) || (m.obs && m.obs.trim())).length;
@@ -2590,7 +2937,13 @@ function abrirRelatorioMensal() {
       <div style="font-size:11px;font-weight:700;color:#0369a1;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px">🧹 Limpeza Esteira</div>
       <div style="font-size:28px;font-weight:700;color:#0284c7">${comLimpeza}<span style="font-size:14px;color:#7dd3fc"> / ${total}</span></div>
       <div style="font-size:12px;color:#075985;margin-top:4px">${total - comLimpeza} limpezas pendentes</div>
-    </div>`;
+    </div>
+    ${totalMnPends > 0 ? `
+    <div style="background:#fdf4ff;border:1.5px solid #d8b4fe;border-radius:10px;padding:16px">
+      <div style="font-size:11px;font-weight:700;color:#7e22ce;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px">📋 Pend. por Cond.</div>
+      <div style="font-size:28px;font-weight:700;color:#9333ea">${totalMnPends}</div>
+      <div style="font-size:12px;color:#6b21a8;margin-top:4px">tarefas em aberto</div>
+    </div>` : ''}`;
 
   // Tabela detalhada
   const tabela = document.getElementById('mn-rel-tabela');
@@ -2603,6 +2956,7 @@ function abrirRelatorioMensal() {
           <th style="padding:9px 12px;text-align:left;font-size:10.5px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em">Condomínio</th>
           <th style="padding:9px 12px;text-align:center;font-size:10.5px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em">Preventiva</th>
           <th style="padding:9px 12px;text-align:center;font-size:10.5px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em">⚠️ Pendência</th>
+          <th style="padding:9px 12px;text-align:center;font-size:10.5px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em">📋 Pend. Cond.</th>
           <th style="padding:9px 12px;text-align:center;font-size:10.5px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em">📄 Relatório</th>
           <th style="padding:9px 12px;text-align:center;font-size:10.5px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em">🧹 Limpeza</th>
         </tr>
@@ -2631,6 +2985,15 @@ function abrirRelatorioMensal() {
             </td>
             <td style="padding:10px 12px;text-align:center">${prevIcon}</td>
             <td style="padding:10px 12px;text-align:center">${pendIcon}</td>
+            <td style="padding:10px 12px;text-align:center">${(() => {
+              const pends = getMnPends(m.id);
+              const ab = pends.filter(p => !p.done).length;
+              const tot = pends.length;
+              if (tot === 0) return '<span style="color:var(--text-light);font-size:12px">—</span>';
+              return ab > 0
+                ? `<span style="background:#fde68a;color:#92400e;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:700">${ab} aberta${ab>1?'s':''}</span>`
+                : `<span style="background:#d1fae5;color:#065f46;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:700">✅ Concluídas</span>`;
+            })()}</td>
             <td style="padding:10px 12px;text-align:center">${relIcon}</td>
             <td style="padding:10px 12px;text-align:center">${limpIcon}</td>
           </tr>`;
@@ -2811,11 +3174,68 @@ function renderAt() {
   }).join('');
 }
 
+// ===== BOLETOS EM ABERTO (painel na aba Manutenção) =====
+function renderBoletos() {
+  const lista = document.getElementById('mn-boletos-lista');
+  const count = document.getElementById('mn-boletos-count');
+  if (!lista || !count) return;
+
+  // Coleta todas as vendas com pagamento Boleto e não pagas
+  const boletos = [];
+  for (let m = 0; m < 12; m++) {
+    (sales[m] || []).forEach(s => {
+      if (s.payment === 'Boleto' && s.pago === 'nao') {
+        boletos.push({ ...s, mes: m });
+      }
+    });
+  }
+  boletos.sort((a, b) => (a.date || '').localeCompare(b.date || ''));
+
+  count.textContent = boletos.length;
+
+  if (boletos.length === 0) {
+    lista.innerHTML = '<div style="font-size:13px;color:var(--text-light);padding:16px 0;text-align:center">✅ Nenhum boleto em aberto.</div>';
+    return;
+  }
+
+  lista.innerHTML = `
+    <div style="overflow-x:auto">
+      <table style="width:100%;border-collapse:collapse;font-size:13px;background:var(--white);border:1px solid var(--border);border-radius:var(--radius)">
+        <thead>
+          <tr style="background:#f1f3f8;border-bottom:2px solid var(--border)">
+            <th style="padding:10px 14px;text-align:left;font-size:10.5px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em">Descrição</th>
+            <th style="padding:10px 14px;text-align:left;font-size:10.5px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em">Mês</th>
+            <th style="padding:10px 14px;text-align:left;font-size:10.5px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em">Data</th>
+            <th style="padding:10px 14px;text-align:right;font-size:10.5px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em">Valor</th>
+            <th style="padding:10px 14px;text-align:center;font-size:10.5px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em">Ação</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${boletos.map(s => `<tr style="border-bottom:1px solid #f0f1f5">
+            <td style="padding:10px 14px;font-weight:600">${esc(s.desc)}</td>
+            <td style="padding:10px 14px;color:var(--text-muted)">${MESES[s.mes]}</td>
+            <td style="padding:10px 14px;color:var(--text-muted);font-family:'DM Mono',monospace;font-size:12px">${fmtDate(s.date)}</td>
+            <td style="padding:10px 14px;text-align:right;font-weight:700;color:var(--orange);font-family:'DM Mono',monospace">${fmt(s.value)}</td>
+            <td style="padding:10px 14px;text-align:center">
+              <button onclick="marcarBoletoPago('${s.id}',${s.mes})" style="padding:4px 12px;background:var(--green-light);color:var(--green);border:1px solid #bbf7d0;border-radius:6px;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:700;cursor:pointer" onmouseover="this.style.background='var(--green)';this.style.color='white'" onmouseout="this.style.background='var(--green-light)';this.style.color='var(--green)'">✓ Marcar pago</button>
+            </td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>`;
+}
+
+function marcarBoletoPago(id, mes) {
+  const lista = sales[mes] || [];
+  const s = lista.find(x => x.id === id);
+  if (s) { s.pago = 'sim'; save(); renderBoletos(); }
+}
+
 // ===== TOGGLE PAGO =====
 function toggleSalePago(id) {
   const lista = getSalesMes(salesMesAtivo);
   const s = lista.find(x => x.id === id);
-  if (s) { s.pago = (s.pago === 'nao') ? 'sim' : 'nao'; save(); renderSales(); }
+  if (s) { s.pago = (s.pago === 'nao') ? 'sim' : 'nao'; save(); renderSales(); renderBoletos(); }
 }
 
 // ===== FATURAMENTO =====
@@ -2848,27 +3268,17 @@ function switchFatMes(idx) {
 
 function addFaturamento(obj) {
   const desc   = obj ? obj.desc   : document.getElementById('fat-f-desc').value.trim();
-  const valorRaw = obj ? obj.valor : document.getElementById('fat-f-valor').value;
-  function _parseValor(raw) {
-    const s = String(raw).trim();
-    if (s.includes(',') && s.includes('.')) return parseFloat(s.replace(/\./g,'').replace(',','.')) || 0;
-    if (s.includes(',')) return parseFloat(s.replace(',','.')) || 0;
-    return parseFloat(s) || 0;
-  }
-  const valor = _parseValor(valorRaw);
+  const valor  = obj ? obj.valor  : parseFloat(document.getElementById('fat-f-valor').value) || 0;
   const data   = obj ? obj.data   : document.getElementById('fat-f-data').value;
   const cat    = obj ? obj.cat    : document.getElementById('fat-f-cat').value;
   const status = obj ? obj.status : document.getElementById('fat-f-status').value;
-  if (!desc) { if (!obj) alert('Preencha a descrição!'); return; }
-  if (!obj && (!valor || valor <= 0)) { alert('Preencha um valor válido maior que zero!'); return; }
+  if (!desc || !valor) { if (!obj) alert('Preencha descrição e valor!'); return; }
   const mes = obj ? obj.mes : fatMesAtivo;
-  const novoId = Date.now().toString() + '_' + Math.floor(Math.random() * 1000000);
-  getFatMes(mes).push({ id: novoId, desc, valor, data: data || new Date().toISOString().slice(0,10), cat, status });
+  getFatMes(mes).push({ id: Date.now().toString() + Math.random(), desc, valor, data: data || new Date().toISOString().slice(0,10), cat, status });
   saveFat();
   if (!obj) {
     document.getElementById('fat-f-desc').value  = '';
     document.getElementById('fat-f-valor').value = '';
-    document.getElementById('fat-f-data').value  = new Date().toISOString().slice(0,10);
   }
   buildFatTabs();
   renderFaturamento();
@@ -2969,127 +3379,6 @@ function renderFaturamento() {
       <td><button class="comb-del" onclick="removerFat(${fatMesAtivo},'${f.id}')">×</button></td>
     </tr>`;
   }).join('');
-}
-
-// ===== DASHBOARD =====
-function renderDashboard() {
-  const mesAtual = new Date().getMonth();
-  const anoAtual = new Date().getFullYear();
-
-  // KPIs
-  let totalVendasMes = 0, totalVendasGeral = 0, vendasPagas = 0, vendasPendentes = 0;
-  for (let i = 0; i < 12; i++) {
-    (sales[i]||[]).forEach(s => {
-      totalVendasGeral += Number(s.value||0);
-      if (i === mesAtual) totalVendasMes += Number(s.value||0);
-      if (s.pago !== 'nao') vendasPagas += Number(s.value||0);
-      else vendasPendentes += Number(s.value||0);
-    });
-  }
-  let totalFatMes = 0, totalFatRecebido = 0, totalFatPendente = 0;
-  for (let i = 0; i < 12; i++) {
-    (faturamentos[i]||[]).forEach(f => {
-      if (i === mesAtual) totalFatMes += f.valor||0;
-      if (f.status === 'recebido') totalFatRecebido += f.valor||0;
-      else totalFatPendente += f.valor||0;
-    });
-  }
-  const pendOpen = pendings.filter(p => !p.done).length;
-  const atTotal  = atendimentos.length;
-  const leads_fechados = leads.filter(l => l.stage === 'Fechado').length;
-
-  document.getElementById('dash-kpis').innerHTML = `
-    <div class="dash-kpi-card" style="border-top:3px solid var(--primary)">
-      <div class="dash-kpi-label">💰 Vendas este mês</div>
-      <div class="dash-kpi-value" style="color:var(--primary)">${fmt(totalVendasMes)}</div>
-      <div class="dash-kpi-sub">${MESES[mesAtual]} / ${anoAtual}</div>
-    </div>
-    <div class="dash-kpi-card" style="border-top:3px solid var(--green)">
-      <div class="dash-kpi-label">🧾 Faturamento recebido</div>
-      <div class="dash-kpi-value" style="color:var(--green)">${fmt(totalFatRecebido)}</div>
-      <div class="dash-kpi-sub">Total geral confirmado</div>
-    </div>
-    <div class="dash-kpi-card" style="border-top:3px solid var(--orange)">
-      <div class="dash-kpi-label">⏳ A receber</div>
-      <div class="dash-kpi-value" style="color:var(--orange)">${fmt(totalFatPendente + vendasPendentes)}</div>
-      <div class="dash-kpi-sub">Faturamento + vendas pendentes</div>
-    </div>
-    <div class="dash-kpi-card" style="border-top:3px solid var(--red)">
-      <div class="dash-kpi-label">📋 Pendências abertas</div>
-      <div class="dash-kpi-value" style="color:var(--red)">${pendOpen}</div>
-      <div class="dash-kpi-sub">de ${pendings.length} total</div>
-    </div>
-    <div class="dash-kpi-card" style="border-top:3px solid var(--purple)">
-      <div class="dash-kpi-label">🗂 Leads fechados</div>
-      <div class="dash-kpi-value" style="color:var(--purple)">${leads_fechados}</div>
-      <div class="dash-kpi-sub">de ${leads.length} leads</div>
-    </div>
-    <div class="dash-kpi-card" style="border-top:3px solid var(--blue)">
-      <div class="dash-kpi-label">🛠 Atendimentos</div>
-      <div class="dash-kpi-value" style="color:var(--blue)">${atTotal}</div>
-      <div class="dash-kpi-sub">registrados</div>
-    </div>`;
-
-  // Gráfico vendas + faturamento por mês
-  const totaisV = MESES.map((_,i) => (sales[i]||[]).reduce((s,x) => s+Number(x.value||0), 0));
-  const totaisF = MESES.map((_,i) => (faturamentos[i]||[]).reduce((s,x) => s+(x.valor||0), 0));
-  const maxVal  = Math.max(...totaisV, ...totaisF, 1);
-  const grafico = document.getElementById('dash-grafico');
-  if (grafico) grafico.innerHTML = MESES.map((nome,i) => {
-    const hV = Math.round((totaisV[i]/maxVal)*90);
-    const hF = Math.round((totaisF[i]/maxVal)*90);
-    const isHoje = i === mesAtual;
-    return `<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;position:relative;cursor:pointer" onclick="showTab('vendas')" title="${nome}: Vendas ${fmt(totaisV[i])} / Fat. ${fmt(totaisF[i])}">
-      <div style="display:flex;align-items:flex-end;gap:2px;height:90px">
-        <div style="width:10px;border-radius:3px 3px 0 0;background:${isHoje?'var(--primary)':'#c7d2fe'};height:${Math.max(hV,2)}px;transition:height 0.3s" title="Vendas"></div>
-        <div style="width:10px;border-radius:3px 3px 0 0;background:${isHoje?'var(--green)':'#bbf7d0'};height:${Math.max(hF,2)}px;transition:height 0.3s" title="Faturamento"></div>
-      </div>
-      <span style="font-size:9px;color:${isHoje?'var(--primary)':'var(--text-muted)'};font-weight:${isHoje?700:500}">${nome.slice(0,3)}</span>
-    </div>`;
-  }).join('');
-
-  // Pendências abertas
-  const dashPend = document.getElementById('dash-pend');
-  const pendAbertos = pendings.filter(p => !p.done).sort((a,b) => {
-    const ordem = { Alta:0, Média:1, Baixa:2 };
-    return (ordem[a.priority]||1) - (ordem[b.priority]||1);
-  }).slice(0,6);
-  dashPend.innerHTML = pendAbertos.length === 0
-    ? `<div style="font-size:13px;color:var(--text-light)">Nenhuma pendência aberta 🎉</div>`
-    : pendAbertos.map(p => `<div class="dash-pend-item dash-pend-${(p.priority||'media').toLowerCase().replace('é','e')}">${esc(p.desc)}<br><span style="font-size:10px;color:var(--text-muted)">${p.category} • ${fmtDate(p.date)}</span></div>`).join('');
-
-  // Últimas vendas (do mês atual)
-  const dashVendas = document.getElementById('dash-vendas');
-  const ultimasVendas = [...(sales[mesAtual]||[])].sort((a,b) => (b.date||'').localeCompare(a.date||'')).slice(0,5);
-  dashVendas.innerHTML = ultimasVendas.length === 0
-    ? `<div style="font-size:13px;color:var(--text-light)">Sem vendas em ${MESES[mesAtual]}</div>`
-    : ultimasVendas.map(s => {
-        const isPago = s.pago !== 'nao';
-        return `<div class="dash-sale-row">
-          <div style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600">${esc(s.desc)}</div>
-          <span class="sale-pago-badge ${isPago?'sale-pago-sim':'sale-pago-nao'}" style="cursor:default">${isPago?'✅':'⏳'}</span>
-          <span style="font-family:'DM Mono',monospace;font-weight:700;color:var(--green);font-size:13px;margin-left:8px">${fmt(s.value)}</span>
-        </div>`;
-      }).join('');
-
-  // Atendimentos recentes
-  const dashAtend = document.getElementById('dash-atend');
-  const ultimosAt = [...atendimentos].slice(0,5);
-  const urgCor = { Alta:'var(--red)', Média:'var(--orange)', Baixa:'var(--green)' };
-  dashAtend.innerHTML = ultimosAt.length === 0
-    ? `<div style="font-size:13px;color:var(--text-light)">Nenhum atendimento registrado</div>`
-    : ultimosAt.map(a => `<div class="dash-sale-row">
-        <div style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
-          <strong style="font-size:13px">${esc(a.cliente)}</strong>
-          <span style="font-size:11px;color:var(--text-muted);margin-left:6px">${esc(a.assunto)}</span>
-        </div>
-        <span style="font-size:11px;font-weight:700;color:${urgCor[a.urgencia]||'var(--text-muted)'}">● ${a.urgencia}</span>
-      </div>`).join('');
-
-  // subtítulo com data
-  const hoje = new Date();
-  const sub = document.getElementById('dash-subtitle');
-  if (sub) sub.textContent = `${hoje.toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}`;
 }
 
 // ===== COMBUSTÍVEL =====
@@ -3395,7 +3684,6 @@ document.getElementById('sale-date').value    = today;
 document.getElementById('pend-date').value    = today;
 document.getElementById('comb-f-data').value  = today;
 document.getElementById('fat-f-data').value   = today;
-renderDashboard();
 renderFunil();
 updateBadge();
 buildMesesTabs();
@@ -3405,10 +3693,16 @@ buildCombTabs();
 renderGrafico();
 atualizarMeta();
 renderAt();
+renderBoletos();
 
 function updateBadge() {
-  const open = pendings.filter(p => !p.done).length;
-  document.getElementById('badge-count').textContent = open;
+  const hoje = new Date(); hoje.setHours(0,0,0,0);
+  const open    = pendings.filter(p => !p.done).length;
+  const vencidas = pendings.filter(p => !p.done && p.date && new Date(p.date + 'T00:00:00') < hoje).length;
+  const badge = document.getElementById('badge-count');
+  badge.textContent = open;
+  badge.style.background = vencidas > 0 ? 'var(--red)' : '';
+  badge.title = vencidas > 0 ? `${vencidas} vencida${vencidas > 1 ? 's' : ''}` : '';
 }
 
 document.getElementById('modal-lead').addEventListener('click', function(e) {
