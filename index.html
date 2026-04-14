@@ -635,6 +635,34 @@
   .pend-vencida { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 20px; background: #fee2e2; color: #b91c1c; white-space: nowrap; }
   .pending-item.vencida { border-left-color: var(--red); background: #fff8f8; }
 
+  /* CLIENTES */
+  .cli-card { background:var(--white); border:1px solid var(--border); border-radius:var(--radius); padding:16px 18px; cursor:pointer; transition:box-shadow 0.15s,transform 0.15s; box-shadow:var(--shadow-sm); border-left:4px solid var(--border); }
+  .cli-card:hover { box-shadow:var(--shadow); transform:translateY(-2px); }
+  .cli-card.tipo-fixo     { border-left-color:var(--primary); }
+  .cli-card.tipo-corretivo { border-left-color:var(--orange); }
+  .cli-card.tipo-locacao  { border-left-color:var(--purple); }
+  .cli-card.tipo-venda    { border-left-color:var(--green); }
+  .cli-nome { font-size:14px; font-weight:700; color:var(--text); margin-bottom:3px; }
+  .cli-tipo-badge { display:inline-block; font-size:10px; font-weight:700; padding:2px 8px; border-radius:20px; margin-bottom:8px; }
+  .cli-fixo-badge    { background:var(--primary-light); color:var(--primary); }
+  .cli-corret-badge  { background:var(--orange-light); color:var(--orange); }
+  .cli-locacao-badge { background:var(--purple-light); color:var(--purple); }
+  .cli-venda-badge   { background:var(--green-light); color:var(--green); }
+  .cli-info-row { font-size:12px; color:var(--text-muted); display:flex; gap:12px; flex-wrap:wrap; margin-top:6px; }
+  .cli-stat { display:flex; flex-direction:column; align-items:center; background:var(--bg); border-radius:8px; padding:6px 10px; min-width:60px; }
+  .cli-stat-val { font-size:18px; font-weight:700; color:var(--text); }
+  .cli-stat-label { font-size:10px; color:var(--text-muted); text-align:center; margin-top:1px; }
+  .cli-det-tab { padding:7px 14px; border:none; background:none; font-family:'DM Sans',sans-serif; font-size:13px; font-weight:600; color:var(--text-muted); cursor:pointer; border-bottom:2px solid transparent; margin-bottom:-1px; transition:all 0.15s; }
+  .cli-det-tab:hover { color:var(--text); }
+  .cli-det-tab.active { color:var(--primary); border-bottom-color:var(--primary); }
+  .cli-hist-item { padding:10px 14px; border-radius:var(--radius-sm); background:var(--bg); border-left:3px solid var(--border); margin-bottom:8px; font-size:13px; }
+  .cli-hist-item.corretivo { border-left-color:var(--orange); }
+  .cli-hist-item.preventiva { border-left-color:var(--green); }
+  .cli-hist-item.venda { border-left-color:var(--blue); }
+  .maq-card { background:var(--bg); border:1px solid var(--border); border-radius:var(--radius-sm); padding:12px 14px; margin-bottom:8px; display:flex; align-items:flex-start; justify-content:space-between; gap:10px; }
+  .maq-nome { font-size:13px; font-weight:700; color:var(--text); }
+  .maq-sub  { font-size:11px; color:var(--text-muted); margin-top:2px; }
+
   /* MANUTENÇÃO */
   #page-manutencao {
     background: var(--bg);
@@ -1210,6 +1238,7 @@
     <button class="nav-tab" id="tab-pendencias" onclick="showTab('pendencias')">📋 Pendências <span class="badge" id="badge-count">0</span></button>
     <button class="nav-tab" onclick="showTab('manutencao')">🔧 Manutenção</button>
     <button class="nav-tab" onclick="showTab('atendimentos')">🛠 Atendimentos</button>
+    <button class="nav-tab" onclick="showTab('clientes')">👥 Clientes</button>
   </div>
   <button class="btn-primary" onclick="openModal()">+ Novo Lead</button>
   <button onclick="exportarDados()" style="padding:7px 13px;background:var(--green);color:white;border:none;border-radius:var(--radius-sm);font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap" title="Exportar todos os dados">⬇️ Exportar</button>
@@ -1716,11 +1745,12 @@
     <div class="at-form-row">
       <div class="at-form-group">
         <label>Condomínio / Cliente *</label>
-        <input id="at-f-cliente" placeholder="Nome do condomínio..." oninput="verificarCliente()">
+        <input id="at-f-cliente" placeholder="Nome do condomínio..." oninput="verificarCliente();filtrarMaquinasAt()">
       </div>
       <div class="at-form-group">
-        <label>Equipamento</label>
-        <input id="at-f-equip" placeholder="Ex: Esteira #2">
+        <label>Equipamento / Máquina</label>
+        <input id="at-f-equip" placeholder="Ex: Esteira #2" list="at-maq-list">
+        <datalist id="at-maq-list"></datalist>
       </div>
     </div>
     <div class="at-form-group">
@@ -1813,6 +1843,145 @@
     <div class="sale-edit-footer">
       <button class="btn-secondary" onclick="fecharEditSale()">Cancelar</button>
       <button class="btn-primary" onclick="confirmarEditSale()">Salvar alterações</button>
+    </div>
+  </div>
+</div>
+
+<!-- =================== CLIENTES =================== -->
+<div class="page" id="page-clientes">
+  <div style="padding:24px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px">
+      <div style="font-size:17px;font-weight:700;color:var(--text)">👥 Clientes — <span id="cli-count" style="color:var(--primary)">0 cadastrados</span></div>
+      <button class="btn-novo-atend" onclick="abrirCliModal()">＋ Novo Cliente</button>
+    </div>
+
+    <!-- FILTROS -->
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;align-items:center">
+      <div style="position:relative;flex:1;min-width:200px;max-width:320px">
+        <span style="position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:14px;pointer-events:none;color:var(--text-muted)">🔍</span>
+        <input id="cli-search" type="text" placeholder="Buscar cliente..." oninput="renderClientes()"
+          style="width:100%;padding:7px 12px 7px 32px;border:1.5px solid var(--border);border-radius:20px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text);background:var(--white);outline:none">
+      </div>
+      <button class="at-filter-btn active" onclick="setCliFiltro('todos')">Todos</button>
+      <button class="at-filter-btn" onclick="setCliFiltro('Contrato Fixo')">📋 Contrato Fixo</button>
+      <button class="at-filter-btn" onclick="setCliFiltro('Corretivo')">🔧 Corretivo</button>
+      <button class="at-filter-btn" onclick="setCliFiltro('Locação')">📦 Locação</button>
+      <button class="at-filter-btn" onclick="setCliFiltro('Venda')">💰 Venda</button>
+    </div>
+
+    <!-- GRID DE CLIENTES -->
+    <div id="cli-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px"></div>
+  </div>
+</div>
+
+<!-- MODAL CLIENTE -->
+<div class="at-modal-overlay hidden" id="cli-modal-overlay" onclick="fecharCliModal(event)">
+  <div class="at-modal" style="max-width:480px">
+    <h3 id="cli-modal-titulo">Novo Cliente</h3>
+    <div class="at-form-row">
+      <div class="at-form-group" style="flex:2">
+        <label>Nome / Razão Social *</label>
+        <input id="cli-f-nome" placeholder="Nome do cliente...">
+      </div>
+      <div class="at-form-group">
+        <label>Tipo</label>
+        <select id="cli-f-tipo">
+          <option value="Contrato Fixo">📋 Contrato Fixo</option>
+          <option value="Corretivo">🔧 Corretivo</option>
+          <option value="Locação">📦 Locação</option>
+          <option value="Venda">💰 Venda</option>
+        </select>
+      </div>
+    </div>
+    <div class="at-form-row">
+      <div class="at-form-group">
+        <label>Telefone / WhatsApp</label>
+        <input id="cli-f-tel" placeholder="(11) 99999-9999">
+      </div>
+      <div class="at-form-group">
+        <label>Responsável</label>
+        <input id="cli-f-resp" placeholder="Nome do responsável">
+      </div>
+    </div>
+    <div class="at-form-group">
+      <label>Endereço</label>
+      <input id="cli-f-end" placeholder="Rua, número, bairro, cidade">
+    </div>
+    <div class="at-form-group">
+      <label>Observação</label>
+      <textarea id="cli-f-obs" rows="2" placeholder="Ex: só atende de manhã, difícil acesso..."></textarea>
+    </div>
+    <div class="at-modal-footer">
+      <button class="btn-secondary" onclick="fecharCliModal()">Cancelar</button>
+      <button class="btn-primary" onclick="salvarCliente()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL DETALHE CLIENTE -->
+<div class="at-modal-overlay hidden" id="cli-detalhe-overlay" onclick="fecharCliDetalhe(event)">
+  <div class="at-modal" style="max-width:680px;max-height:92vh">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;gap:12px">
+      <div>
+        <div style="font-size:18px;font-weight:700;color:var(--text)" id="cli-det-nome"></div>
+        <div style="font-size:12px;color:var(--text-muted);margin-top:3px" id="cli-det-sub"></div>
+      </div>
+      <div style="display:flex;gap:8px;flex-shrink:0">
+        <button onclick="imprimirCliente()" style="padding:6px 14px;background:var(--green);color:white;border:none;border-radius:7px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;cursor:pointer">🖨️ PDF</button>
+        <button onclick="editarClienteAtual()" style="padding:6px 14px;background:var(--primary);color:white;border:none;border-radius:7px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;cursor:pointer">✏️ Editar</button>
+        <button onclick="fecharCliDetalhe()" style="background:none;border:none;font-size:22px;cursor:pointer;color:var(--text-muted);line-height:1">×</button>
+      </div>
+    </div>
+
+    <!-- KPIs -->
+    <div id="cli-det-kpis" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin-bottom:20px"></div>
+
+    <!-- ABAS INTERNAS -->
+    <div style="display:flex;gap:4px;margin-bottom:16px;border-bottom:1px solid var(--border);padding-bottom:0">
+      <button class="cli-det-tab active" onclick="switchCliTab('atendimentos')" id="cli-tab-at">🔧 Atendimentos</button>
+      <button class="cli-det-tab" onclick="switchCliTab('preventivas')" id="cli-tab-prev">📋 Preventivas</button>
+      <button class="cli-det-tab" onclick="switchCliTab('maquinas')" id="cli-tab-maq">⚙️ Máquinas</button>
+      <button class="cli-det-tab" onclick="switchCliTab('vendas')" id="cli-tab-vd">💰 Vendas</button>
+    </div>
+    <div id="cli-det-conteudo" style="max-height:380px;overflow-y:auto"></div>
+  </div>
+</div>
+
+<!-- MODAL MÁQUINA -->
+<div class="at-modal-overlay hidden" id="maq-modal-overlay" onclick="fecharMaqModal(event)">
+  <div class="at-modal" style="max-width:420px">
+    <h3 id="maq-modal-titulo">Nova Máquina</h3>
+    <div class="at-form-group">
+      <label>Marca *</label>
+      <input id="maq-f-marca" placeholder="Ex: Life Fitness, Technogym...">
+    </div>
+    <div class="at-form-row">
+      <div class="at-form-group">
+        <label>Modelo *</label>
+        <input id="maq-f-modelo" placeholder="Ex: Esteira T5">
+      </div>
+      <div class="at-form-group">
+        <label>Nº Série</label>
+        <input id="maq-f-serie" placeholder="Opcional">
+      </div>
+    </div>
+    <div class="at-form-group">
+      <label>Tipo</label>
+      <select id="maq-f-tipo">
+        <option value="Esteira">🏃 Esteira</option>
+        <option value="Bike">🚴 Bike</option>
+        <option value="Elíptico">⚡ Elíptico</option>
+        <option value="Musculação">💪 Musculação</option>
+        <option value="Outro">📦 Outro</option>
+      </select>
+    </div>
+    <div class="at-form-group">
+      <label>Observação</label>
+      <input id="maq-f-obs" placeholder="Ex: instalada em 01/2024">
+    </div>
+    <div class="at-modal-footer">
+      <button class="btn-secondary" onclick="fecharMaqModal()">Cancelar</button>
+      <button class="btn-primary" onclick="salvarMaquina()">Salvar</button>
     </div>
   </div>
 </div>
@@ -1944,7 +2113,7 @@ function showTab(tab) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
   document.getElementById('page-' + tab).classList.add('active');
-  const tabs = ['funil','vendas','faturamento','pendencias','manutencao','atendimentos'];
+  const tabs = ['funil','vendas','faturamento','pendencias','manutencao','atendimentos','clientes'];
   const idx = tabs.indexOf(tab);
   if (idx !== -1) document.querySelectorAll('.nav-tab')[idx].classList.add('active');
   if (tab === 'funil')        renderFunil();
@@ -1953,6 +2122,7 @@ function showTab(tab) {
   if (tab === 'pendencias')   renderPendings();
   if (tab === 'manutencao')   { buildMesesTabs(); renderManut(); renderBoletos(); }
   if (tab === 'atendimentos') renderAt();
+  if (tab === 'clientes')     renderClientes();
 }
 
 // ===== FUNIL =====
@@ -3757,17 +3927,412 @@ function updateBadge() {
   badge.title = vencidas > 0 ? `${vencidas} vencida${vencidas > 1 ? 's' : ''}` : '';
 }
 
+// ===== CLIENTES =====
+let clientes  = JSON.parse(localStorage.getItem('crm_clientes') || '[]');
+let maquinas  = JSON.parse(localStorage.getItem('crm_maquinas') || '{}'); // { clienteId: [{id,marca,modelo,serie,tipo,obs}] }
+let cliEditId = null;
+let cliDetalheId = null;
+let cliDetTab = 'atendimentos';
+let cliFiltroAtivo = 'todos';
+let maqEditId = null;
+
+function saveClientes() { localStorage.setItem('crm_clientes', JSON.stringify(clientes)); }
+function saveMaquinas() { localStorage.setItem('crm_maquinas', JSON.stringify(maquinas)); }
+function getMaquinasCliente(cliId) { if (!maquinas[cliId]) maquinas[cliId] = []; return maquinas[cliId]; }
+
+// Retorna lista completa de clientes incluindo os da Manutenção (contrato fixo)
+function getClientesCompleto() {
+  const lista = [...clientes];
+  // Adiciona clientes da manutenção que não estejam já cadastrados
+  const nomesExistentes = new Set(lista.map(c => (c.nome||'').toLowerCase().trim()));
+  Object.values(manuts).flat().forEach(m => {
+    if (!m.cliente) return;
+    const nomeNorm = m.cliente.toLowerCase().trim();
+    if (!nomesExistentes.has(nomeNorm)) {
+      nomesExistentes.add(nomeNorm);
+      lista.push({ id: 'manut_' + nomeNorm.replace(/\s+/g,'_'), nome: m.cliente, tipo: 'Contrato Fixo', tel:'', resp:'', end:'', obs:'', _fromManut: true });
+    }
+  });
+  return lista.sort((a,b) => (a.nome||'').localeCompare(b.nome||''));
+}
+
+function setCliFiltro(filtro) {
+  cliFiltroAtivo = filtro;
+  document.querySelectorAll('#page-clientes .at-filter-btn').forEach(b => b.classList.remove('active'));
+  const mapa = {'todos':0,'Contrato Fixo':1,'Corretivo':2,'Locação':3,'Venda':4};
+  const btns = document.querySelectorAll('#page-clientes .at-filter-btn');
+  if (btns[mapa[filtro]]) btns[mapa[filtro]].classList.add('active');
+  renderClientes();
+}
+
+function renderClientes() {
+  const grid  = document.getElementById('cli-grid');
+  const count = document.getElementById('cli-count');
+  const query = (document.getElementById('cli-search')?.value || '').toLowerCase().trim();
+  let lista = getClientesCompleto();
+  if (cliFiltroAtivo !== 'todos') lista = lista.filter(c => c.tipo === cliFiltroAtivo);
+  if (query) lista = lista.filter(c => (c.nome+c.tel+c.resp+c.end).toLowerCase().includes(query));
+  count.textContent = lista.length + ' cadastrado' + (lista.length !== 1 ? 's' : '');
+  if (lista.length === 0) { grid.innerHTML = '<div class="at-empty">Nenhum cliente encontrado.</div>'; return; }
+
+  const tipoCls = { 'Contrato Fixo':'tipo-fixo','Corretivo':'tipo-corretivo','Locação':'tipo-locacao','Venda':'tipo-venda' };
+  const tipoBadge = { 'Contrato Fixo':'cli-fixo-badge','Corretivo':'cli-corret-badge','Locação':'cli-locacao-badge','Venda':'cli-venda-badge' };
+  const tipoLabel = { 'Contrato Fixo':'📋 Contrato Fixo','Corretivo':'🔧 Corretivo','Locação':'📦 Locação','Venda':'💰 Venda' };
+
+  grid.innerHTML = lista.map(c => {
+    const atends   = atendimentos.filter(a => a.cliente && a.cliente.toLowerCase().includes((c.nome||'').toLowerCase())).length;
+    const prevs    = Object.values(manuts).flat().filter(m => m.cliente && m.cliente.toLowerCase() === (c.nome||'').toLowerCase() && m.preventiva).length;
+    const maqCount = getMaquinasCliente(c.id).length;
+    return `<div class="cli-card ${tipoCls[c.tipo]||''}" onclick="abrirCliDetalhe('${c.id}')">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px">
+        <div>
+          <div class="cli-nome">${esc(c.nome)}</div>
+          <span class="cli-tipo-badge ${tipoBadge[c.tipo]||''}">${tipoLabel[c.tipo]||c.tipo}</span>
+        </div>
+        ${!c._fromManut ? `<button onclick="event.stopPropagation();abrirCliModal('${c.id}')" style="background:none;border:none;color:var(--text-light);cursor:pointer;font-size:14px;padding:0 2px" title="Editar">✏️</button>` : ''}
+      </div>
+      <div class="cli-info-row">
+        ${c.tel ? `<span>📞 ${esc(c.tel)}</span>` : ''}
+        ${c.resp ? `<span>👤 ${esc(c.resp)}</span>` : ''}
+        ${c.end  ? `<span>📍 ${esc(c.end)}</span>`  : ''}
+      </div>
+      <div style="display:flex;gap:8px;margin-top:10px">
+        <div class="cli-stat"><span class="cli-stat-val" style="color:var(--orange)">${atends}</span><span class="cli-stat-label">Corretivos</span></div>
+        <div class="cli-stat"><span class="cli-stat-val" style="color:var(--green)">${prevs}</span><span class="cli-stat-label">Preventivas</span></div>
+        <div class="cli-stat"><span class="cli-stat-val" style="color:var(--purple)">${maqCount}</span><span class="cli-stat-label">Máquinas</span></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ---- Modal Cadastro Cliente ----
+function abrirCliModal(id) {
+  cliEditId = id || null;
+  const overlay = document.getElementById('cli-modal-overlay');
+  overlay.classList.remove('hidden');
+  document.getElementById('cli-modal-titulo').textContent = id ? 'Editar Cliente' : 'Novo Cliente';
+  if (id) {
+    const c = clientes.find(x => x.id === id);
+    if (c) {
+      document.getElementById('cli-f-nome').value = c.nome || '';
+      document.getElementById('cli-f-tipo').value = c.tipo || 'Corretivo';
+      document.getElementById('cli-f-tel').value  = c.tel  || '';
+      document.getElementById('cli-f-resp').value = c.resp || '';
+      document.getElementById('cli-f-end').value  = c.end  || '';
+      document.getElementById('cli-f-obs').value  = c.obs  || '';
+    }
+  } else {
+    ['cli-f-nome','cli-f-tel','cli-f-resp','cli-f-end','cli-f-obs'].forEach(i => document.getElementById(i).value = '');
+    document.getElementById('cli-f-tipo').value = 'Corretivo';
+  }
+}
+
+function fecharCliModal(e) {
+  if (e && e.target !== document.getElementById('cli-modal-overlay')) return;
+  document.getElementById('cli-modal-overlay').classList.add('hidden');
+  cliEditId = null;
+}
+
+function salvarCliente() {
+  const nome = document.getElementById('cli-f-nome').value.trim();
+  if (!nome) { alert('Preencha o nome do cliente!'); return; }
+  const dados = {
+    nome, tipo: document.getElementById('cli-f-tipo').value,
+    tel:  document.getElementById('cli-f-tel').value.trim(),
+    resp: document.getElementById('cli-f-resp').value.trim(),
+    end:  document.getElementById('cli-f-end').value.trim(),
+    obs:  document.getElementById('cli-f-obs').value.trim(),
+  };
+  if (cliEditId) {
+    const idx = clientes.findIndex(x => x.id === cliEditId);
+    if (idx >= 0) clientes[idx] = { ...clientes[idx], ...dados };
+  } else {
+    clientes.push({ id: Date.now().toString(), ...dados });
+  }
+  saveClientes();
+  document.getElementById('cli-modal-overlay').classList.add('hidden');
+  cliEditId = null;
+  renderClientes();
+}
+
+// ---- Detalhe Cliente ----
+function abrirCliDetalhe(id) {
+  cliDetalheId = id;
+  cliDetTab = 'atendimentos';
+  const overlay = document.getElementById('cli-detalhe-overlay');
+  overlay.classList.remove('hidden');
+  const todos = getClientesCompleto();
+  const c = todos.find(x => x.id === id);
+  if (!c) return;
+  document.getElementById('cli-det-nome').textContent = c.nome;
+  const tipoBadge = { 'Contrato Fixo':'📋 Contrato Fixo','Corretivo':'🔧 Corretivo','Locação':'📦 Locação','Venda':'💰 Venda' };
+  let sub = tipoBadge[c.tipo] || c.tipo;
+  if (c.tel)  sub += ' · 📞 ' + c.tel;
+  if (c.resp) sub += ' · 👤 ' + c.resp;
+  if (c.end)  sub += ' · 📍 ' + c.end;
+  document.getElementById('cli-det-sub').textContent = sub;
+  renderCliDetalheKpis(c);
+  renderCliDetTab(c);
+  document.querySelectorAll('.cli-det-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('cli-tab-at').classList.add('active');
+}
+
+function fecharCliDetalhe(e) {
+  if (e && e.target !== document.getElementById('cli-detalhe-overlay')) return;
+  document.getElementById('cli-detalhe-overlay').classList.add('hidden');
+  cliDetalheId = null;
+}
+
+function editarClienteAtual() {
+  fecharCliDetalhe();
+  abrirCliModal(cliDetalheId);
+}
+
+function switchCliTab(tab) {
+  cliDetTab = tab;
+  document.querySelectorAll('.cli-det-tab').forEach(t => t.classList.remove('active'));
+  const mapa = { atendimentos:'cli-tab-at', preventivas:'cli-tab-prev', maquinas:'cli-tab-maq', vendas:'cli-tab-vd' };
+  if (mapa[tab]) document.getElementById(mapa[tab]).classList.add('active');
+  const todos = getClientesCompleto();
+  const c = todos.find(x => x.id === cliDetalheId);
+  if (c) renderCliDetTab(c);
+}
+
+function renderCliDetalheKpis(c) {
+  const atends = atendimentos.filter(a => a.cliente && a.cliente.toLowerCase().includes((c.nome||'').toLowerCase()));
+  const prevs  = Object.values(manuts).flat().filter(m => m.cliente && m.cliente.toLowerCase() === (c.nome||'').toLowerCase() && m.preventiva);
+  const maqCount = getMaquinasCliente(c.id).length;
+  const vendasCli = [];
+  for (let m = 0; m < 12; m++) { (sales[m]||[]).forEach(s => { if ((s.desc||'').toLowerCase().includes((c.nome||'').toLowerCase())) vendasCli.push(s); }); }
+  document.getElementById('cli-det-kpis').innerHTML = `
+    <div class="dash-kpi-card" style="border-top:3px solid var(--orange)"><div class="dash-kpi-label">🔧 Corretivos</div><div class="dash-kpi-value" style="color:var(--orange);font-size:22px">${atends.length}</div></div>
+    <div class="dash-kpi-card" style="border-top:3px solid var(--green)"><div class="dash-kpi-label">📋 Preventivas</div><div class="dash-kpi-value" style="color:var(--green);font-size:22px">${prevs.length}</div></div>
+    <div class="dash-kpi-card" style="border-top:3px solid var(--purple)"><div class="dash-kpi-label">⚙️ Máquinas</div><div class="dash-kpi-value" style="color:var(--purple);font-size:22px">${maqCount}</div></div>
+    <div class="dash-kpi-card" style="border-top:3px solid var(--blue)"><div class="dash-kpi-label">💰 Vendas</div><div class="dash-kpi-value" style="color:var(--blue);font-size:22px">${vendasCli.length}</div></div>`;
+}
+
+function renderCliDetTab(c) {
+  const cont = document.getElementById('cli-det-conteudo');
+  const nomeN = (c.nome||'').toLowerCase();
+
+  if (cliDetTab === 'atendimentos') {
+    const lista = atendimentos.filter(a => a.cliente && a.cliente.toLowerCase().includes(nomeN)).sort((a,b) => (b.data||'').localeCompare(a.data||''));
+    if (lista.length === 0) { cont.innerHTML = '<div style="color:var(--text-light);font-size:13px;padding:16px 0;text-align:center">Nenhum atendimento registrado.</div>'; return; }
+    const urgCor = { Alta:'var(--red)', Média:'var(--orange)', Baixa:'var(--green)' };
+    cont.innerHTML = lista.map(a => `
+      <div class="cli-hist-item corretivo">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:4px">
+          <span style="font-weight:700;font-size:13px">${esc(a.assunto)}</span>
+          <span style="font-size:11px;color:${urgCor[a.urgencia]||'var(--text-muted)'};font-weight:700">${a.urgencia}</span>
+        </div>
+        <div style="font-size:11px;color:var(--text-muted);display:flex;gap:10px;flex-wrap:wrap">
+          <span>📅 ${fmtDate(a.data)}</span>
+          ${a.equip ? `<span>⚙️ ${esc(a.equip)}</span>` : ''}
+          <span style="font-weight:600;color:var(--text)">${a.status}</span>
+        </div>
+      </div>`).join('');
+  }
+
+  if (cliDetTab === 'preventivas') {
+    const lista = Object.entries(manuts).flatMap(([mes, arr]) =>
+      arr.filter(m => m.cliente && m.cliente.toLowerCase() === nomeN && m.preventiva)
+         .map(m => ({ ...m, mes: parseInt(mes) }))
+    ).sort((a,b) => (b.preventiva||'').localeCompare(a.preventiva||''));
+    if (lista.length === 0) { cont.innerHTML = '<div style="color:var(--text-light);font-size:13px;padding:16px 0;text-align:center">Nenhuma preventiva registrada.</div>'; return; }
+    cont.innerHTML = lista.map(m => `
+      <div class="cli-hist-item preventiva">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+          <span style="font-weight:700">📋 Preventiva — ${MESES[m.mes]}</span>
+          <span style="font-size:11px;color:var(--text-muted)">📅 ${fmtDate(m.preventiva)}</span>
+        </div>
+        ${m.corretiva ? `<div style="font-size:11px;color:var(--text-muted);margin-top:3px">🔧 Corretiva 1ª: ${fmtDate(m.corretiva)}${m.corretiva2?' · 2ª: '+fmtDate(m.corretiva2):''}</div>` : ''}
+        ${m.relatorio ? `<div style="font-size:11px;color:var(--green);margin-top:2px">📄 Relatório enviado: ${fmtDate(m.relatorio)}</div>` : ''}
+      </div>`).join('');
+  }
+
+  if (cliDetTab === 'maquinas') {
+    const lista = getMaquinasCliente(c.id);
+    const tipoIcon = { Esteira:'🏃', Bike:'🚴', Elíptico:'⚡', Musculação:'💪', Outro:'📦' };
+    cont.innerHTML = `
+      <div style="display:flex;justify-content:flex-end;margin-bottom:10px">
+        <button onclick="abrirMaqModal()" style="padding:6px 14px;background:var(--primary);color:white;border:none;border-radius:7px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;cursor:pointer">＋ Nova Máquina</button>
+      </div>
+      ${lista.length === 0 ? '<div style="color:var(--text-light);font-size:13px;padding:16px 0;text-align:center">Nenhuma máquina cadastrada.</div>' :
+        lista.map(mq => {
+          const problemas = atendimentos.filter(a => a.cliente && a.cliente.toLowerCase().includes(nomeN) && a.equip && a.equip.toLowerCase().includes((mq.modelo||'').toLowerCase())).length;
+          return `<div class="maq-card">
+            <div>
+              <div class="maq-nome">${tipoIcon[mq.tipo]||'📦'} ${esc(mq.marca)} ${esc(mq.modelo)}</div>
+              <div class="maq-sub">${mq.serie ? 'Série: '+esc(mq.serie)+' · ' : ''}${mq.obs||''}</div>
+              ${problemas > 0 ? `<div style="font-size:11px;color:var(--orange);margin-top:3px;font-weight:600">⚠️ ${problemas} ocorrência${problemas>1?'s':''} registrada${problemas>1?'s':''}</div>` : ''}
+            </div>
+            <button onclick="removerMaquina('${c.id}','${mq.id}')" style="background:none;border:none;color:var(--text-light);cursor:pointer;font-size:16px;padding:0 2px" title="Remover">×</button>
+          </div>`;
+        }).join('')
+      }`;
+  }
+
+  if (cliDetTab === 'vendas') {
+    const lista = [];
+    for (let m = 0; m < 12; m++) {
+      (sales[m]||[]).forEach(s => { if ((s.desc||'').toLowerCase().includes(nomeN)) lista.push({ ...s, mes: m }); });
+    }
+    lista.sort((a,b) => (b.date||'').localeCompare(a.date||''));
+    if (lista.length === 0) { cont.innerHTML = '<div style="color:var(--text-light);font-size:13px;padding:16px 0;text-align:center">Nenhuma venda encontrada.</div>'; return; }
+    cont.innerHTML = lista.map(s => `
+      <div class="cli-hist-item venda">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+          <span style="font-weight:700">${esc(s.desc)}</span>
+          <span style="font-weight:700;color:var(--green);font-family:'DM Mono',monospace">${fmt(s.value)}</span>
+        </div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:3px;display:flex;gap:10px">
+          <span>📅 ${fmtDate(s.date)}</span>
+          <span>${s.type}</span>
+          <span>${s.payment}</span>
+          <span style="color:${s.pago!=='nao'?'var(--green)':'var(--orange)'}">${s.pago!=='nao'?'✅ Pago':'⏳ Pendente'}</span>
+        </div>
+      </div>`).join('');
+  }
+}
+
+// ---- Máquinas ----
+function abrirMaqModal(id) {
+  maqEditId = id || null;
+  document.getElementById('maq-modal-overlay').classList.remove('hidden');
+  document.getElementById('maq-modal-titulo').textContent = id ? 'Editar Máquina' : 'Nova Máquina';
+  if (id) {
+    const mqs = getMaquinasCliente(cliDetalheId);
+    const mq  = mqs.find(x => x.id === id);
+    if (mq) {
+      document.getElementById('maq-f-marca').value  = mq.marca  || '';
+      document.getElementById('maq-f-modelo').value = mq.modelo || '';
+      document.getElementById('maq-f-serie').value  = mq.serie  || '';
+      document.getElementById('maq-f-tipo').value   = mq.tipo   || 'Outro';
+      document.getElementById('maq-f-obs').value    = mq.obs    || '';
+    }
+  } else {
+    ['maq-f-marca','maq-f-modelo','maq-f-serie','maq-f-obs'].forEach(i => document.getElementById(i).value = '');
+    document.getElementById('maq-f-tipo').value = 'Esteira';
+  }
+}
+
+function fecharMaqModal(e) {
+  if (e && e.target !== document.getElementById('maq-modal-overlay')) return;
+  document.getElementById('maq-modal-overlay').classList.add('hidden');
+  maqEditId = null;
+}
+
+function salvarMaquina() {
+  const marca  = document.getElementById('maq-f-marca').value.trim();
+  const modelo = document.getElementById('maq-f-modelo').value.trim();
+  if (!marca || !modelo) { alert('Preencha marca e modelo!'); return; }
+  const dados = { marca, modelo, serie: document.getElementById('maq-f-serie').value.trim(), tipo: document.getElementById('maq-f-tipo').value, obs: document.getElementById('maq-f-obs').value.trim() };
+  const lista = getMaquinasCliente(cliDetalheId);
+  if (maqEditId) {
+    const idx = lista.findIndex(x => x.id === maqEditId);
+    if (idx >= 0) lista[idx] = { ...lista[idx], ...dados };
+  } else {
+    lista.push({ id: Date.now().toString(), ...dados });
+  }
+  saveMaquinas();
+  document.getElementById('maq-modal-overlay').classList.add('hidden');
+  maqEditId = null;
+  const todos = getClientesCompleto();
+  const c = todos.find(x => x.id === cliDetalheId);
+  if (c) { renderCliDetalheKpis(c); renderCliDetTab(c); }
+}
+
+function removerMaquina(cliId, maqId) {
+  if (!confirm('Remover esta máquina?')) return;
+  maquinas[cliId] = (maquinas[cliId]||[]).filter(x => x.id !== maqId);
+  saveMaquinas();
+  const todos = getClientesCompleto();
+  const c = todos.find(x => x.id === cliId);
+  if (c) { renderCliDetalheKpis(c); renderCliDetTab(c); }
+}
+
+// ---- Sugestão de máquinas no atendimento ----
+function filtrarMaquinasAt() {
+  const nomeCliente = (document.getElementById('at-f-cliente')?.value || '').toLowerCase().trim();
+  const datalist = document.getElementById('at-maq-list');
+  if (!datalist) return;
+  const todos = getClientesCompleto();
+  const c = todos.find(x => x.nome && x.nome.toLowerCase().includes(nomeCliente));
+  if (!c) { datalist.innerHTML = ''; return; }
+  const mqs = getMaquinasCliente(c.id);
+  datalist.innerHTML = mqs.map(mq => `<option value="${esc(mq.marca+' '+mq.modelo)}">`).join('');
+}
+
+// ---- Relatório PDF do cliente ----
+function imprimirCliente() {
+  const todos = getClientesCompleto();
+  const c = todos.find(x => x.id === cliDetalheId);
+  if (!c) return;
+  const nomeN = (c.nome||'').toLowerCase();
+  const atends = atendimentos.filter(a => a.cliente && a.cliente.toLowerCase().includes(nomeN)).sort((a,b) => (b.data||'').localeCompare(a.data||''));
+  const prevs  = Object.entries(manuts).flatMap(([mes,arr]) => arr.filter(m => m.cliente && m.cliente.toLowerCase()===nomeN && m.preventiva).map(m => ({...m,mes:parseInt(mes)}))).sort((a,b)=>(b.preventiva||'').localeCompare(a.preventiva||''));
+  const mqs    = getMaquinasCliente(c.id);
+  const tipoBadge = { 'Contrato Fixo':'📋 Contrato Fixo','Corretivo':'🔧 Corretivo','Locação':'📦 Locação','Venda':'💰 Venda' };
+  const urgCor = { Alta:'#ef4444', Média:'#f59e0b', Baixa:'#10b981' };
+
+  const janela = window.open('', '_blank');
+  janela.document.write(`<!DOCTYPE html><html lang="pt-BR"><head>
+    <meta charset="UTF-8"><title>Ficha do Cliente — ${c.nome}</title>
+    <style>
+      *{box-sizing:border-box;margin:0;padding:0}
+      body{font-family:Arial,sans-serif;font-size:13px;color:#1a1d27;padding:32px}
+      h1{font-size:20px;font-weight:700;margin-bottom:4px}
+      .sub{font-size:12px;color:#8b90a0;margin-bottom:6px}
+      .badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;background:#eef2ff;color:#4f46e5;margin-bottom:16px}
+      .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:24px}
+      .kpi{background:#f8f9fb;border-radius:8px;padding:12px;text-align:center}
+      .kpi-val{font-size:22px;font-weight:700}
+      .kpi-label{font-size:10px;color:#8b90a0;margin-top:2px;text-transform:uppercase}
+      h2{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#8b90a0;margin:20px 0 10px}
+      .item{padding:10px 14px;border-radius:8px;background:#f8f9fb;border-left:3px solid #e8eaef;margin-bottom:8px}
+      .item.corr{border-left-color:#f59e0b}.item.prev{border-left-color:#10b981}.item.maq{border-left-color:#8b5cf6}
+      table{width:100%;border-collapse:collapse;font-size:12px}
+      th{background:#f1f3f8;padding:8px 12px;text-align:left;font-size:10px;font-weight:700;text-transform:uppercase;color:#8b90a0;border-bottom:2px solid #e8eaef}
+      td{padding:8px 12px;border-bottom:1px solid #f0f1f5}
+      .footer{margin-top:28px;font-size:11px;color:#b0b5c3;text-align:center}
+      @media print{body{padding:16px}}
+    </style>
+  </head><body>
+    <h1>${esc(c.nome)}</h1>
+    <div class="sub">${[c.tel?'📞 '+c.tel:'', c.resp?'👤 '+c.resp:'', c.end?'📍 '+c.end:''].filter(Boolean).join(' · ')}</div>
+    <span class="badge">${tipoBadge[c.tipo]||c.tipo}</span>
+    ${c.obs ? `<div style="font-size:12px;color:#8b90a0;margin-bottom:16px;font-style:italic">📝 ${esc(c.obs)}</div>` : ''}
+    <div class="kpis">
+      <div class="kpi"><div class="kpi-val" style="color:#f59e0b">${atends.length}</div><div class="kpi-label">Corretivos</div></div>
+      <div class="kpi"><div class="kpi-val" style="color:#10b981">${prevs.length}</div><div class="kpi-label">Preventivas</div></div>
+      <div class="kpi"><div class="kpi-val" style="color:#8b5cf6">${mqs.length}</div><div class="kpi-label">Máquinas</div></div>
+      <div class="kpi"><div class="kpi-val" style="color:#3b82f6">${atends.filter(a=>a.status==='Concluído').length}</div><div class="kpi-label">Concluídos</div></div>
+    </div>
+    ${mqs.length > 0 ? `<h2>⚙️ Máquinas cadastradas</h2>${mqs.map(mq=>`<div class="item maq"><strong>${esc(mq.marca)} ${esc(mq.modelo)}</strong>${mq.serie?' — Série: '+esc(mq.serie):''}${mq.obs?' · '+esc(mq.obs):''}</div>`).join('')}` : ''}
+    ${atends.length > 0 ? `<h2>🔧 Histórico de atendimentos</h2>
+      <table><thead><tr><th>Data</th><th>Problema</th><th>Equipamento</th><th>Urgência</th><th>Status</th></tr></thead><tbody>
+      ${atends.map(a=>`<tr><td>${fmtDate(a.data)}</td><td>${esc(a.assunto)}</td><td>${esc(a.equip||'—')}</td><td style="color:${urgCor[a.urgencia]||'#888'};font-weight:700">${a.urgencia}</td><td>${a.status}</td></tr>`).join('')}
+      </tbody></table>` : ''}
+    ${prevs.length > 0 ? `<h2>📋 Histórico de preventivas</h2>
+      <table><thead><tr><th>Mês</th><th>Data Preventiva</th><th>Corretiva 1ª</th><th>Relatório</th></tr></thead><tbody>
+      ${prevs.map(m=>`<tr><td>${MESES[m.mes]}</td><td>${fmtDate(m.preventiva)}</td><td>${fmtDate(m.corretiva)||'—'}</td><td>${fmtDate(m.relatorio)||'—'}</td></tr>`).join('')}
+      </tbody></table>` : ''}
+    <div class="footer">Relatório gerado em ${new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'})} — CRM Vendas</div>
+    <script>window.onload=function(){window.print()}<\/script>
+  </body></html>`);
+  janela.document.close();
+}
+
 // ===== EXPORTAR / IMPORTAR =====
 function exportarDados() {
   const chaves = ['crm_leads','crm_sales','crm_pendings','crm_manuts',
                   'crm_faturamentos','crm_atendimentos','crm_combustiveis',
-                  'crm_pedidos','crm_mn_pends'];
+                  'crm_pedidos','crm_mn_pends','crm_clientes','crm_maquinas'];
   const dados = {};
   chaves.forEach(k => {
     const v = localStorage.getItem(k);
     if (v) dados[k] = JSON.parse(v);
   });
-  // metas mensais
   for (let i = 0; i < 12; i++) {
     const v = localStorage.getItem('crm_meta_mes_' + i);
     if (v) dados['crm_meta_mes_' + i] = v;
@@ -3789,7 +4354,7 @@ function importarDados(event) {
       const dados = JSON.parse(e.target.result);
       const chaves = ['crm_leads','crm_sales','crm_pendings','crm_manuts',
                       'crm_faturamentos','crm_atendimentos','crm_combustiveis',
-                      'crm_pedidos','crm_mn_pends'];
+                      'crm_pedidos','crm_mn_pends','crm_clientes','crm_maquinas'];
       let importados = 0;
       chaves.forEach(k => {
         if (dados[k] !== undefined) {
