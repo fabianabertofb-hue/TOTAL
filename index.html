@@ -635,6 +635,30 @@
   .pend-vencida { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 20px; background: #fee2e2; color: #b91c1c; white-space: nowrap; }
   .pending-item.vencida { border-left-color: var(--red); background: #fff8f8; }
 
+  /* ENTREGAS */
+  .ent-card { background:var(--white); border:1px solid var(--border); border-radius:var(--radius); padding:18px 20px; box-shadow:var(--shadow-sm); border-left:4px solid var(--border); margin-bottom:12px; }
+  .ent-card.agendada     { border-left-color:var(--blue); }
+  .ent-card.pendencia    { border-left-color:var(--orange); }
+  .ent-card.realizada    { border-left-color:var(--green); opacity:0.7; }
+  .ent-card.concluida    { border-left-color:var(--green); opacity:0.6; }
+  .ent-header { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; margin-bottom:12px; flex-wrap:wrap; }
+  .ent-nome   { font-size:15px; font-weight:700; color:var(--text); }
+  .ent-meta   { font-size:12px; color:var(--text-muted); margin-top:3px; display:flex; gap:12px; flex-wrap:wrap; }
+  .ent-status-badge { font-size:11px; font-weight:700; padding:3px 10px; border-radius:20px; white-space:nowrap; }
+  .ent-st-agendada  { background:var(--blue-light); color:#1e40af; }
+  .ent-st-pendencia { background:var(--orange-light); color:#92400e; }
+  .ent-st-realizada { background:var(--green-light); color:#065f46; }
+  .ent-st-concluida { background:var(--green-light); color:#065f46; }
+  .ent-item { display:flex; align-items:center; gap:10px; padding:6px 10px; border-radius:6px; font-size:13px; border:1px solid var(--border); background:var(--bg); margin-bottom:4px; }
+  .ent-item.entregue { opacity:0.55; }
+  .ent-item.entregue .ent-item-desc { text-decoration:line-through; color:var(--text-muted); }
+  .ent-item-check { width:17px; height:17px; min-width:17px; border:2px solid var(--border); border-radius:4px; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:all 0.15s; }
+  .ent-item-check.ok { background:var(--green); border-color:var(--green); }
+  .ent-item-check.ok::after { content:'✓'; color:white; font-size:10px; font-weight:700; }
+  .ent-item-desc { flex:1; }
+  .ent-item-qty  { font-size:11px; color:var(--text-muted); font-family:'DM Mono',monospace; white-space:nowrap; }
+  .ent-pend-box  { background:#fff7ed; border:1px solid #fed7aa; border-radius:8px; padding:8px 12px; font-size:12px; color:#92400e; margin-top:10px; }
+
   /* CLIENTES */
   .cli-card { background:var(--white); border:1px solid var(--border); border-radius:var(--radius); padding:16px 18px; cursor:pointer; transition:box-shadow 0.15s,transform 0.15s; box-shadow:var(--shadow-sm); border-left:4px solid var(--border); }
   .cli-card:hover { box-shadow:var(--shadow); transform:translateY(-2px); }
@@ -1238,6 +1262,7 @@
     <button class="nav-tab" id="tab-pendencias" onclick="showTab('pendencias')">📋 Pendências <span class="badge" id="badge-count">0</span></button>
     <button class="nav-tab" onclick="showTab('manutencao')">🔧 Manutenção</button>
     <button class="nav-tab" onclick="showTab('atendimentos')">🛠 Atendimentos</button>
+    <button class="nav-tab" onclick="showTab('entregas')">🚚 Entregas <span class="badge" id="badge-entregas" style="display:none">0</span></button>
     <button class="nav-tab" onclick="showTab('clientes')">👥 Clientes</button>
   </div>
   <button class="btn-primary" onclick="openModal()">+ Novo Lead</button>
@@ -1640,6 +1665,97 @@
   </div>
 
 </div>
+</div>
+
+<!-- =================== ENTREGAS =================== -->
+<div class="page" id="page-entregas">
+  <div style="padding:24px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px">
+      <div>
+        <div style="font-size:17px;font-weight:700;color:var(--text)">🚚 Entregas — <span id="ent-count" style="color:var(--primary)">0 ativas</span></div>
+        <div style="font-size:12px;color:var(--text-muted);margin-top:3px">Somente agendadas e com pendência aparecem aqui</div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <label id="btn-importar-pdf" style="padding:8px 16px;background:var(--orange);color:white;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px" title="Importar PDF da proposta Bling">
+          📄 Importar PDF
+          <input type="file" accept=".pdf" onchange="lerPdfEntrega(event)" style="display:none">
+        </label>
+        <button class="btn-novo-atend" onclick="abrirEntregaModal()">＋ Nova Entrega</button>
+      </div>
+    </div>
+
+    <!-- FILTROS -->
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;align-items:center">
+      <button class="at-filter-btn active" onclick="setEntFiltro('ativos')">⚡ Ativas</button>
+      <button class="at-filter-btn" onclick="setEntFiltro('todos')">Todas</button>
+      <button class="at-filter-btn" onclick="setEntFiltro('Agendada')">📅 Agendadas</button>
+      <button class="at-filter-btn" onclick="setEntFiltro('Com pendência')">⚠️ Com pendência</button>
+      <button class="at-filter-btn" onclick="setEntFiltro('Concluída')">✅ Concluídas</button>
+    </div>
+
+    <!-- LISTA -->
+    <div id="ent-lista"></div>
+  </div>
+</div>
+
+<!-- MODAL ENTREGA -->
+<div class="at-modal-overlay hidden" id="ent-modal-overlay" onclick="fecharEntregaModal(event)">
+  <div class="at-modal" style="max-width:600px">
+    <h3 id="ent-modal-titulo">Nova Entrega</h3>
+
+    <!-- Preview PDF importado -->
+    <div id="ent-pdf-preview" style="display:none;background:var(--primary-light);border:1px solid var(--primary);border-radius:8px;padding:10px 14px;margin-bottom:16px;font-size:12px;color:var(--primary)">
+      📄 <strong id="ent-pdf-info"></strong>
+    </div>
+
+    <div class="at-form-row">
+      <div class="at-form-group" style="flex:2">
+        <label>Cliente *</label>
+        <input id="ent-f-cliente" placeholder="Nome do cliente...">
+      </div>
+      <div class="at-form-group">
+        <label>Nº Proposta</label>
+        <input id="ent-f-proposta" placeholder="Ex: 2591">
+      </div>
+    </div>
+    <div class="at-form-row">
+      <div class="at-form-group">
+        <label>Data de Entrega</label>
+        <input type="date" id="ent-f-data">
+      </div>
+      <div class="at-form-group">
+        <label>Técnico</label>
+        <input id="ent-f-tecnico" placeholder="Nome do técnico">
+      </div>
+      <div class="at-form-group">
+        <label>Status</label>
+        <select id="ent-f-status">
+          <option value="Agendada">📅 Agendada</option>
+          <option value="Realizada">🚚 Realizada</option>
+          <option value="Com pendência">⚠️ Com pendência</option>
+          <option value="Concluída">✅ Concluída</option>
+        </select>
+      </div>
+    </div>
+    <div class="at-form-group">
+      <label>Pendência / Observação</label>
+      <textarea id="ent-f-pend" rows="2" placeholder="Descreva a pendência ou observação..."></textarea>
+    </div>
+
+    <!-- LISTA DE ITENS -->
+    <div style="margin-top:4px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <label style="font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em">Itens da entrega</label>
+        <button onclick="addItemEntrega()" style="font-size:11px;font-weight:700;color:var(--primary);background:none;border:none;cursor:pointer;padding:0">＋ Adicionar item</button>
+      </div>
+      <div id="ent-itens-lista" style="max-height:220px;overflow-y:auto;display:flex;flex-direction:column;gap:4px"></div>
+    </div>
+
+    <div class="at-modal-footer">
+      <button class="btn-secondary" onclick="fecharEntregaModal()">Cancelar</button>
+      <button class="btn-primary" onclick="salvarEntrega()">Salvar</button>
+    </div>
+  </div>
 </div>
 
 <!-- =================== ATENDIMENTOS =================== -->
@@ -2063,6 +2179,19 @@
 <script>
 // ===== STATE =====
 let leads    = JSON.parse(localStorage.getItem('crm_leads')    || '[]');
+// Entregas — declaradas aqui para evitar erro de inicialização
+let entregas     = JSON.parse(localStorage.getItem('crm_entregas') || '[]');
+let entEditId    = null;
+let entFiltro    = 'ativos';
+let entItensTemp = [];
+// Clientes
+let clientes  = JSON.parse(localStorage.getItem('crm_clientes') || '[]');
+let maquinas  = JSON.parse(localStorage.getItem('crm_maquinas') || '{}');
+let cliEditId = null;
+let cliDetalheId = null;
+let cliDetTab = 'atendimentos';
+let cliFiltroAtivo = 'todos';
+let maqEditId = null;
 // sales agora é objeto indexado por mês: { 0: [...], 1: [...], ... }
 let sales = (function() {
   const raw = localStorage.getItem('crm_sales');
@@ -2128,7 +2257,7 @@ function showTab(tab) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
   document.getElementById('page-' + tab).classList.add('active');
-  const tabs = ['funil','vendas','faturamento','pendencias','manutencao','atendimentos','clientes'];
+  const tabs = ['funil','vendas','faturamento','pendencias','manutencao','atendimentos','entregas','clientes'];
   const idx = tabs.indexOf(tab);
   if (idx !== -1) document.querySelectorAll('.nav-tab')[idx].classList.add('active');
   if (tab === 'funil')        renderFunil();
@@ -2137,6 +2266,7 @@ function showTab(tab) {
   if (tab === 'pendencias')   renderPendings();
   if (tab === 'manutencao')   { buildMesesTabs(); renderManut(); renderBoletos(); }
   if (tab === 'atendimentos') renderAt();
+  if (tab === 'entregas')     renderEntregas();
   if (tab === 'clientes')     renderClientes();
 }
 
@@ -4031,6 +4161,7 @@ atualizarMeta();
 renderAt();
 renderBoletos();
 renderVencimentos();
+updateEntBadge();
 
 function updateBadge() {
   const hoje = new Date(); hoje.setHours(0,0,0,0);
@@ -4042,15 +4173,327 @@ function updateBadge() {
   badge.title = vencidas > 0 ? `${vencidas} vencida${vencidas > 1 ? 's' : ''}` : '';
 }
 
-// ===== CLIENTES =====
-let clientes  = JSON.parse(localStorage.getItem('crm_clientes') || '[]');
-let maquinas  = JSON.parse(localStorage.getItem('crm_maquinas') || '{}'); // { clienteId: [{id,marca,modelo,serie,tipo,obs}] }
-let cliEditId = null;
-let cliDetalheId = null;
-let cliDetTab = 'atendimentos';
-let cliFiltroAtivo = 'todos';
-let maqEditId = null;
+// ===== ENTREGAS =====
+function saveEntregas() { localStorage.setItem('crm_entregas', JSON.stringify(entregas)); }
 
+function setEntFiltro(filtro) {
+  entFiltro = filtro;
+  document.querySelectorAll('#page-entregas .at-filter-btn').forEach(b => b.classList.remove('active'));
+  const mapa = { ativos:0, todos:1, Agendada:2, 'Com pendência':3, Concluída:4 };
+  const btns = document.querySelectorAll('#page-entregas .at-filter-btn');
+  if (btns[mapa[filtro]] !== undefined) btns[mapa[filtro]].classList.add('active');
+  renderEntregas();
+}
+
+function updateEntBadge() {
+  const badge = document.getElementById('badge-entregas');
+  if (!badge) return;
+  const ativos = entregas.filter(e => e.status === 'Agendada' || e.status === 'Com pendência').length;
+  badge.textContent = ativos;
+  badge.style.display = ativos > 0 ? 'inline-block' : 'none';
+  badge.style.background = entregas.some(e => e.status === 'Com pendência') ? 'var(--orange)' : '';
+}
+
+function renderEntregas() {
+  const lista_el = document.getElementById('ent-lista');
+  const count_el = document.getElementById('ent-count');
+  if (!lista_el) return;
+
+  let lista = [...entregas].sort((a,b) => (b.data||'').localeCompare(a.data||''));
+
+  if (entFiltro === 'ativos') lista = lista.filter(e => e.status === 'Agendada' || e.status === 'Com pendência');
+  else if (entFiltro !== 'todos') lista = lista.filter(e => e.status === entFiltro);
+
+  const ativas = entregas.filter(e => e.status === 'Agendada' || e.status === 'Com pendência').length;
+  count_el.textContent = ativas + ' ativa' + (ativas !== 1 ? 's' : '');
+  updateEntBadge();
+
+  if (lista.length === 0) {
+    lista_el.innerHTML = `<div class="at-empty">${entFiltro === 'ativos' ? '✅ Nenhuma entrega pendente!' : 'Nenhuma entrega encontrada.'}</div>`;
+    return;
+  }
+
+  const stLabel = { Agendada:'📅 Agendada', Realizada:'🚚 Realizada', 'Com pendência':'⚠️ Com pendência', Concluída:'✅ Concluída' };
+  const stClass = { Agendada:'ent-st-agendada', Realizada:'ent-st-realizada', 'Com pendência':'ent-st-pendencia', Concluída:'ent-st-concluida' };
+  const cardCls = { Agendada:'agendada', Realizada:'realizada', 'Com pendência':'pendencia', Concluída:'concluida' };
+
+  lista_el.innerHTML = lista.map(e => {
+    const itens     = e.itens || [];
+    const entregues = itens.filter(i => i.ok).length;
+    const total     = itens.length;
+    const progresso = total > 0 ? Math.round((entregues/total)*100) : 0;
+
+    const itensHtml = itens.map(it => `
+      <div class="ent-item ${it.ok ? 'entregue' : ''}">
+        <div class="ent-item-check ${it.ok ? 'ok' : ''}" onclick="toggleItemEntrega('${e.id}','${it.id}')"></div>
+        <span class="ent-item-desc">${esc(it.desc)}</span>
+        <span class="ent-item-qty">Qtd: ${it.qty}</span>
+      </div>`).join('');
+
+    return `<div class="ent-card ${cardCls[e.status]||''}">
+      <div class="ent-header">
+        <div>
+          <div class="ent-nome">${esc(e.cliente)}</div>
+          <div class="ent-meta">
+            ${e.proposta ? `<span>📋 Proposta ${esc(e.proposta)}</span>` : ''}
+            ${e.data     ? `<span>📅 ${fmtDate(e.data)}</span>` : ''}
+            ${e.tecnico  ? `<span>👤 ${esc(e.tecnico)}</span>` : ''}
+            ${total > 0  ? `<span>${entregues}/${total} itens conferidos</span>` : ''}
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
+          <span class="ent-status-badge ${stClass[e.status]||''}">${stLabel[e.status]||e.status}</span>
+          <button onclick="abrirEntregaModal('${e.id}')" style="background:none;border:none;color:var(--text-light);cursor:pointer;font-size:14px" title="Editar">✏️</button>
+          <button onclick="removerEntrega('${e.id}')" style="background:none;border:none;color:var(--text-light);cursor:pointer;font-size:16px" title="Remover">×</button>
+        </div>
+      </div>
+
+      ${total > 0 ? `
+        <div style="margin-bottom:10px">
+          <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-muted);margin-bottom:4px">
+            <span>Checklist de itens</span><span>${progresso}%</span>
+          </div>
+          <div style="background:var(--border);border-radius:20px;height:5px">
+            <div style="background:${progresso===100?'var(--green)':'var(--primary)'};height:5px;border-radius:20px;width:${progresso}%;transition:width 0.3s"></div>
+          </div>
+        </div>
+        <div>${itensHtml}</div>` : ''}
+
+      ${e.pendencia ? `<div class="ent-pend-box">⚠️ <strong>Pendência:</strong> ${esc(e.pendencia)}</div>` : ''}
+
+      ${e.status === 'Com pendência' ? `
+        <div style="display:flex;gap:8px;margin-top:12px">
+          <button onclick="resolverEntrega('${e.id}')" style="padding:6px 14px;background:var(--green-light);color:var(--green);border:1px solid #bbf7d0;border-radius:6px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;cursor:pointer" onmouseover="this.style.background='var(--green)';this.style.color='white'" onmouseout="this.style.background='var(--green-light)';this.style.color='var(--green)'">✓ Marcar como Concluída</button>
+        </div>` : ''}
+    </div>`;
+  }).join('');
+}
+
+function toggleItemEntrega(entId, itemId) {
+  const e = entregas.find(x => x.id === entId);
+  if (!e || !e.itens) return;
+  const item = e.itens.find(i => i.id === itemId);
+  if (item) {
+    item.ok = !item.ok;
+    // Se todos conferidos e status Agendada → muda para Realizada
+    if (e.itens.every(i => i.ok) && e.status === 'Agendada') e.status = 'Realizada';
+    saveEntregas(); renderEntregas();
+  }
+}
+
+function resolverEntrega(id) {
+  const e = entregas.find(x => x.id === id);
+  if (e) { e.status = 'Concluída'; saveEntregas(); renderEntregas(); }
+}
+
+function removerEntrega(id) {
+  if (!confirm('Remover esta entrega?')) return;
+  entregas = entregas.filter(x => x.id !== id);
+  saveEntregas(); renderEntregas();
+}
+
+// ---- Modal ----
+function abrirEntregaModal(id) {
+  entEditId = id || null;
+  entItensTemp = [];
+  document.getElementById('ent-modal-overlay').classList.remove('hidden');
+  document.getElementById('ent-modal-titulo').textContent = id ? 'Editar Entrega' : 'Nova Entrega';
+  document.getElementById('ent-pdf-preview').style.display = 'none';
+  const hoje = new Date().toISOString().slice(0,10);
+  if (id) {
+    const e = entregas.find(x => x.id === id);
+    if (e) {
+      document.getElementById('ent-f-cliente').value  = e.cliente  || '';
+      document.getElementById('ent-f-proposta').value = e.proposta || '';
+      document.getElementById('ent-f-data').value     = e.data     || hoje;
+      document.getElementById('ent-f-tecnico').value  = e.tecnico  || '';
+      document.getElementById('ent-f-status').value   = e.status   || 'Agendada';
+      document.getElementById('ent-f-pend').value     = e.pendencia|| '';
+      entItensTemp = (e.itens || []).map(i => ({...i}));
+    }
+  } else {
+    ['ent-f-cliente','ent-f-proposta','ent-f-tecnico','ent-f-pend'].forEach(i => document.getElementById(i).value = '');
+    document.getElementById('ent-f-data').value   = hoje;
+    document.getElementById('ent-f-status').value = 'Agendada';
+    entItensTemp = [];
+  }
+  renderItensModal();
+}
+
+function fecharEntregaModal(e) {
+  if (e && e.target !== document.getElementById('ent-modal-overlay')) return;
+  document.getElementById('ent-modal-overlay').classList.add('hidden');
+  entEditId = null; entItensTemp = [];
+}
+
+function renderItensModal() {
+  const wrap = document.getElementById('ent-itens-lista');
+  if (!wrap) return;
+  if (entItensTemp.length === 0) {
+    wrap.innerHTML = '<div style="font-size:12px;color:var(--text-light);padding:8px 0;text-align:center">Nenhum item. Clique em + Adicionar item ou importe um PDF.</div>';
+    return;
+  }
+  wrap.innerHTML = entItensTemp.map((it, idx) => `
+    <div style="display:flex;align-items:center;gap:6px;padding:5px 8px;background:var(--bg);border-radius:6px;border:1px solid var(--border)">
+      <span style="font-size:12px;flex:1">${esc(it.desc)}</span>
+      <span style="font-size:11px;color:var(--text-muted);font-family:'DM Mono',monospace">Qtd: ${it.qty}</span>
+      <button onclick="removerItemTemp(${idx})" style="background:none;border:none;color:var(--text-light);cursor:pointer;font-size:14px">×</button>
+    </div>`).join('');
+}
+
+function addItemEntrega() {
+  const desc = prompt('Descrição do item:');
+  if (!desc) return;
+  const qty = prompt('Quantidade:', '1') || '1';
+  entItensTemp.push({ id: Date.now().toString(), desc: desc.trim(), qty: qty.trim(), ok: false });
+  renderItensModal();
+}
+
+function removerItemTemp(idx) {
+  entItensTemp.splice(idx, 1);
+  renderItensModal();
+}
+
+function salvarEntrega() {
+  const cliente = document.getElementById('ent-f-cliente').value.trim();
+  if (!cliente) { alert('Preencha o nome do cliente!'); return; }
+  const dados = {
+    cliente,
+    proposta:  document.getElementById('ent-f-proposta').value.trim(),
+    data:      document.getElementById('ent-f-data').value,
+    tecnico:   document.getElementById('ent-f-tecnico').value.trim(),
+    status:    document.getElementById('ent-f-status').value,
+    pendencia: document.getElementById('ent-f-pend').value.trim(),
+    itens:     entItensTemp,
+  };
+  if (entEditId) {
+    const idx = entregas.findIndex(x => x.id === entEditId);
+    if (idx >= 0) entregas[idx] = { ...entregas[idx], ...dados };
+  } else {
+    entregas.unshift({ id: Date.now().toString(), ...dados });
+  }
+  saveEntregas();
+  document.getElementById('ent-modal-overlay').classList.add('hidden');
+  entEditId = null; entItensTemp = [];
+  renderEntregas();
+}
+
+// ---- Leitor de PDF Bling (OCR via Tesseract.js) ----
+async function lerPdfEntrega(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  event.target.value = '';
+
+  // Mostra loading
+  const btn = document.getElementById('btn-importar-pdf');
+  if (btn) btn.textContent = '⏳ Lendo PDF...';
+
+  try {
+    // Carrega PDF.js
+    if (!window.pdfjsLib) {
+      await new Promise((resolve, reject) => {
+        const s = document.createElement('script');
+        s.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+        s.onload = resolve; s.onerror = reject;
+        document.head.appendChild(s);
+      });
+      window.pdfjsLib.GlobalWorkerOptions.workerSrc =
+        'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    }
+
+    // Carrega Tesseract.js
+    if (!window.Tesseract) {
+      await new Promise((resolve, reject) => {
+        const s = document.createElement('script');
+        s.src = 'https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/5.0.4/tesseract.min.js';
+        s.onload = resolve; s.onerror = reject;
+        document.head.appendChild(s);
+      });
+    }
+
+    // Renderiza primeira página em canvas
+    const arrayBuffer = await file.arrayBuffer();
+    const pdf    = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+    const page   = await pdf.getPage(1);
+    const scale  = 2.5;
+    const vp     = page.getViewport({ scale });
+    const canvas = document.createElement('canvas');
+    canvas.width  = vp.width;
+    canvas.height = vp.height;
+    await page.render({ canvasContext: canvas.getContext('2d'), viewport: vp }).promise;
+
+    // OCR com Tesseract
+    const worker = await Tesseract.createWorker('por');
+    const { data: { text: texto } } = await worker.recognize(canvas);
+    await worker.terminate();
+
+    // Extrai nº proposta
+    const numProposta = (texto.match(/Proposta\s*N[ºo°]?\s*(\d+)/i) || texto.match(/Número da Proposta\s+(\d+)/i) || [])[1] || '';
+
+    // Extrai cliente
+    const clienteMatch = texto.match(/CONDOMIN[IO]{1,2}\s+\w[\w\s]+|ACADEMIA\s+\w[\w\s]+|CLUBE\s+\w[\w\s]+/i)
+      || texto.match(/Para[\s\S]{0,30}\n([A-ZÁÀÂÃÉÈÊÍÌÎÓÒÔÕÚÙÛ][^\n]{5,60})/);
+    const clienteNome = clienteMatch
+      ? (clienteMatch[1] || clienteMatch[0]).replace(/CPF.*/i,'').replace(/CNPJ.*/i,'').trim()
+      : '';
+
+    // Extrai data
+    const dataMatch = texto.match(/Data\s+(\d{2}\/\d{2}\/\d{4})/);
+    const dataBr    = dataMatch ? dataMatch[1] : '';
+    const dataIso   = dataBr ? dataBr.split('/').reverse().join('-') : new Date().toISOString().slice(0,10);
+
+    // Extrai itens — usa código de 4-6 dígitos como âncora principal
+    // (mais confiável que unidade de medida, que o OCR frequentemente distorce)
+    const itens = [];
+    const linhas = texto.split('\n');
+    for (const linha of linhas) {
+      if (!linha.trim() || linha.length < 10) continue;
+      // Âncora: código de 4-6 dígitos isolado
+      const mCod = linha.match(/\b(\d{4,6})\b/);
+      if (!mCod) continue;
+      const codPos = linha.indexOf(mCod[0]);
+      let antes = linha.substring(0, codPos).trim();
+      // Remove lixo do início: dígitos, pipes, travessões, colchetes, símbolos
+      antes = antes.replace(/^[\d\s|\-\[\]=_.]{0,12}/, '');
+      // Remove palavras curtas isoladas de lixo OCR (1-3 chars)
+      antes = antes.replace(/^(\b\w{1,3}\b\s+)+/, '');
+      // Remove pipes, colchetes, travessões residuais
+      let desc = antes.replace(/[|[\]\-\—]+/g, '').replace(/\s{2,}/g, ' ').trim();
+      // Remove travessão/lixo no final
+      desc = desc.replace(/[\-\—\s]+$/, '').trim();
+      if (desc.length >= 5 && /[A-ZÁÀÂÃÉÈÊÍÌÎÓÒÔÕÚÙÛ]{3,}/.test(desc)) {
+        if (!itens.find(i => i.desc === desc)) {
+          itens.push({ id: Date.now().toString() + Math.random(), desc, qty: '1', ok: false });
+        }
+      }
+    }
+
+    // Preenche o modal
+    abrirEntregaModal();
+    if (clienteNome) document.getElementById('ent-f-cliente').value  = clienteNome;
+    if (numProposta) document.getElementById('ent-f-proposta').value = numProposta;
+    document.getElementById('ent-f-data').value = dataIso;
+    entItensTemp = itens;
+    renderItensModal();
+
+    // Preview
+    const preview = document.getElementById('ent-pdf-preview');
+    document.getElementById('ent-pdf-info').textContent =
+      `✅ ${file.name} — ${clienteNome || '?'} · Proposta ${numProposta || '?'} · ${itens.length} item(s) encontrado(s)`;
+    preview.style.display = 'block';
+
+    if (itens.length === 0) {
+      alert('⚠️ PDF lido mas nenhum item foi identificado.\nVerifique os dados e adicione os itens manualmente.');
+    }
+
+  } catch(err) {
+    alert('❌ Erro ao ler o PDF.\n' + err.message);
+  } finally {
+    if (btn) btn.innerHTML = '📄 Importar PDF<input type="file" accept=".pdf" onchange="lerPdfEntrega(event)" style="display:none">';
+  }
+}
+
+// ===== CLIENTES =====
 function saveClientes() { localStorage.setItem('crm_clientes', JSON.stringify(clientes)); }
 function saveMaquinas() { localStorage.setItem('crm_maquinas', JSON.stringify(maquinas)); }
 function getMaquinasCliente(cliId) { if (!maquinas[cliId]) maquinas[cliId] = []; return maquinas[cliId]; }
@@ -4442,7 +4885,7 @@ function imprimirCliente() {
 function exportarDados() {
   const chaves = ['crm_leads','crm_sales','crm_pendings','crm_manuts',
                   'crm_faturamentos','crm_atendimentos','crm_combustiveis',
-                  'crm_pedidos','crm_mn_pends','crm_clientes','crm_maquinas'];
+                  'crm_pedidos','crm_mn_pends','crm_clientes','crm_maquinas','crm_entregas'];
   const dados = {};
   chaves.forEach(k => {
     const v = localStorage.getItem(k);
@@ -4469,7 +4912,7 @@ function importarDados(event) {
       const dados = JSON.parse(e.target.result);
       const chaves = ['crm_leads','crm_sales','crm_pendings','crm_manuts',
                       'crm_faturamentos','crm_atendimentos','crm_combustiveis',
-                      'crm_pedidos','crm_mn_pends','crm_clientes','crm_maquinas'];
+                      'crm_pedidos','crm_mn_pends','crm_clientes','crm_maquinas','crm_entregas'];
       let importados = 0;
       chaves.forEach(k => {
         if (dados[k] !== undefined) {
