@@ -659,6 +659,56 @@
   .ent-item-qty  { font-size:11px; color:var(--text-muted); font-family:'DM Mono',monospace; white-space:nowrap; }
   .ent-pend-box  { background:#fff7ed; border:1px solid #fed7aa; border-radius:8px; padding:8px 12px; font-size:12px; color:#92400e; margin-top:10px; }
 
+  /* ── AGENDA ── */
+  #page-agenda { padding:24px; }
+  .agenda-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; flex-wrap:wrap; gap:12px; }
+  .agenda-nav { display:flex; align-items:center; gap:12px; }
+  .agenda-nav-btn { background:var(--white); border:1px solid var(--border); border-radius:8px; width:34px; height:34px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:16px; transition:all 0.15s; }
+  .agenda-nav-btn:hover { background:var(--primary-light); border-color:var(--primary); }
+  .agenda-mes-label { font-size:16px; font-weight:700; color:var(--text); min-width:180px; text-align:center; }
+  .agenda-hoje-btn { padding:5px 14px; border-radius:20px; border:1.5px solid var(--primary); background:var(--white); font-family:'DM Sans',sans-serif; font-size:12px; font-weight:600; color:var(--primary); cursor:pointer; transition:all 0.15s; }
+  .agenda-hoje-btn:hover { background:var(--primary); color:white; }
+  .agenda-views { display:flex; gap:4px; }
+  .agenda-view-btn { padding:5px 12px; border-radius:20px; border:1.5px solid var(--border); background:var(--white); font-family:'DM Sans',sans-serif; font-size:12px; font-weight:600; color:var(--text-muted); cursor:pointer; transition:all 0.15s; }
+  .agenda-view-btn:hover { border-color:var(--primary); color:var(--primary); }
+  .agenda-view-btn.active { background:var(--primary); color:white; border-color:var(--primary); }
+  .agenda-calendar { background:var(--white); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow-sm); overflow:hidden; }
+  .agenda-weekdays { display:grid; grid-template-columns:repeat(7,1fr); background:var(--bg); border-bottom:1px solid var(--border); }
+  .agenda-weekday { padding:10px 4px; text-align:center; font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.05em; }
+  .agenda-days { display:grid; grid-template-columns:repeat(7,1fr); }
+  .agenda-day { min-height:100px; border-right:1px solid var(--border); border-bottom:1px solid var(--border); padding:6px; cursor:pointer; transition:background 0.15s; position:relative; }
+  .agenda-day:nth-child(7n) { border-right:none; }
+  .agenda-day:hover { background:#f0f4ff; }
+  .agenda-day.other-month { background:#fafbfc; }
+  .agenda-day.other-month .agenda-day-num { color:var(--text-light); }
+  .agenda-day.today { background:#eef2ff; }
+  .agenda-day.today .agenda-day-num { background:var(--primary); color:white; border-radius:50%; width:24px; height:24px; display:flex; align-items:center; justify-content:center; }
+  .agenda-day-num { font-size:12px; font-weight:600; color:var(--text); margin-bottom:4px; display:inline-block; }
+  .agenda-evt { font-size:10px; padding:2px 5px; border-radius:4px; margin-bottom:2px; cursor:pointer; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-weight:600; transition:opacity 0.15s; }
+  .agenda-evt:hover { opacity:0.8; }
+  .agenda-evt.pri-alta   { background:#fee2e2; color:#b91c1c; }
+  .agenda-evt.pri-media  { background:#fef3c7; color:#92400e; }
+  .agenda-evt.pri-baixa  { background:#d1fae5; color:#065f46; }
+  .agenda-evt.pri-normal { background:#dbeafe; color:#1e40af; }
+  .agenda-evt.concluida  { opacity:0.5; text-decoration:line-through; }
+  .agenda-list-view { display:flex; flex-direction:column; gap:8px; }
+  .agenda-list-item { background:var(--white); border:1px solid var(--border); border-radius:var(--radius-sm); padding:12px 16px; display:flex; align-items:center; gap:12px; cursor:pointer; transition:box-shadow 0.15s; border-left:4px solid var(--border); }
+  .agenda-list-item:hover { box-shadow:var(--shadow); }
+  .agenda-list-item.pri-alta   { border-left-color:#ef4444; }
+  .agenda-list-item.pri-media  { border-left-color:#f59e0b; }
+  .agenda-list-item.pri-baixa  { border-left-color:#10b981; }
+  .agenda-list-item.pri-normal { border-left-color:#3b82f6; }
+  .agenda-list-item.concluida  { opacity:0.6; }
+  .agenda-list-check { width:18px; height:18px; min-width:18px; border:2px solid var(--border); border-radius:4px; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:all 0.15s; }
+  .agenda-list-check.ok { background:var(--green); border-color:var(--green); }
+  .agenda-list-check.ok::after { content:'✓'; color:white; font-size:10px; font-weight:700; }
+  .agenda-list-info { flex:1; }
+  .agenda-list-title { font-size:13px; font-weight:700; color:var(--text); }
+  .agenda-list-title.done { text-decoration:line-through; color:var(--text-muted); }
+  .agenda-list-sub { font-size:11px; color:var(--text-muted); margin-top:2px; display:flex; gap:10px; flex-wrap:wrap; }
+  .agenda-list-del { background:none; border:none; color:var(--text-light); cursor:pointer; font-size:16px; padding:0 4px; transition:color 0.15s; }
+  .agenda-list-del:hover { color:var(--red); }
+
   /* CLIENTES */
   .cli-card { background:var(--white); border:1px solid var(--border); border-radius:var(--radius); padding:16px 18px; cursor:pointer; transition:box-shadow 0.15s,transform 0.15s; box-shadow:var(--shadow-sm); border-left:4px solid var(--border); }
   .cli-card:hover { box-shadow:var(--shadow); transform:translateY(-2px); }
@@ -1263,6 +1313,7 @@
     <button class="nav-tab" onclick="showTab('manutencao')">🔧 Manutenção</button>
     <button class="nav-tab" onclick="showTab('atendimentos')">🛠 Atendimentos</button>
     <button class="nav-tab" onclick="showTab('entregas')">🚚 Entregas <span class="badge" id="badge-entregas" style="display:none">0</span></button>
+    <button class="nav-tab" onclick="showTab('agenda')">📅 Agenda <span class="badge" id="badge-agenda" style="display:none">0</span></button>
     <button class="nav-tab" onclick="showTab('clientes')">👥 Clientes</button>
   </div>
   <button class="btn-primary" onclick="openModal()">+ Novo Lead</button>
@@ -1680,6 +1731,7 @@
           📄 Importar PDF
           <input type="file" accept=".pdf" onchange="lerPdfEntrega(event)" style="display:none">
         </label>
+        <button onclick="abrirColarTextoModal()" style="padding:8px 16px;background:var(--blue);color:white;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px" title="Cole o texto copiado do PDF">📋 Colar Texto do PDF</button>
         <button class="btn-novo-atend" onclick="abrirEntregaModal()">＋ Nova Entrega</button>
       </div>
     </div>
@@ -1754,6 +1806,110 @@
     <div class="at-modal-footer">
       <button class="btn-secondary" onclick="fecharEntregaModal()">Cancelar</button>
       <button class="btn-primary" onclick="salvarEntrega()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL COLAR TEXTO DO PDF -->
+<div class="at-modal-overlay hidden" id="colar-texto-overlay" onclick="fecharColarTextoModal(event)">
+  <div class="at-modal" style="max-width:600px">
+    <h3>📋 Colar Texto do PDF</h3>
+    <p style="font-size:12px;color:var(--text-muted);margin-bottom:14px;line-height:1.5">
+      Abra o PDF da proposta no navegador ou leitor de PDF, selecione todo o texto (<strong>Ctrl+A</strong>), copie (<strong>Ctrl+C</strong>) e cole aqui (<strong>Ctrl+V</strong>):
+    </p>
+    <div class="at-form-group">
+      <textarea id="colar-texto-area" rows="12" placeholder="Cole o texto do PDF aqui..." style="font-family:'DM Mono',monospace;font-size:11px"></textarea>
+    </div>
+    <div class="at-modal-footer">
+      <button class="btn-secondary" onclick="fecharColarTextoModal()">Cancelar</button>
+      <button class="btn-primary" onclick="processarTextoPdf()">Processar Texto</button>
+    </div>
+  </div>
+</div>
+
+<!-- =================== AGENDA =================== -->
+<div class="page" id="page-agenda">
+  <div class="agenda-header">
+    <div>
+      <div style="font-size:17px;font-weight:700;color:var(--text)">📅 Minha Agenda — <span id="agenda-count" style="color:var(--primary)">0 tarefas</span></div>
+      <div style="font-size:12px;color:var(--text-muted);margin-top:3px">Organize seus compromissos e tarefas</div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+      <div class="agenda-views">
+        <button class="agenda-view-btn active" onclick="setAgendaView('mes')">Mês</button>
+        <button class="agenda-view-btn" onclick="setAgendaView('lista')">Lista</button>
+      </div>
+      <button class="btn-novo-atend" onclick="abrirTarefaModal()">＋ Nova Tarefa</button>
+    </div>
+  </div>
+
+  <div class="agenda-nav" style="margin-bottom:16px">
+    <button class="agenda-nav-btn" onclick="agendaMesAnterior()">◀</button>
+    <div class="agenda-mes-label" id="agenda-mes-label"></div>
+    <button class="agenda-nav-btn" onclick="agendaMesSeguinte()">▶</button>
+    <button class="agenda-hoje-btn" onclick="agendaHoje()">Hoje</button>
+  </div>
+
+  <!-- Filtros -->
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;align-items:center">
+    <button class="at-filter-btn active" onclick="setAgendaFiltro('todos')">Todas</button>
+    <button class="at-filter-btn" onclick="setAgendaFiltro('pendentes')">⏳ Pendentes</button>
+    <button class="at-filter-btn" onclick="setAgendaFiltro('concluidas')">✅ Concluídas</button>
+    <button class="at-filter-btn urg-alta" onclick="setAgendaFiltro('alta')">🔴 Alta</button>
+    <button class="at-filter-btn urg-media" onclick="setAgendaFiltro('media')">🟡 Média</button>
+    <button class="at-filter-btn urg-baixa" onclick="setAgendaFiltro('baixa')">🟢 Baixa</button>
+  </div>
+
+  <div id="agenda-container"></div>
+</div>
+
+<!-- MODAL TAREFA -->
+<div class="at-modal-overlay hidden" id="tarefa-modal-overlay" onclick="fecharTarefaModal(event)">
+  <div class="at-modal" style="max-width:480px">
+    <h3 id="tarefa-modal-titulo">Nova Tarefa</h3>
+    <div class="at-form-group">
+      <label>Título *</label>
+      <input id="trf-f-titulo" placeholder="Descrição da tarefa...">
+    </div>
+    <div class="at-form-row">
+      <div class="at-form-group">
+        <label>Data</label>
+        <input type="date" id="trf-f-data">
+      </div>
+      <div class="at-form-group">
+        <label>Horário</label>
+        <input type="time" id="trf-f-hora">
+      </div>
+    </div>
+    <div class="at-form-row">
+      <div class="at-form-group">
+        <label>Prioridade</label>
+        <select id="trf-f-prioridade">
+          <option value="normal">🔵 Normal</option>
+          <option value="baixa">🟢 Baixa</option>
+          <option value="media">🟡 Média</option>
+          <option value="alta">🔴 Alta</option>
+        </select>
+      </div>
+      <div class="at-form-group">
+        <label>Categoria</label>
+        <select id="trf-f-categoria">
+          <option value="geral">📌 Geral</option>
+          <option value="cliente">👤 Cliente</option>
+          <option value="entrega">🚚 Entrega</option>
+          <option value="manutencao">🔧 Manutenção</option>
+          <option value="financeiro">💰 Financeiro</option>
+          <option value="pessoal">🏠 Pessoal</option>
+        </select>
+      </div>
+    </div>
+    <div class="at-form-group">
+      <label>Observações</label>
+      <textarea id="trf-f-obs" rows="2" placeholder="Detalhes adicionais..."></textarea>
+    </div>
+    <div class="at-modal-footer">
+      <button class="btn-secondary" onclick="fecharTarefaModal()">Cancelar</button>
+      <button class="btn-primary" onclick="salvarTarefa()">Salvar</button>
     </div>
   </div>
 </div>
@@ -2192,6 +2348,13 @@ let cliDetalheId = null;
 let cliDetTab = 'atendimentos';
 let cliFiltroAtivo = 'todos';
 let maqEditId = null;
+// Agenda
+let tarefas   = JSON.parse(localStorage.getItem('crm_tarefas') || '[]');
+let tarefaEditId = null;
+let agendaView   = 'mes';
+let agendaFiltro = 'todos';
+let agendaMesAtual = new Date().getMonth();
+let agendaAnoAtual = new Date().getFullYear();
 // sales agora é objeto indexado por mês: { 0: [...], 1: [...], ... }
 let sales = (function() {
   const raw = localStorage.getItem('crm_sales');
@@ -2257,7 +2420,7 @@ function showTab(tab) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
   document.getElementById('page-' + tab).classList.add('active');
-  const tabs = ['funil','vendas','faturamento','pendencias','manutencao','atendimentos','entregas','clientes'];
+  const tabs = ['funil','vendas','faturamento','pendencias','manutencao','atendimentos','entregas','agenda','clientes'];
   const idx = tabs.indexOf(tab);
   if (idx !== -1) document.querySelectorAll('.nav-tab')[idx].classList.add('active');
   if (tab === 'funil')        renderFunil();
@@ -2267,6 +2430,7 @@ function showTab(tab) {
   if (tab === 'manutencao')   { buildMesesTabs(); renderManut(); renderBoletos(); }
   if (tab === 'atendimentos') renderAt();
   if (tab === 'entregas')     renderEntregas();
+  if (tab === 'agenda')       renderAgenda();
   if (tab === 'clientes')     renderClientes();
 }
 
@@ -4378,15 +4542,15 @@ function salvarEntrega() {
   renderEntregas();
 }
 
-// ---- Leitor de PDF Bling (OCR via Tesseract.js) ----
+// ---- Leitor de PDF Bling (texto nativo + fallback OCR) ----
 async function lerPdfEntrega(event) {
   const file = event.target.files[0];
   if (!file) return;
   event.target.value = '';
 
-  // Mostra loading
   const btn = document.getElementById('btn-importar-pdf');
-  if (btn) btn.textContent = '⏳ Lendo PDF...';
+  const setStatus = (msg) => { if (btn) btn.textContent = msg; };
+  setStatus('⏳ Carregando PDF...');
 
   try {
     // Carrega PDF.js
@@ -4397,101 +4561,389 @@ async function lerPdfEntrega(event) {
         s.onload = resolve; s.onerror = reject;
         document.head.appendChild(s);
       });
-      window.pdfjsLib.GlobalWorkerOptions.workerSrc =
-        'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+      // Baixa PDF.js worker como blob (funciona em file:// e GitHub Pages)
+      try {
+        const r = await fetch('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js');
+        const t = await r.text();
+        window.pdfjsLib.GlobalWorkerOptions.workerSrc = URL.createObjectURL(new Blob([t], {type:'application/javascript'}));
+      } catch(e) {
+        window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+      }
     }
 
-    // Carrega Tesseract.js
-    if (!window.Tesseract) {
-      await new Promise((resolve, reject) => {
-        const s = document.createElement('script');
-        s.src = 'https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/5.0.4/tesseract.min.js';
-        s.onload = resolve; s.onerror = reject;
-        document.head.appendChild(s);
-      });
-    }
-
-    // Renderiza primeira página em canvas
     const arrayBuffer = await file.arrayBuffer();
-    const pdf    = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-    const page   = await pdf.getPage(1);
-    const scale  = 2.5;
-    const vp     = page.getViewport({ scale });
-    const canvas = document.createElement('canvas');
-    canvas.width  = vp.width;
-    canvas.height = vp.height;
-    await page.render({ canvasContext: canvas.getContext('2d'), viewport: vp }).promise;
+    const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
 
-    // OCR com Tesseract
-    const worker = await Tesseract.createWorker('por');
-    const { data: { text: texto } } = await worker.recognize(canvas);
-    await worker.terminate();
+    // ===== PASSO 1: Tenta extração nativa de texto =====
+    setStatus('⏳ Extraindo texto...');
+    let texto = '';
+    let totalChars = 0;
 
-    // Extrai nº proposta
-    const numProposta = (texto.match(/Proposta\s*N[ºo°]?\s*(\d+)/i) || texto.match(/Número da Proposta\s+(\d+)/i) || [])[1] || '';
+    for (let p = 1; p <= pdf.numPages; p++) {
+      const page = await pdf.getPage(p);
+      const content = await page.getTextContent();
+      
+      if (content.items.length === 0) continue;
 
-    // Extrai cliente
-    const clienteMatch = texto.match(/CONDOMIN[IO]{1,2}\s+\w[\w\s]+|ACADEMIA\s+\w[\w\s]+|CLUBE\s+\w[\w\s]+/i)
-      || texto.match(/Para[\s\S]{0,30}\n([A-ZÁÀÂÃÉÈÊÍÌÎÓÒÔÕÚÙÛ][^\n]{5,60})/);
-    const clienteNome = clienteMatch
-      ? (clienteMatch[1] || clienteMatch[0]).replace(/CPF.*/i,'').replace(/CNPJ.*/i,'').trim()
-      : '';
-
-    // Extrai data
-    const dataMatch = texto.match(/Data\s+(\d{2}\/\d{2}\/\d{4})/);
-    const dataBr    = dataMatch ? dataMatch[1] : '';
-    const dataIso   = dataBr ? dataBr.split('/').reverse().join('-') : new Date().toISOString().slice(0,10);
-
-    // Extrai itens — usa código de 4-6 dígitos como âncora principal
-    // (mais confiável que unidade de medida, que o OCR frequentemente distorce)
-    const itens = [];
-    const linhas = texto.split('\n');
-    for (const linha of linhas) {
-      if (!linha.trim() || linha.length < 10) continue;
-      // Âncora: código de 4-6 dígitos isolado
-      const mCod = linha.match(/\b(\d{4,6})\b/);
-      if (!mCod) continue;
-      const codPos = linha.indexOf(mCod[0]);
-      let antes = linha.substring(0, codPos).trim();
-      // Remove lixo do início: dígitos, pipes, travessões, colchetes, símbolos
-      antes = antes.replace(/^[\d\s|\-\[\]=_.]{0,12}/, '');
-      // Remove palavras curtas isoladas de lixo OCR (1-3 chars)
-      antes = antes.replace(/^(\b\w{1,3}\b\s+)+/, '');
-      // Remove pipes, colchetes, travessões residuais
-      let desc = antes.replace(/[|[\]\-\—]+/g, '').replace(/\s{2,}/g, ' ').trim();
-      // Remove travessão/lixo no final
-      desc = desc.replace(/[\-\—\s]+$/, '').trim();
-      if (desc.length >= 5 && /[A-ZÁÀÂÃÉÈÊÍÌÎÓÒÔÕÚÙÛ]{3,}/.test(desc)) {
-        if (!itens.find(i => i.desc === desc)) {
-          itens.push({ id: Date.now().toString() + Math.random(), desc, qty: '1', ok: false });
+      // Tenta agrupar por posição Y
+      const hasTransform = content.items[0] && content.items[0].transform;
+      if (hasTransform) {
+        const byLine = {};
+        content.items.forEach(item => {
+          const str = (item.str || '').trim();
+          if (!str) return;
+          const y = Math.round(item.transform[5] / 3) * 3;
+          if (!byLine[y]) byLine[y] = [];
+          byLine[y].push({ x: item.transform[4], text: item.str });
+        });
+        const sortedYs = Object.keys(byLine).map(Number).sort((a, b) => b - a);
+        sortedYs.forEach(y => {
+          byLine[y].sort((a, b) => a.x - b.x);
+          const linhaTexto = byLine[y].map(i => i.text).join(' ').trim();
+          if (linhaTexto) {
+            texto += linhaTexto + '\n';
+            totalChars += linhaTexto.length;
+          }
+        });
+      } else {
+        // Sem transform — junta tudo
+        const pageText = content.items.map(item => item.str || '').join(' ').trim();
+        if (pageText) {
+          texto += pageText.replace(/\s{3,}/g, '\n') + '\n';
+          totalChars += pageText.length;
         }
       }
     }
 
-    // Preenche o modal
-    abrirEntregaModal();
-    if (clienteNome) document.getElementById('ent-f-cliente').value  = clienteNome;
-    if (numProposta) document.getElementById('ent-f-proposta').value = numProposta;
-    document.getElementById('ent-f-data').value = dataIso;
-    entItensTemp = itens;
-    renderItensModal();
+    console.log('[PDF] Texto nativo extraído:', totalChars, 'caracteres');
+    console.log('[PDF] Texto:', texto.substring(0, 1000));
 
-    // Preview
-    const preview = document.getElementById('ent-pdf-preview');
-    document.getElementById('ent-pdf-info').textContent =
-      `✅ ${file.name} — ${clienteNome || '?'} · Proposta ${numProposta || '?'} · ${itens.length} item(s) encontrado(s)`;
-    preview.style.display = 'block';
+    // ===== PASSO 2: Se texto nativo falhou, usa OCR.space API (funciona no browser/GitHub Pages) =====
+    if (totalChars < 20) {
+      setStatus('⏳ Preparando OCR...');
+      console.log('[PDF] Texto nativo insuficiente, tentando OCR via OCR.space...');
 
-    if (itens.length === 0) {
-      alert('⚠️ PDF lido mas nenhum item foi identificado.\nVerifique os dados e adicione os itens manualmente.');
+      try {
+        const paginas = Math.min(pdf.numPages, 3);
+
+        // Renderiza cada página como imagem e envia para OCR.space
+        for (let p = 1; p <= paginas; p++) {
+          setStatus(`⏳ OCR página ${p}/${paginas}...`);
+
+          const page = await pdf.getPage(p);
+          const vp = page.getViewport({ scale: 2.5 });
+          const canvas = document.createElement('canvas');
+          canvas.width = vp.width;
+          canvas.height = vp.height;
+          await page.render({ canvasContext: canvas.getContext('2d'), viewport: vp }).promise;
+
+          // Converte para base64
+          const base64 = canvas.toDataURL('image/jpeg', 0.92);
+
+          // Envia para OCR.space (API gratuita, sem CORS, chave pública de teste)
+          const formData = new FormData();
+          formData.append('base64Image', base64);
+          formData.append('language', 'por');
+          formData.append('isOverlayRequired', 'false');
+          formData.append('detectOrientation', 'true');
+          formData.append('scale', 'true');
+          formData.append('OCREngine', '2'); // Engine 2 é melhor para impressos
+
+          const resp = await fetch('https://api.ocr.space/parse/image', {
+            method: 'POST',
+            headers: { 'apikey': 'K81462267988957' }, // chave gratuita pública
+            body: formData
+          });
+
+          if (!resp.ok) throw new Error('OCR.space HTTP ' + resp.status);
+
+          const result = await resp.json();
+
+          if (result.IsErroredOnProcessing) {
+            throw new Error('OCR.space: ' + result.ErrorMessage);
+          }
+
+          const pageText = result.ParsedResults?.[0]?.ParsedText || '';
+          texto += pageText + '\n';
+          console.log(`[PDF OCR.space] Página ${p} (${pageText.length} chars):`, pageText.substring(0, 300));
+        }
+
+        if (!texto.trim()) throw new Error('OCR não retornou texto');
+
+      } catch(ocrErr) {
+        console.error('[PDF] Erro no OCR:', ocrErr);
+
+        // Último fallback: abre modal pedindo que o usuário tire print e use ferramenta online
+        alert('⚠️ OCR automático falhou.\n\nErro: ' + (ocrErr.message || ocrErr) + '\n\nAlternativa rápida:\n1. Tire um print do PDF\n2. Acesse https://www.imagetotext.info/\n3. Cole a imagem lá\n4. Copie o texto e use "📋 Colar Texto do PDF"');
+      }
     }
 
+    // ===== PASSO 3: Usa a função central de parsing =====
+    parsearTextoPdf(texto, file.name);
+
   } catch(err) {
-    alert('❌ Erro ao ler o PDF.\n' + err.message);
+    console.error('[PDF] Erro geral:', err);
+    alert('❌ Erro ao ler o PDF.\n' + (err.message || err) + '\n\nDica: Use o botão "📋 Colar Texto do PDF" como alternativa.');
   } finally {
     if (btn) btn.innerHTML = '📄 Importar PDF<input type="file" accept=".pdf" onchange="lerPdfEntrega(event)" style="display:none">';
   }
 }
+
+// ---- Colar Texto do PDF ----
+function abrirColarTextoModal() {
+  document.getElementById('colar-texto-overlay').classList.remove('hidden');
+  document.getElementById('colar-texto-area').value = '';
+  document.getElementById('colar-texto-area').focus();
+}
+function fecharColarTextoModal(e) {
+  if (e && e.target !== document.getElementById('colar-texto-overlay')) return;
+  document.getElementById('colar-texto-overlay').classList.add('hidden');
+}
+function processarTextoPdf() {
+  const texto = document.getElementById('colar-texto-area').value.trim();
+  if (!texto) { alert('Cole o texto do PDF primeiro!'); return; }
+  document.getElementById('colar-texto-overlay').classList.add('hidden');
+  // Usa a mesma lógica de parsing — chama parsearTextoPdf
+  parsearTextoPdf(texto, 'texto colado');
+}
+
+// Função central de parsing — usada tanto pelo importar PDF quanto pelo colar texto
+function parsearTextoPdf(texto, fonte) {
+  texto = texto.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+  console.log('[PDF Parse] Fonte:', fonte);
+  console.log('[PDF Parse] Texto:', texto.substring(0, 2000));
+
+  // ===== Detecta se é Proposta Bling =====
+  const isBling = /Bling\s*[-–]\s*Proposta\s*Comercial/i.test(texto) ||
+                  /Proposta\s*N[ºo°]?\s*\d{3,}/i.test(texto);
+
+  // Extrai nº proposta
+  const numProposta = (
+    texto.match(/Proposta\s*(?:de\s+Venda\s*)?N[ºo°.:]?\s*(\d+)/i) ||
+    texto.match(/N[ºo°]?\s*(?:da\s+)?Proposta[:\s]*(\d+)/i) ||
+    texto.match(/Número\s*(?:da\s+)?Proposta[:\s]*(\d+)/i) ||
+    texto.match(/Pedido\s*(?:de\s+Venda\s*)?N[ºo°.:]?\s*(\d+)/i) ||
+    texto.match(/Nº\s*(\d{4,})/i) ||
+    []
+  )[1] || '';
+
+  // Extrai cliente — formato Bling: linha após "Para" contém o nome em maiúsculas
+  let clienteNome = '';
+
+  if (isBling) {
+    // Bling: "Para\nNOME DO CLIENTE\nCNPJ..."
+    const mPara = texto.match(/\bPara\b[\s\n]+([A-ZÁÀÂÃÉÈÊÍÌÎÓÒÔÕÚÙÛ][^\n]{4,80})/i);
+    if (mPara) {
+      clienteNome = mPara[1].replace(/CNPJ.*/i, '').replace(/CPF.*/i, '').trim();
+    }
+    // Fallback: primeira linha em MAIÚSCULAS com 10+ chars após "Para"
+    if (!clienteNome) {
+      const linhas = texto.split('\n');
+      const idxPara = linhas.findIndex(l => /^\s*Para\s*$/i.test(l.trim()));
+      if (idxPara >= 0) {
+        for (let i = idxPara + 1; i < Math.min(idxPara + 4, linhas.length); i++) {
+          const l = linhas[i].trim();
+          if (l.length >= 8 && /[A-ZÁÀÂÃÉÈÊÍÌÎÓÒÔÕÚÙÛ]{3,}/.test(l) && !/CNPJ|CPF|IE:/i.test(l)) {
+            clienteNome = l; break;
+          }
+        }
+      }
+    }
+  }
+
+  // Fallback geral para outros formatos
+  if (!clienteNome) {
+    const clientePatterns = [
+      /Cliente[:\s]+([A-ZÁÀÂÃÉÈÊÍÌÎÓÒÔÕÚÙÛ][^\n,;]{4,60})/i,
+      /Razão\s*Social[:\s]+([^\n,;]{5,60})/i,
+      /Nome(?:\s+Fantasia)?[:\s]+([A-ZÁÀÂÃÉÈÊÍÌÎÓÒÔÕÚÙÛ][^\n,;]{4,60})/i,
+      /Para[:\s]+([A-ZÁÀÂÃÉÈÊÍÌÎÓÒÔÕÚÙÛ][^\n,;]{4,60})/i,
+      /Destinatário[:\s]+([^\n,;]{5,60})/i,
+      /CONDOMÍN?IO\s+[\w\s]{3,50}/i,
+      /ACADEMIA\s+[\w\s]{3,50}/i,
+    ];
+    for (const pat of clientePatterns) {
+      const m = texto.match(pat);
+      if (m) {
+        clienteNome = (m[1] || m[0]).replace(/CPF.*/i, '').replace(/CNPJ.*/i, '').replace(/Fone.*/i, '').trim();
+        if (clienteNome.length >= 3) break;
+        clienteNome = '';
+      }
+    }
+  }
+
+  // Extrai data
+  let dataBr = '';
+  const dataPatterns = [
+    /Data\s*(?:de\s+Emissão)?[:\s]*(\d{2}\/\d{2}\/\d{4})/i,
+    /Emissão[:\s]*(\d{2}\/\d{2}\/\d{4})/i,
+    /(\d{2}\/\d{2}\/\d{4})/,
+    /(\d{2}\/\d{2}\/\d{2,4})\s*,\s*\d{2}:\d{2}/,  // formato "15/04/2026, 13:14"
+  ];
+  for (const pat of dataPatterns) {
+    const m = texto.match(pat);
+    if (m) { dataBr = m[1]; break; }
+  }
+  const dataIso = dataBr ? dataBr.split('/').reverse().join('-') : new Date().toISOString().slice(0,10);
+
+  // Extrai itens
+  function isLixo(s) {
+    if (!s) return true;
+    if (/CNPJ|CPF/i.test(s)) return true;
+    if (/\bIE\s*[:\s]?\s*(\d|ISENTO)/i.test(s)) return true;
+    if (/Inscri[çc]/i.test(s)) return true;
+    if (/\bCEP\b|\bFone\b|\bTel\b|\bWhatsApp\b/i.test(s)) return true;
+    if (/@\w+\.\w+/.test(s)) return true;
+    if (/Endere[çc]o|Logradouro|Bairro|Munic[ií]pio/i.test(s)) return true;
+    if (/Raz[ãa]o\s*Social|Nome\s*Fantasia/i.test(s)) return true;
+    if (/Proposta\s*(de|N)|Pedido\s*(de|N)|N[úu]mero\s*(da|de)/i.test(s)) return true;
+    if (/Condi[çc][ãõ]o|Pagamento|Vencimento|Parcela|Vendedor|Representante|Transportadora/i.test(s)) return true;
+    if (/Data\s*(de\s+)?(Emiss|Validade|Cria)/i.test(s)) return true;
+    if (/Observa[çc]|Informa[çc]/i.test(s)) return true;
+    if (/^[\d.\-\/,\s:()]+$/.test(s.trim())) return true;
+    if (/^\s*(Código|Item|Produto|Descrição|TOTAL|Subtotal|Desconto|Frete|Quantidade|Und?\b)/i.test(s.trim())) return true;
+    if (/^\s*(R\$|Total|Subtotal|Valor)/i.test(s.trim())) return true;
+    if (/,\s*[A-Z]{2}\s*$/.test(s.trim())) return true;
+    if (/^\s*(Rua|Av\.?|Avenida|Alameda|Rod)\s/i.test(s.trim())) return true;
+    if (/^[-–]\s*[A-Z].*,\s*[A-Z]{2}/.test(s.trim())) return true;
+    if (/\(\d{2}\)\s*\d{4,5}[-.]?\d{4}/.test(s)) return true;
+    if (/\d{2}\.\d{3}\.\d{3}[\/\-]/.test(s)) return true;
+    if (/^(Imagem|Descrição do produto|Itens da proposta|Atenciosamente|fisycal|MUVE|Bling)/i.test(s.trim())) return true;
+    if (/N[ºo]\s*de\s*Itens|Soma\s*das\s*Qtdes|Total\s*(dos|outros|da\s*proposta)/i.test(s)) return true;
+    return false;
+  }
+
+  const itens = [];
+
+  // ===== Parser especial Bling =====
+  // Formato: linhas como "TORNOZELEIRA 4 KL CAPOTA MARÍTIMA PRETA FISYCAL 4547 PAR 1,00 99,90 99,90"
+  // ou OCR pode ter separado em múltiplas linhas
+  if (isBling) {
+    const linhas = texto.split('\n');
+    let dentroItens = false;
+    let bufferDesc = '';
+
+    for (let i = 0; i < linhas.length; i++) {
+      const l = linhas[i].trim();
+
+      // Detecta início da tabela de itens
+      if (/Descri[çc][ãa]o\s*do\s*produto/i.test(l)) { dentroItens = true; continue; }
+
+      // Detecta fim da tabela
+      if (dentroItens && /N[ºo]\s*de\s*Itens|Soma\s*das\s*Qtdes|Atenciosamente/i.test(l)) { dentroItens = false; break; }
+
+      if (!dentroItens) continue;
+
+      // Linha com código numérico de 4 dígitos = linha de item
+      // Ex: "TORNOZELEIRA 4 KL CAPOTA MARÍTIMA PRETA FISYCAL 4547 PAR 1,00 99,90 99,90"
+      const mLinha = l.match(/^(.+?)\s+(\d{4,6})\s+(PAR|UN|PC|PÇ|CJ|KIT|M|M2|LT|KG|G|H)\s+([\d,]+)\s+([\d,.]+)\s+([\d,.]+)\s*$/i);
+      if (mLinha) {
+        let desc = mLinha[1].replace(/^\d+\s+/, '').trim(); // remove nº da linha
+        const unidade = mLinha[3];
+        const qty = mLinha[4].replace(',', '.');
+        if (desc.length >= 4 && !itens.find(it => it.desc === desc)) {
+          itens.push({ id: Date.now().toString() + Math.random(), desc, qty, ok: false });
+        }
+        bufferDesc = '';
+        continue;
+      }
+
+      // Linha pode ser só a descrição (OCR quebrou a linha)
+      // Acumula e tenta juntar com próxima linha
+      if (/^[A-ZÁÀÂÃÉÈÊÍÌÎÓÒÔÕÚÙÛ]/.test(l) && !/^\d/.test(l) && l.length > 4) {
+        bufferDesc = l;
+        // Olha próxima linha para ver se tem código
+        const proxima = (linhas[i+1] || '').trim();
+        const mProxCod = proxima.match(/^(\d{4,6})\s+(PAR|UN|PC|PÇ|CJ|KIT|M|M2|LT|KG|G|H)\s+([\d,]+)/i);
+        if (mProxCod) {
+          const qty = mProxCod[3].replace(',', '.');
+          if (bufferDesc.length >= 4 && !itens.find(it => it.desc === bufferDesc)) {
+            itens.push({ id: Date.now().toString() + Math.random(), desc: bufferDesc, qty, ok: false });
+          }
+          i++; // pula a linha do código
+          bufferDesc = '';
+        }
+        continue;
+      }
+    }
+
+    // Fallback Bling: varredura simples se tabela não foi detectada
+    if (itens.length === 0) {
+      // Procura padrão: descrição em caps seguida de código 4 dígitos
+      const reItemBling = /([A-ZÁÀÂÃÉÈÊÍÌÎÓÒÔÕÚÙÛ][A-Za-záàâãéèêíìîóòôõúùûÁÀÂÃÉÈÊÍÌÎÓÒÔÕÚÙÛ\s\d]{8,60?})\s+(\d{4,6})\s+(PAR|UN|PC|PÇ|CJ|KIT)\s+([\d,]+)/gi;
+      let m;
+      while ((m = reItemBling.exec(texto)) !== null) {
+        const desc = m[1].replace(/^\d+\s+/, '').trim();
+        const qty = m[4].replace(',', '.');
+        if (desc.length >= 4 && !itens.find(it => it.desc === desc)) {
+          itens.push({ id: Date.now().toString() + Math.random(), desc, qty, ok: false });
+        }
+      }
+    }
+  }
+
+  // ===== Parser geral (outros formatos) =====
+  if (itens.length === 0) {
+    const linhas = texto.split('\n');
+    for (const linha of linhas) {
+      const lt = linha.trim();
+      if (!lt || lt.length < 6 || isLixo(lt)) continue;
+
+      let match = lt.match(/^\s*(?:\d{1,3}\s+)?(\d{4,8})\s+(.+)/);
+      if (match) {
+        let desc = match[2].replace(/R\$\s*[\d.,]+/g, '').replace(/\b(UN|PC|PÇ|CJ|KIT|PAR)\b.*$/i, '').replace(/\s{2,}/g, ' ').trim();
+        let qty = '1';
+        const qm = linha.match(/(?:Qtd|Quant|Qt)[.:\s]*(\d+)/i) || linha.match(/\b(\d+)\s*(UN|PC|PÇ|CJ|KIT)\b/i);
+        if (qm) qty = qm[1];
+        if (desc.length >= 4 && /[A-Za-záàâãéèêíìîóòôõúùû]{3,}/.test(desc) && !itens.find(i => i.desc === desc)) {
+          itens.push({ id: Date.now().toString() + Math.random(), desc, qty, ok: false });
+        }
+        continue;
+      }
+
+      const mCod = lt.match(/\b(\d{4,6})\b/);
+      if (mCod && !/\d{2}\.\d{3}\.\d{3}/.test(lt)) {
+        const codPos = lt.indexOf(mCod[0]);
+        let desc = lt.substring(0, codPos).replace(/^[\d\s|\-\[\]=_.]+/, '').replace(/[-—\s]+$/, '').trim();
+        if (desc.length >= 4 && /[A-Za-záàâãéèêíìîóòôõúùû]{3,}/.test(desc) && !itens.find(i => i.desc === desc)) {
+          itens.push({ id: Date.now().toString() + Math.random(), desc, qty: '1', ok: false });
+        }
+        continue;
+      }
+
+      if (/\b(ESTEIRA|BICICLETA|BIKE|ELÍPTIC|TRANSPORT|ERGOMETR|SIMULADOR|MUSCULAÇÃO|SUPINO|CROSS|LEG\s*PRESS|SMITH|HACK|POLIA|PULLDOWN|REMADA|PRANCHA|ABDOMINAL|STEPPER|SPINNING|REMO|MULTI|TORNOZELEIRA|CAPOTA)/i.test(lt)) {
+        let desc = lt.replace(/R\$\s*[\d.,]+/g, '').replace(/\b(UN|PC|PÇ|CJ|KIT|PAR)\b.*$/i, '').replace(/\s{2,}/g, ' ').trim();
+        let qty = '1';
+        const qm = lt.match(/(?:Qtd|Quant|Qt)[.:\s]*(\d+)/i) || lt.match(/\b(\d+)\s*(UN|PC|PÇ|CJ|KIT)\b/i);
+        if (qm) qty = qm[1];
+        if (desc.length >= 5 && !itens.find(i => i.desc === desc)) {
+          itens.push({ id: Date.now().toString() + Math.random(), desc, qty, ok: false });
+        }
+      }
+    }
+  }
+
+  // Preenche modal
+  abrirEntregaModal();
+  if (clienteNome) document.getElementById('ent-f-cliente').value = clienteNome;
+  if (numProposta) document.getElementById('ent-f-proposta').value = numProposta;
+  document.getElementById('ent-f-data').value = dataIso;
+  entItensTemp = itens;
+  renderItensModal();
+
+  const preview = document.getElementById('ent-pdf-preview');
+  document.getElementById('ent-pdf-info').textContent =
+    `✅ ${fonte} — ${clienteNome || '?'} · Proposta ${numProposta || '?'} · ${itens.length} item(s) encontrado(s)`;
+  preview.style.display = 'block';
+
+  if (itens.length === 0) {
+    const textoPreview = texto.replace(/\s+/g, ' ').trim().substring(0, 300);
+    alert(textoPreview.length > 10
+      ? `⚠️ Nenhum item identificado.\n\nTexto lido:\n"${textoPreview}..."\n\nAdicione os itens manualmente.`
+      : '⚠️ Nenhum texto encontrado. Adicione os itens manualmente.');
+  }
+}
+
 
 // ===== CLIENTES =====
 function saveClientes() { localStorage.setItem('crm_clientes', JSON.stringify(clientes)); }
@@ -4881,11 +5333,264 @@ function imprimirCliente() {
   janela.document.close();
 }
 
+// ===== AGENDA =====
+const MESES_AGENDA = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+const DIAS_SEMANA = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+const CATEG_ICONS = { geral:'📌', cliente:'👤', entrega:'🚚', manutencao:'🔧', financeiro:'💰', pessoal:'🏠' };
+
+function saveTarefas() { localStorage.setItem('crm_tarefas', JSON.stringify(tarefas)); }
+
+function updateAgendaBadge() {
+  const badge = document.getElementById('badge-agenda');
+  if (!badge) return;
+  const hoje = new Date().toISOString().slice(0,10);
+  const pendentes = tarefas.filter(t => !t.concluida && t.data <= hoje).length;
+  badge.textContent = pendentes;
+  badge.style.display = pendentes > 0 ? 'inline-block' : 'none';
+  badge.style.background = pendentes > 0 ? 'var(--red)' : '';
+}
+
+function setAgendaView(v) {
+  agendaView = v;
+  document.querySelectorAll('.agenda-view-btn').forEach(b => b.classList.remove('active'));
+  const mapa = { mes:0, lista:1 };
+  const btns = document.querySelectorAll('.agenda-view-btn');
+  if (btns[mapa[v]] !== undefined) btns[mapa[v]].classList.add('active');
+  renderAgenda();
+}
+
+function setAgendaFiltro(f) {
+  agendaFiltro = f;
+  const container = document.getElementById('page-agenda');
+  if (!container) return;
+  const btns = container.querySelectorAll('.at-filter-btn');
+  btns.forEach(b => b.classList.remove('active'));
+  const mapa = { todos:0, pendentes:1, concluidas:2, alta:3, media:4, baixa:5 };
+  if (btns[mapa[f]] !== undefined) btns[mapa[f]].classList.add('active');
+  renderAgenda();
+}
+
+function agendaMesAnterior() {
+  agendaMesAtual--;
+  if (agendaMesAtual < 0) { agendaMesAtual = 11; agendaAnoAtual--; }
+  renderAgenda();
+}
+function agendaMesSeguinte() {
+  agendaMesAtual++;
+  if (agendaMesAtual > 11) { agendaMesAtual = 0; agendaAnoAtual++; }
+  renderAgenda();
+}
+function agendaHoje() {
+  const h = new Date();
+  agendaMesAtual = h.getMonth();
+  agendaAnoAtual = h.getFullYear();
+  renderAgenda();
+}
+
+function filtrarTarefas(lista) {
+  if (agendaFiltro === 'pendentes')  return lista.filter(t => !t.concluida);
+  if (agendaFiltro === 'concluidas') return lista.filter(t => t.concluida);
+  if (agendaFiltro === 'alta')   return lista.filter(t => t.prioridade === 'alta');
+  if (agendaFiltro === 'media')  return lista.filter(t => t.prioridade === 'media');
+  if (agendaFiltro === 'baixa')  return lista.filter(t => t.prioridade === 'baixa');
+  return lista;
+}
+
+function renderAgenda() {
+  const container = document.getElementById('agenda-container');
+  const label = document.getElementById('agenda-mes-label');
+  const countEl = document.getElementById('agenda-count');
+  if (!container) return;
+
+  label.textContent = MESES_AGENDA[agendaMesAtual] + ' ' + agendaAnoAtual;
+
+  const pendentes = tarefas.filter(t => !t.concluida).length;
+  countEl.textContent = pendentes + ' pendente' + (pendentes !== 1 ? 's' : '');
+  updateAgendaBadge();
+
+  if (agendaView === 'mes') renderAgendaMes(container);
+  else renderAgendaLista(container);
+}
+
+function renderAgendaMes(container) {
+  const year = agendaAnoAtual;
+  const month = agendaMesAtual;
+  const firstDay = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const daysInPrev = new Date(year, month, 0).getDate();
+  const hoje = new Date();
+  const hojeStr = hoje.toISOString().slice(0,10);
+
+  const tarefasFiltradas = filtrarTarefas(tarefas);
+
+  let html = '<div class="agenda-calendar">';
+  html += '<div class="agenda-weekdays">';
+  DIAS_SEMANA.forEach(d => html += `<div class="agenda-weekday">${d}</div>`);
+  html += '</div><div class="agenda-days">';
+
+  // Dias do mês anterior
+  for (let i = firstDay - 1; i >= 0; i--) {
+    const day = daysInPrev - i;
+    html += `<div class="agenda-day other-month"><span class="agenda-day-num">${day}</span></div>`;
+  }
+
+  // Dias do mês atual
+  for (let d = 1; d <= daysInMonth; d++) {
+    const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const isToday = dateStr === hojeStr;
+    const dayTasks = tarefasFiltradas.filter(t => t.data === dateStr);
+
+    html += `<div class="agenda-day${isToday ? ' today' : ''}" ondblclick="abrirTarefaModalDia('${dateStr}')">`;
+    html += `<span class="agenda-day-num">${d}</span>`;
+    dayTasks.slice(0, 3).forEach(t => {
+      const priClass = 'pri-' + (t.prioridade || 'normal');
+      const doneClass = t.concluida ? ' concluida' : '';
+      html += `<div class="agenda-evt ${priClass}${doneClass}" onclick="event.stopPropagation();abrirTarefaModal('${t.id}')" title="${esc(t.titulo)}${t.hora ? ' · '+t.hora : ''}">${t.hora ? t.hora+' ' : ''}${CATEG_ICONS[t.categoria]||'📌'} ${esc(t.titulo)}</div>`;
+    });
+    if (dayTasks.length > 3) {
+      html += `<div style="font-size:10px;color:var(--text-muted);padding:1px 5px;cursor:pointer" onclick="event.stopPropagation();setAgendaView('lista')">+${dayTasks.length - 3} mais</div>`;
+    }
+    html += '</div>';
+  }
+
+  // Dias do próximo mês (preencher até 42 slots)
+  const totalSlots = firstDay + daysInMonth;
+  const remaining = totalSlots % 7 === 0 ? 0 : 7 - (totalSlots % 7);
+  for (let i = 1; i <= remaining; i++) {
+    html += `<div class="agenda-day other-month"><span class="agenda-day-num">${i}</span></div>`;
+  }
+
+  html += '</div></div>';
+  container.innerHTML = html;
+}
+
+function renderAgendaLista(container) {
+  const year = agendaAnoAtual;
+  const month = agendaMesAtual;
+  const prefix = `${year}-${String(month+1).padStart(2,'0')}`;
+
+  let lista = tarefas.filter(t => (t.data || '').startsWith(prefix));
+  lista = filtrarTarefas(lista);
+  lista.sort((a,b) => {
+    const cmpData = (a.data||'').localeCompare(b.data||'');
+    if (cmpData !== 0) return cmpData;
+    return (a.hora||'').localeCompare(b.hora||'');
+  });
+
+  if (lista.length === 0) {
+    container.innerHTML = '<div class="at-empty">Nenhuma tarefa encontrada neste mês.</div>';
+    return;
+  }
+
+  const priLabel = { alta:'🔴 Alta', media:'🟡 Média', baixa:'🟢 Baixa', normal:'🔵 Normal' };
+  let lastDate = '';
+
+  let html = '<div class="agenda-list-view">';
+  lista.forEach(t => {
+    if (t.data !== lastDate) {
+      const [y,m,d] = (t.data||'').split('-');
+      const dateObj = new Date(y, m-1, d);
+      const diaSem = DIAS_SEMANA[dateObj.getDay()];
+      html += `<div style="font-size:12px;font-weight:700;color:var(--text-muted);padding:8px 0 2px;margin-top:8px;border-bottom:1px solid var(--border)">${diaSem}, ${d}/${m}/${y}</div>`;
+      lastDate = t.data;
+    }
+    const priClass = 'pri-' + (t.prioridade || 'normal');
+    const doneClass = t.concluida ? ' concluida' : '';
+    html += `
+      <div class="agenda-list-item ${priClass}${doneClass}">
+        <div class="agenda-list-check ${t.concluida ? 'ok' : ''}" onclick="toggleTarefa('${t.id}')"></div>
+        <div class="agenda-list-info" onclick="abrirTarefaModal('${t.id}')">
+          <div class="agenda-list-title ${t.concluida ? 'done' : ''}">${CATEG_ICONS[t.categoria]||'📌'} ${esc(t.titulo)}</div>
+          <div class="agenda-list-sub">
+            ${t.hora ? '<span>🕐 '+t.hora+'</span>' : ''}
+            <span>${priLabel[t.prioridade]||'Normal'}</span>
+            ${t.obs ? '<span>💬 '+esc(t.obs.substring(0,40))+(t.obs.length>40?'...':'')+'</span>' : ''}
+          </div>
+        </div>
+        <button class="agenda-list-del" onclick="removerTarefa('${t.id}')" title="Remover">×</button>
+      </div>`;
+  });
+  html += '</div>';
+  container.innerHTML = html;
+}
+
+function toggleTarefa(id) {
+  const t = tarefas.find(x => x.id === id);
+  if (t) { t.concluida = !t.concluida; saveTarefas(); renderAgenda(); }
+}
+
+function removerTarefa(id) {
+  if (!confirm('Remover esta tarefa?')) return;
+  tarefas = tarefas.filter(x => x.id !== id);
+  saveTarefas(); renderAgenda();
+}
+
+function abrirTarefaModalDia(dateStr) {
+  abrirTarefaModal();
+  document.getElementById('trf-f-data').value = dateStr;
+}
+
+function abrirTarefaModal(id) {
+  tarefaEditId = id || null;
+  document.getElementById('tarefa-modal-overlay').classList.remove('hidden');
+  document.getElementById('tarefa-modal-titulo').textContent = id ? 'Editar Tarefa' : 'Nova Tarefa';
+  const hoje = new Date().toISOString().slice(0,10);
+  if (id) {
+    const t = tarefas.find(x => x.id === id);
+    if (t) {
+      document.getElementById('trf-f-titulo').value     = t.titulo || '';
+      document.getElementById('trf-f-data').value       = t.data || hoje;
+      document.getElementById('trf-f-hora').value       = t.hora || '';
+      document.getElementById('trf-f-prioridade').value = t.prioridade || 'normal';
+      document.getElementById('trf-f-categoria').value  = t.categoria || 'geral';
+      document.getElementById('trf-f-obs').value        = t.obs || '';
+    }
+  } else {
+    ['trf-f-titulo','trf-f-hora','trf-f-obs'].forEach(i => document.getElementById(i).value = '');
+    document.getElementById('trf-f-data').value = hoje;
+    document.getElementById('trf-f-prioridade').value = 'normal';
+    document.getElementById('trf-f-categoria').value = 'geral';
+  }
+}
+
+function fecharTarefaModal(e) {
+  if (e && e.target !== document.getElementById('tarefa-modal-overlay')) return;
+  document.getElementById('tarefa-modal-overlay').classList.add('hidden');
+  tarefaEditId = null;
+}
+
+function salvarTarefa() {
+  const titulo = document.getElementById('trf-f-titulo').value.trim();
+  if (!titulo) { alert('Preencha o título da tarefa!'); return; }
+  const dados = {
+    titulo,
+    data:       document.getElementById('trf-f-data').value,
+    hora:       document.getElementById('trf-f-hora').value,
+    prioridade: document.getElementById('trf-f-prioridade').value,
+    categoria:  document.getElementById('trf-f-categoria').value,
+    obs:        document.getElementById('trf-f-obs').value.trim(),
+    concluida:  false,
+  };
+  if (tarefaEditId) {
+    const idx = tarefas.findIndex(x => x.id === tarefaEditId);
+    if (idx >= 0) tarefas[idx] = { ...tarefas[idx], ...dados, concluida: tarefas[idx].concluida };
+  } else {
+    tarefas.push({ id: Date.now().toString(), ...dados });
+  }
+  saveTarefas();
+  document.getElementById('tarefa-modal-overlay').classList.add('hidden');
+  tarefaEditId = null;
+  renderAgenda();
+}
+
+// Atualiza badge ao iniciar
+updateAgendaBadge();
+
 // ===== EXPORTAR / IMPORTAR =====
 function exportarDados() {
   const chaves = ['crm_leads','crm_sales','crm_pendings','crm_manuts',
                   'crm_faturamentos','crm_atendimentos','crm_combustiveis',
-                  'crm_pedidos','crm_mn_pends','crm_clientes','crm_maquinas','crm_entregas'];
+                  'crm_pedidos','crm_mn_pends','crm_clientes','crm_maquinas','crm_entregas','crm_tarefas'];
   const dados = {};
   chaves.forEach(k => {
     const v = localStorage.getItem(k);
@@ -4912,7 +5617,7 @@ function importarDados(event) {
       const dados = JSON.parse(e.target.result);
       const chaves = ['crm_leads','crm_sales','crm_pendings','crm_manuts',
                       'crm_faturamentos','crm_atendimentos','crm_combustiveis',
-                      'crm_pedidos','crm_mn_pends','crm_clientes','crm_maquinas','crm_entregas'];
+                      'crm_pedidos','crm_mn_pends','crm_clientes','crm_maquinas','crm_entregas','crm_tarefas'];
       let importados = 0;
       chaves.forEach(k => {
         if (dados[k] !== undefined) {
