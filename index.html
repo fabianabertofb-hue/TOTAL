@@ -980,6 +980,40 @@
   }
   .mn-row-del:hover { background: var(--red-light); color: var(--red); }
 
+  /* ── DESTAQUE: linha inteira quando proposta aprovada ── */
+  .mn-sheet tbody tr.row-aprovada {
+    background: linear-gradient(90deg, #f0fdf4 0%, #f0fdf4 100%) !important;
+    border-left: 3px solid #22c55e !important;
+    box-shadow: inset 3px 0 0 #22c55e;
+  }
+  .mn-sheet tbody tr.row-aprovada:hover {
+    background: #dcfce7 !important;
+  }
+  .mn-sheet tbody tr.row-aprovada .cell-input {
+    background: transparent !important;
+  }
+  .mn-sheet tbody tr.row-aprovada .td-num {
+    color: #15803d !important;
+    font-weight: 700 !important;
+  }
+  /* badge verde "Aprovada" no select de proposta */
+  .mn-sheet tbody tr.row-aprovada select {
+    color: #15803d !important;
+    font-weight: 700 !important;
+    background: #dcfce7 !important;
+    border-color: #86efac !important;
+  }
+  /* ── DESTAQUE: linha cinza/riscada quando proposta recusada ── */
+  .mn-sheet tbody tr.row-recusada {
+    background: #fef2f2 !important;
+    opacity: 0.75;
+    border-left: 3px solid #f87171 !important;
+  }
+  .mn-sheet tbody tr.row-recusada:hover {
+    background: #fee2e2 !important;
+    opacity: 1;
+  }
+
   .mn-add-row {
     display: flex; align-items: center; gap: 8px;
     padding: 10px 14px;
@@ -1548,8 +1582,8 @@
     <div class="legend-item"><div class="legend-dot" style="background:#bbf7d0;border:1px solid #86efac"></div> Nome verde = preventiva feita</div>
     <div class="legend-item"><div class="legend-dot" style="background:#bbf7d0;border:1px solid #86efac"></div> Relatório verde = entregue</div>
     <div class="legend-item"><div class="legend-dot" style="background:#bbf7d0;border:1px solid #86efac"></div> Limpeza verde = realizada</div>
-    <div class="legend-item"><div class="legend-dot" style="background:#dcfce7;border:1px solid #86efac"></div> Proposta aprovada</div>
-    <div class="legend-item"><div class="legend-dot" style="background:#fee2e2;border:1px solid #fca5a5"></div> Proposta recusada</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#f0fdf4;border:2px solid #22c55e"></div> ✅ Linha verde = proposta aprovada</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#fef2f2;border:2px solid #f87171"></div> ❌ Linha vermelha = proposta recusada</div>
     <div class="legend-item"><div class="legend-dot" style="background:#fef3c7;border:1px solid #fbbf24"></div> 🟡 Vence amanhã</div>
     <div class="legend-item"><div class="legend-dot" style="background:#fee2e2;border:1px solid #fca5a5"></div> 🔴 Vencido</div>
     <div class="legend-item"><div class="legend-dot" style="background:#fee2e2;border:1px solid #fca5a5"></div> ⚠️ +30 dias sem preventiva</div>
@@ -3259,8 +3293,10 @@ function renderManut() {
     const alertaVenc = (!m.preventiva || diasSemPrev > 30) && m.cliente ? 'cell-cliente-vencido' : '';
     const alertaVencFinal = clienteOk ? '' : alertaVenc; // se já tem preventiva ok, não alerta
     const relatorioOk = m.relatorio ? 'td-relatorio-ok' : '';
+    // destaque da linha inteira por status da proposta
+    const rowClass = /(aprovad)/i.test(m.propostaStatus||'') ? 'row-aprovada' : /(recusad)/i.test(m.propostaStatus||'') ? 'row-recusada' : '';
     return `
-    <tr>
+    <tr class="${rowClass}">
       <td class="td-num">${i + 1}</td>
       <td><input class="cell-input cell-cliente ${clienteOk} ${alertaVencFinal}"
             value="${alertaVencFinal ? '⚠️ ' + esc(m.cliente) : esc(m.cliente)}"
