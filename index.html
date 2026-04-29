@@ -128,6 +128,17 @@
   .at-card.urg-alta   { border-left-color:#ef4444; }
   .at-card.urg-media  { border-left-color:#f59e0b; }
   .at-card.urg-baixa  { border-left-color:#10b981; }
+
+  /* cores por status */
+  .at-card.st-solicitacao  { background:#eff6ff; }
+  .at-card.st-andamento    { background:#faf5ff; }
+  .at-card.st-orcamento    { background:#fffbeb; }
+  .at-card.st-peca         { background:#fff7ed; }
+  .at-card.st-concluido    { background:#f0fdf4; opacity:0.88; }
+  .at-card.st-concluido .at-card-nome { color:#065f46; }
+
+  /* data finalização no card */
+  .at-card-findate { font-size:11px; color:#059669; font-weight:700; background:#d1fae5; padding:2px 8px; border-radius:20px; white-space:nowrap; }
   .at-card-top { display:flex; align-items:flex-start; justify-content:space-between; gap:8px; margin-bottom:8px; }
   .at-card-nome { font-size:14px; font-weight:700; color:var(--text); }
   .at-card-equip { font-size:12px; color:var(--text-muted); margin-top:2px; }
@@ -2165,7 +2176,7 @@
       </div>
       <div class="at-form-group">
         <label>Status</label>
-        <select id="at-f-status">
+        <select id="at-f-status" onchange="toggleDataFinalizacao(this.value)">
           <option value="Solicitação">📥 Solicitação</option>
           <option value="Em andamento">🔧 Em andamento</option>
           <option value="Em orçamento">📋 Em orçamento</option>
@@ -2177,6 +2188,10 @@
         <label>Data</label>
         <input type="date" id="at-f-data">
       </div>
+    </div>
+    <div class="at-form-group" id="at-f-datafinalizacao-wrap" style="display:none">
+      <label>📅 Data de Finalização</label>
+      <input type="date" id="at-f-datafinalizacao">
     </div>
     <div class="at-sync-info" id="at-sync-info">
       ✅ Condomínio encontrado na aba Manutenção — observação será sincronizada automaticamente!
@@ -3793,6 +3808,18 @@ function esc(s) {
 
 let atendimentos = JSON.parse(localStorage.getItem('crm_atendimentos') || '[]');
 let atEditId = null;
+function toggleDataFinalizacao(status) {
+  const wrap = document.getElementById('at-f-datafinalizacao-wrap');
+  if (!wrap) return;
+  if (status === 'Concluído') {
+    wrap.style.display = 'block';
+    if (!document.getElementById('at-f-datafinalizacao').value)
+      document.getElementById('at-f-datafinalizacao').value = new Date().toISOString().slice(0,10);
+  } else {
+    wrap.style.display = 'none';
+  }
+}
+
 let atFiltros = { urgencia: 'todas', status: 'todos' };
 
 function saveAt() { localStorage.setItem('crm_atendimentos', JSON.stringify(atendimentos)); }
@@ -3826,12 +3853,16 @@ function abrirAtModal(id) {
       document.getElementById('at-f-urgencia').value = a.urgencia || 'Média';
       document.getElementById('at-f-status').value   = a.status || 'Solicitação';
       document.getElementById('at-f-data').value     = a.data || hoje;
+      document.getElementById('at-f-datafinalizacao').value = a.dataFinalizacao || '';
+      toggleDataFinalizacao(a.status);
     }
   } else {
     ['at-f-cliente','at-f-equip','at-f-assunto','at-f-obs'].forEach(id => document.getElementById(id).value = '');
     document.getElementById('at-f-urgencia').value = 'Média';
     document.getElementById('at-f-status').value   = 'Solicitação';
     document.getElementById('at-f-data').value     = hoje;
+    document.getElementById('at-f-datafinalizacao').value = '';
+    toggleDataFinalizacao('Solicitação');
   }
   verificarCliente();
 }
@@ -3882,6 +3913,9 @@ function salvarAt() {
     urgencia: document.getElementById('at-f-urgencia').value,
     status:   document.getElementById('at-f-status').value,
     data:     document.getElementById('at-f-data').value || new Date().toISOString().slice(0,10),
+    dataFinalizacao: document.getElementById('at-f-status').value === 'Concluído'
+      ? (document.getElementById('at-f-datafinalizacao').value || new Date().toISOString().slice(0,10))
+      : '',
   };
   if (atEditId) {
     const idx = atendimentos.findIndex(x => x.id === atEditId);
@@ -3928,13 +3962,20 @@ function renderAt() {
     'Solicitação':'at-badge-solicitacao', 'Em andamento':'at-badge-andamento',
     'Em orçamento':'at-badge-orcamento', 'Pedido de peça':'at-badge-peca', 'Concluído':'at-badge-concluido'
   };
+  const stClass   = {
+    'Solicitação':'st-solicitacao', 'Em andamento':'st-andamento',
+    'Em orçamento':'st-orcamento', 'Pedido de peça':'st-peca', 'Concluído':'st-concluido'
+  };
 
   grid.innerHTML = lista.map(a => {
     const uc = urgClass[a.urgencia] || '';
     const ub = urgBadge[a.urgencia] || '';
     const sb = stBadge[a.status]    || '';
+    const sc = stClass[a.status]    || '';
     const temObs = a.obs ? `<span class="at-obs-tag">obs</span>` : '';
-    return `<div class="at-card ${uc}" onclick="abrirAtModal('${a.id}')">
+    const finDate = a.dataFinalizacao
+      ? `<span class="at-card-findate">✅ Finalizado: ${fmtDate(a.dataFinalizacao)}</span>` : '';
+    return `<div class="at-card ${uc} ${sc}" onclick="abrirAtModal('${a.id}')">
       <div class="at-card-top">
         <div>
           <div class="at-card-nome">${esc(a.cliente)}</div>
@@ -3947,6 +3988,7 @@ function renderAt() {
         <span class="at-badge ${ub}">${a.urgencia}</span>
         <span class="at-badge ${sb}">${a.status}</span>
         ${temObs}
+        ${finDate}
         <span class="at-card-date">${fmtDate(a.data)}</span>
       </div>
     </div>`;
