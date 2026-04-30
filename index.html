@@ -4089,17 +4089,31 @@ function switchFatMes(idx) {
 
 function addFaturamento(obj) {
   const desc   = obj ? obj.desc   : document.getElementById('fat-f-desc').value.trim();
-  const valor  = obj ? obj.valor  : parseFloat(document.getElementById('fat-f-valor').value) || 0;
+  const valorRaw = obj ? obj.valor : parseFloat(document.getElementById('fat-f-valor').value.replace(',','.'));
+  const valor  = isNaN(valorRaw) ? 0 : valorRaw;
   const data   = obj ? obj.data   : document.getElementById('fat-f-data').value;
   const cat    = obj ? obj.cat    : document.getElementById('fat-f-cat').value;
   const status = obj ? obj.status : document.getElementById('fat-f-status').value;
-  if (!desc || !valor) { if (!obj) alert('Preencha descrição e valor!'); return; }
-  const mes = obj ? obj.mes : fatMesAtivo;
+  if (!desc) { if (!obj) alert('Preencha a descrição!'); return; }
+  if (!valor || valor <= 0) { if (!obj) alert('Preencha o valor!'); return; }
+  // Sincroniza o mês ativo com a data informada no campo (se preenchida)
+  let mes;
+  if (obj) {
+    mes = obj.mes;
+  } else {
+    if (data) {
+      mes = parseInt(data.split('-')[1]) - 1; // extrai o mês da data (0-11)
+      fatMesAtivo = mes; // muda a aba ativa para o mês da data
+    } else {
+      mes = fatMesAtivo;
+    }
+  }
   getFatMes(mes).push({ id: Date.now().toString() + Math.random(), desc, valor, data: data || new Date().toISOString().slice(0,10), cat, status });
   saveFat();
   if (!obj) {
     document.getElementById('fat-f-desc').value  = '';
     document.getElementById('fat-f-valor').value = '';
+    document.getElementById('fat-f-data').value  = new Date().toISOString().slice(0,10);
   }
   buildFatTabs();
   renderFaturamento();
