@@ -2455,39 +2455,22 @@
 
 <script>
 // ===== STATE =====
-  // ===== localStorage SAFE WRAPPER (funciona com file://) =====
-  const _memStore = {};
-  const _ls = (() => {
-    try {
-      localStorage.setItem('__crm_test__', '1');
-      localStorage.removeItem('__crm_test__');
-      return localStorage;
-    } catch(e) {
-      console.warn('[CRM] localStorage bloqueado, usando memória temporária.');
-      return {
-        getItem: k => _memStore[k] !== undefined ? _memStore[k] : null,
-        setItem: (k, v) => { _memStore[k] = String(v); },
-        removeItem: k => { delete _memStore[k]; }
-      };
-    }
-  })();
-
-let leads    = JSON.parse(_ls.getItem('crm_leads')    || '[]');
+let leads    = JSON.parse(localStorage.getItem('crm_leads')    || '[]');
 // Entregas — declaradas aqui para evitar erro de inicialização
-let entregas     = JSON.parse(_ls.getItem('crm_entregas') || '[]');
+let entregas     = JSON.parse(localStorage.getItem('crm_entregas') || '[]');
 let entEditId    = null;
 let entFiltro    = 'ativos';
 let entItensTemp = [];
 // Clientes
-let clientes  = JSON.parse(_ls.getItem('crm_clientes') || '[]');
-let maquinas  = JSON.parse(_ls.getItem('crm_maquinas') || '{}');
+let clientes  = JSON.parse(localStorage.getItem('crm_clientes') || '[]');
+let maquinas  = JSON.parse(localStorage.getItem('crm_maquinas') || '{}');
 let cliEditId = null;
 let cliDetalheId = null;
 let cliDetTab = 'atendimentos';
 let cliFiltroAtivo = 'todos';
 let maqEditId = null;
 // Agenda
-let tarefas   = JSON.parse(_ls.getItem('crm_tarefas') || '[]');
+let tarefas   = JSON.parse(localStorage.getItem('crm_tarefas') || '[]');
 let tarefaEditId = null;
 let agendaView   = 'mes';
 let agendaFiltro = 'todos';
@@ -2495,7 +2478,7 @@ let agendaMesAtual = new Date().getMonth();
 let agendaAnoAtual = new Date().getFullYear();
 // sales agora é objeto indexado por mês: { 0: [...], 1: [...], ... }
 let sales = (function() {
-  const raw = _ls.getItem('crm_sales');
+  const raw = localStorage.getItem('crm_sales');
   if (!raw) return {};
   try {
     const parsed = JSON.parse(raw);
@@ -2512,10 +2495,10 @@ let sales = (function() {
     return parsed;
   } catch(e) { return {}; }
 })();
-let pendings = JSON.parse(_ls.getItem('crm_pendings') || '[]');
+let pendings = JSON.parse(localStorage.getItem('crm_pendings') || '[]');
 // manuts agora é objeto indexado por mês: { 0: [...], 1: [...], ... }
 let manuts = (function() {
-  const raw = _ls.getItem('crm_manuts');
+  const raw = localStorage.getItem('crm_manuts');
   if (!raw) return {};
   try {
     const parsed = JSON.parse(raw);
@@ -2538,10 +2521,10 @@ const STAGES = [
 ];
 
 function save() {
-  _ls.setItem('crm_leads',    JSON.stringify(leads));
-  _ls.setItem('crm_sales',    JSON.stringify(sales));
-  _ls.setItem('crm_pendings', JSON.stringify(pendings));
-  _ls.setItem('crm_manuts',   JSON.stringify(manuts));
+  localStorage.setItem('crm_leads',    JSON.stringify(leads));
+  localStorage.setItem('crm_sales',    JSON.stringify(sales));
+  localStorage.setItem('crm_pendings', JSON.stringify(pendings));
+  localStorage.setItem('crm_manuts',   JSON.stringify(manuts));
 }
 
 function fmt(v) {
@@ -2771,7 +2754,7 @@ function renderGrafico() {
 
 function salvarMeta() {
   const val = document.getElementById('vd-meta-input').value;
-  _ls.setItem('crm_meta_mes_' + salesMesAtivo, val);
+  localStorage.setItem('crm_meta_mes_' + salesMesAtivo, val);
   atualizarMeta();
 }
 
@@ -2781,7 +2764,7 @@ function atualizarMeta() {
   const pctEl   = document.getElementById('vd-meta-pct');
   if (!metaEl) return;
   // carregar meta salva do mês ativo
-  const salva = _ls.getItem('crm_meta_mes_' + salesMesAtivo) || '';
+  const salva = localStorage.getItem('crm_meta_mes_' + salesMesAtivo) || '';
   metaEl.value = salva;
   const meta = parseFloat(salva) || 0;
   const totalMes = (sales[salesMesAtivo] || []).reduce((s,x) => s + Number(x.value), 0);
@@ -2904,9 +2887,9 @@ function confirmarEditSale() {
 
 // ===== PEDIDOS =====
 // pedidos ficam em localStorage separado: { 'tipo_id': [{id,num,data,valor,status},...] }
-let pedidosDB = JSON.parse(_ls.getItem('crm_pedidos') || '{}');
+let pedidosDB = JSON.parse(localStorage.getItem('crm_pedidos') || '{}');
 
-function savePedidos() { _ls.setItem('crm_pedidos', JSON.stringify(pedidosDB)); }
+function savePedidos() { localStorage.setItem('crm_pedidos', JSON.stringify(pedidosDB)); }
 
 function getPedidos(tipo, id) {
   const key = tipo + '_' + id;
@@ -3496,9 +3479,9 @@ function renderManut() {
 
 // ===== PENDÊNCIAS DE MANUTENÇÃO (por condomínio) =====
 // Armazenadas em localStorage separado: { 'manut_ID': [{id, desc, prio, done},...] }
-let mnPendsDB = JSON.parse(_ls.getItem('crm_mn_pends') || '{}');
+let mnPendsDB = JSON.parse(localStorage.getItem('crm_mn_pends') || '{}');
 
-function saveMnPends() { _ls.setItem('crm_mn_pends', JSON.stringify(mnPendsDB)); }
+function saveMnPends() { localStorage.setItem('crm_mn_pends', JSON.stringify(mnPendsDB)); }
 
 function getMnPends(manutId) {
   if (!mnPendsDB[manutId]) mnPendsDB[manutId] = [];
@@ -3823,7 +3806,7 @@ function esc(s) {
 
 // ===== ATENDIMENTOS =====
 
-let atendimentos = JSON.parse(_ls.getItem('crm_atendimentos') || '[]');
+let atendimentos = JSON.parse(localStorage.getItem('crm_atendimentos') || '[]');
 let atEditId = null;
 function toggleDataFinalizacao(status) {
   const wrap = document.getElementById('at-f-datafinalizacao-wrap');
@@ -3839,7 +3822,7 @@ function toggleDataFinalizacao(status) {
 
 let atFiltros = { urgencia: 'todas', status: 'todos' };
 
-function saveAt() { _ls.setItem('crm_atendimentos', JSON.stringify(atendimentos)); }
+function saveAt() { localStorage.setItem('crm_atendimentos', JSON.stringify(atendimentos)); }
 
 function setAtFilter(tipo, val) {
   atFiltros[tipo] = val;
@@ -4077,11 +4060,11 @@ function toggleSalePago(id) {
 }
 
 // ===== FATURAMENTO =====
-let faturamentos = JSON.parse(_ls.getItem('crm_faturamentos') || '{}'); // { mes: [{...}] }
+let faturamentos = JSON.parse(localStorage.getItem('crm_faturamentos') || '{}'); // { mes: [{...}] }
 let fatMesAtivo  = new Date().getMonth();
 
 function getFatMes(m) { if (!faturamentos[m]) faturamentos[m] = []; return faturamentos[m]; }
-function saveFat() { try { _ls.setItem('crm_faturamentos', JSON.stringify(faturamentos)); } catch(e) { console.error('[FAT] saveFat error:', e); } }
+function saveFat() { localStorage.setItem('crm_faturamentos', JSON.stringify(faturamentos)); }
 
 function buildFatTabs() {
   const wrap = document.getElementById('fat-meses-tabs');
@@ -4106,21 +4089,20 @@ function switchFatMes(idx) {
 
 function addFaturamento(obj) {
   const desc   = obj ? obj.desc   : document.getElementById('fat-f-desc').value.trim();
-  const valorRaw = obj ? obj.valor : parseFloat(document.getElementById('fat-f-valor').value.replace(',','.'));
+  const valorRaw = obj ? obj.valor : parseFloat(document.getElementById('fat-f-valor').value.replace(',', '.'));
   const valor  = isNaN(valorRaw) ? 0 : valorRaw;
   const data   = obj ? obj.data   : document.getElementById('fat-f-data').value;
   const cat    = obj ? obj.cat    : document.getElementById('fat-f-cat').value;
   const status = obj ? obj.status : document.getElementById('fat-f-status').value;
   if (!desc) { if (!obj) alert('Preencha a descrição!'); return; }
   if (!valor || valor <= 0) { if (!obj) alert('Preencha o valor!'); return; }
-  // Sincroniza o mês ativo com a data informada no campo (se preenchida)
   let mes;
   if (obj) {
     mes = obj.mes;
   } else {
     if (data) {
-      mes = parseInt(data.split('-')[1]) - 1; // extrai o mês da data (0-11)
-      fatMesAtivo = mes; // muda a aba ativa para o mês da data
+      mes = parseInt(data.split('-')[1]) - 1;
+      fatMesAtivo = mes;
     } else {
       mes = fatMesAtivo;
     }
@@ -4235,11 +4217,11 @@ function renderFaturamento() {
 
 // ===== COMBUSTÍVEL =====
 
-let combustiveis = JSON.parse(_ls.getItem('crm_combustiveis') || '[]');
+let combustiveis = JSON.parse(localStorage.getItem('crm_combustiveis') || '[]');
 let combFiltro   = 'todos';
 let combMesAtivo = new Date().getMonth();
 
-function saveComb() { _ls.setItem('crm_combustiveis', JSON.stringify(combustiveis)); }
+function saveComb() { localStorage.setItem('crm_combustiveis', JSON.stringify(combustiveis)); }
 
 function calcCombTotal() {
   const litros = parseFloat(document.getElementById('comb-f-litros').value) || 0;
@@ -4560,7 +4542,7 @@ function updateBadge() {
 }
 
 // ===== ENTREGAS =====
-function saveEntregas() { _ls.setItem('crm_entregas', JSON.stringify(entregas)); }
+function saveEntregas() { localStorage.setItem('crm_entregas', JSON.stringify(entregas)); }
 
 function setEntFiltro(filtro) {
   entFiltro = filtro;
@@ -5168,8 +5150,8 @@ function parsearTextoPdf(texto, fonte) {
 
 
 // ===== CLIENTES =====
-function saveClientes() { _ls.setItem('crm_clientes', JSON.stringify(clientes)); }
-function saveMaquinas() { _ls.setItem('crm_maquinas', JSON.stringify(maquinas)); }
+function saveClientes() { localStorage.setItem('crm_clientes', JSON.stringify(clientes)); }
+function saveMaquinas() { localStorage.setItem('crm_maquinas', JSON.stringify(maquinas)); }
 function getMaquinasCliente(cliId) { if (!maquinas[cliId]) maquinas[cliId] = []; return maquinas[cliId]; }
 
 // Retorna lista completa de clientes incluindo os da Manutenção (contrato fixo)
@@ -5560,7 +5542,7 @@ const MESES_AGENDA = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Jul
 const DIAS_SEMANA = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
 const CATEG_ICONS = { geral:'📌', cliente:'👤', entrega:'🚚', manutencao:'🔧', financeiro:'💰', pessoal:'🏠' };
 
-function saveTarefas() { _ls.setItem('crm_tarefas', JSON.stringify(tarefas)); }
+function saveTarefas() { localStorage.setItem('crm_tarefas', JSON.stringify(tarefas)); }
 
 function updateAgendaBadge() {
   const badge = document.getElementById('badge-agenda');
@@ -5815,11 +5797,11 @@ function exportarDados() {
                   'crm_pedidos','crm_mn_pends','crm_clientes','crm_maquinas','crm_entregas','crm_tarefas'];
   const dados = {};
   chaves.forEach(k => {
-    const v = _ls.getItem(k);
+    const v = localStorage.getItem(k);
     if (v) dados[k] = JSON.parse(v);
   });
   for (let i = 0; i < 12; i++) {
-    const v = _ls.getItem('crm_meta_mes_' + i);
+    const v = localStorage.getItem('crm_meta_mes_' + i);
     if (v) dados['crm_meta_mes_' + i] = v;
   }
   dados._exportadoEm = new Date().toLocaleString('pt-BR');
@@ -5843,13 +5825,13 @@ function importarDados(event) {
       let importados = 0;
       chaves.forEach(k => {
         if (dados[k] !== undefined) {
-          _ls.setItem(k, JSON.stringify(dados[k]));
+          localStorage.setItem(k, JSON.stringify(dados[k]));
           importados++;
         }
       });
       for (let i = 0; i < 12; i++) {
         const k = 'crm_meta_mes_' + i;
-        if (dados[k] !== undefined) _ls.setItem(k, dados[k]);
+        if (dados[k] !== undefined) localStorage.setItem(k, dados[k]);
       }
       alert('✅ Dados importados com sucesso! (' + importados + ' seções carregadas)\nA página será recarregada.');
       location.reload();
