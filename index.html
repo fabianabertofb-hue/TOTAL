@@ -2459,11 +2459,11 @@
   const _memStore = {};
   const _ls = (() => {
     try {
-      _ls.setItem('__test__', '1');
-      _ls.removeItem('__test__');
+      localStorage.setItem('__crm_test__', '1');
+      localStorage.removeItem('__crm_test__');
       return localStorage;
     } catch(e) {
-      console.warn('[CRM] localStorage bloqueado (file://), usando memória. Dados serão perdidos ao fechar a aba.');
+      console.warn('[CRM] localStorage bloqueado, usando memória temporária.');
       return {
         getItem: k => _memStore[k] !== undefined ? _memStore[k] : null,
         setItem: (k, v) => { _memStore[k] = String(v); },
