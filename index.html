@@ -4060,10 +4060,18 @@ function toggleSalePago(id) {
 }
 
 // ===== FATURAMENTO =====
-let faturamentos = JSON.parse(localStorage.getItem('crm_faturamentos') || '{}'); // { mes: [{...}] }
+// carrega e sanitiza faturamentos — garante que cada mês é sempre um array
+let faturamentos = (function() {
+  try {
+    var raw = JSON.parse(localStorage.getItem('crm_faturamentos') || '{}');
+    if (typeof raw !== 'object' || Array.isArray(raw)) raw = {};
+    for (var k in raw) { if (!Array.isArray(raw[k])) raw[k] = []; }
+    return raw;
+  } catch(e) { return {}; }
+})();
 let fatMesAtivo  = new Date().getMonth();
 
-function getFatMes(m) { if (!faturamentos[m]) faturamentos[m] = []; return faturamentos[m]; }
+function getFatMes(m) { if (!Array.isArray(faturamentos[m])) faturamentos[m] = []; return faturamentos[m]; }
 function saveFat() { localStorage.setItem('crm_faturamentos', JSON.stringify(faturamentos)); }
 
 function buildFatTabs() {
