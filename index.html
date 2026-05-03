@@ -130,15 +130,35 @@
   .at-card.urg-baixa  { border-left-color:#10b981; }
 
   /* cores por status */
-  .at-card.st-solicitacao  { background:#eff6ff; }
-  .at-card.st-andamento    { background:#faf5ff; }
-  .at-card.st-orcamento    { background:#fffbeb; }
-  .at-card.st-peca         { background:#fff7ed; }
-  .at-card.st-concluido    { background:#f0fdf4; opacity:0.88; }
+  .at-card.st-solicitacao  { background:#dbeafe; border-left-color:#3b82f6 !important; }
+  .at-card.st-solicitacao .at-card-nome { color:#1e40af; }
+  .at-card.st-andamento    { background:#ede9fe; border-left-color:#7c3aed !important; }
+  .at-card.st-andamento .at-card-nome { color:#4c1d95; }
+  .at-card.st-orcamento    { background:#fef3c7; border-left-color:#d97706 !important; }
+  .at-card.st-orcamento .at-card-nome { color:#92400e; }
+  .at-card.st-peca         { background:#ffedd5; border-left-color:#ea580c !important; }
+  .at-card.st-peca .at-card-nome { color:#7c2d12; }
+  .at-card.st-concluido    { background:#f0fdf4; opacity:0.82; }
   .at-card.st-concluido .at-card-nome { color:#065f46; }
 
   /* data finalização no card */
   .at-card-findate { font-size:11px; color:#059669; font-weight:700; background:#d1fae5; padding:2px 8px; border-radius:20px; white-space:nowrap; }
+
+  /* flash de status alterado */
+  @keyframes statusFlash {
+    0%   { box-shadow: 0 0 0 0 rgba(79,70,229,0.0); }
+    20%  { box-shadow: 0 0 0 6px rgba(79,70,229,0.55), inset 0 0 0 2px rgba(79,70,229,0.18); background-color: #eef2ff; }
+    60%  { box-shadow: 0 0 0 4px rgba(79,70,229,0.25); }
+    100% { box-shadow: var(--shadow-sm); }
+  }
+  @keyframes statusFlashGreen {
+    0%   { box-shadow: 0 0 0 0 rgba(16,185,129,0.0); }
+    20%  { box-shadow: 0 0 0 6px rgba(16,185,129,0.55), inset 0 0 0 2px rgba(16,185,129,0.18); background-color: #d1fae5; }
+    60%  { box-shadow: 0 0 0 4px rgba(16,185,129,0.25); }
+    100% { box-shadow: var(--shadow-sm); }
+  }
+  .at-card.status-changed       { animation: statusFlash 0.9s ease-out forwards; }
+  .at-card.status-changed-green { animation: statusFlashGreen 0.9s ease-out forwards; }
   .at-card-top { display:flex; align-items:flex-start; justify-content:space-between; gap:8px; margin-bottom:8px; }
   .at-card-nome { font-size:14px; font-weight:700; color:var(--text); }
   .at-card-equip { font-size:12px; color:var(--text-muted); margin-top:2px; }
@@ -780,8 +800,10 @@
     left: 11px; top: 50%;
     transform: translateY(-50%);
     font-size: 15px;
-    pointer-events: none;
+    pointer-events: auto;
+    cursor: text;
     color: var(--text-muted);
+    z-index: 1;
   }
   .mn-search {
     width: 100%;
@@ -1650,7 +1672,7 @@
   <!-- CONTROLES: busca + ordenar -->
   <div class="mn-controls">
     <div class="mn-search-wrap">
-      <span class="search-icon">🔍</span>
+      <span class="search-icon" onclick="document.getElementById('mn-search-input').focus()">🔍</span>
       <input class="mn-search" id="mn-search-input" type="text"
         placeholder="Buscar condomínio ou cliente..." oninput="renderManut()">
     </div>
@@ -1715,7 +1737,7 @@
     <div class="mn-add-row" onclick="addManutRow()">
       <span style="font-size:16px;line-height:1">＋</span> Adicionar linha
     </div>
-  
+  </div><!-- /mn-sheet-wrap -->
 
   <!-- =================== BOLETOS EM ABERTO =================== -->
   <div style="margin-top:28px;border-top:2px solid var(--border);padding-top:20px" id="mn-boletos-wrap">
@@ -3904,6 +3926,12 @@ function salvarAt() {
   const cliente = document.getElementById('at-f-cliente').value.trim();
   const assunto = document.getElementById('at-f-assunto').value.trim();
   if (!cliente || !assunto) { alert('Preencha cliente e assunto!'); return; }
+  const novoStatus = document.getElementById('at-f-status').value;
+  let statusMudou = false;
+  if (atEditId) {
+    const prev = atendimentos.find(x => x.id === atEditId);
+    if (prev && prev.status !== novoStatus) statusMudou = true;
+  }
   const atend = {
     id:       atEditId || Date.now().toString(),
     cliente,
@@ -3911,11 +3939,12 @@ function salvarAt() {
     assunto,
     obs:      document.getElementById('at-f-obs').value.trim(),
     urgencia: document.getElementById('at-f-urgencia').value,
-    status:   document.getElementById('at-f-status').value,
+    status:   novoStatus,
     data:     document.getElementById('at-f-data').value || new Date().toISOString().slice(0,10),
-    dataFinalizacao: document.getElementById('at-f-status').value === 'Concluído'
+    dataFinalizacao: novoStatus === 'Concluído'
       ? (document.getElementById('at-f-datafinalizacao').value || new Date().toISOString().slice(0,10))
       : '',
+    _statusChanged: statusMudou ? Date.now() : (atEditId ? (atendimentos.find(x=>x.id===atEditId)||{})._statusChanged : 0),
   };
   if (atEditId) {
     const idx = atendimentos.findIndex(x => x.id === atEditId);
@@ -3927,7 +3956,7 @@ function salvarAt() {
   sincronizarComManut(atend);
   document.getElementById('at-modal-overlay').classList.add('hidden');
   atEditId = null;
-  renderAt();
+  renderAt(atend._statusChanged ? atend.id : null);
 }
 
 function removerAt(id) {
@@ -3936,7 +3965,7 @@ function removerAt(id) {
   saveAt(); renderAt();
 }
 
-function renderAt() {
+function renderAt(flashId) {
   const grid    = document.getElementById('at-grid');
   const query   = (document.getElementById('at-search')?.value || '').toLowerCase().trim();
   const urgFilt = atFiltros.urgencia;
@@ -3947,6 +3976,13 @@ function renderAt() {
     const matchSt  = stFilt  === 'todos' || a.status   === stFilt;
     const matchQ   = !query  || (a.cliente+a.equip+a.assunto).toLowerCase().includes(query);
     return matchUrg && matchSt && matchQ;
+  });
+
+  // Concluídos sempre no final
+  lista.sort((a, b) => {
+    const aConcluido = a.status === 'Concluído' ? 1 : 0;
+    const bConcluido = b.status === 'Concluído' ? 1 : 0;
+    return aConcluido - bConcluido;
   });
 
   document.getElementById('at-count').textContent = `${lista.length} registro${lista.length !== 1 ? 's' : ''}`;
@@ -3975,7 +4011,7 @@ function renderAt() {
     const temObs = a.obs ? `<span class="at-obs-tag">obs</span>` : '';
     const finDate = a.dataFinalizacao
       ? `<span class="at-card-findate">✅ Finalizado: ${fmtDate(a.dataFinalizacao)}</span>` : '';
-    return `<div class="at-card ${uc} ${sc}" onclick="abrirAtModal('${a.id}')">
+    return `<div class="at-card ${uc} ${sc}" id="at-card-${a.id}" onclick="abrirAtModal('${a.id}')">
       <div class="at-card-top">
         <div>
           <div class="at-card-nome">${esc(a.cliente)}</div>
@@ -3993,6 +4029,18 @@ function renderAt() {
       </div>
     </div>`;
   }).join('');
+
+  // Flash no card que teve status alterado
+  if (flashId) {
+    const el = document.getElementById('at-card-' + flashId);
+    if (el) {
+      const isConcluido = el.classList.contains('st-concluido');
+      const flashClass  = isConcluido ? 'status-changed-green' : 'status-changed';
+      el.classList.add(flashClass);
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      setTimeout(() => el.classList.remove(flashClass), 1000);
+    }
+  }
 }
 
 // ===== BOLETOS EM ABERTO (painel na aba Manutenção) =====
