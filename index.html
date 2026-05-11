@@ -475,37 +475,15 @@
   .vd-total-mes { font-size:13px; font-weight:700; color:var(--green); background:#f0fdf4; border:1px solid #bbf7d0; border-radius:8px; padding:6px 14px; white-space:nowrap; }
 
   /* ── ALERTA VENCIMENTO ── */
-  .cell-cliente-vencido {
-    background: #fee2e2 !important;
-    color: #b91c1c !important;
-    font-weight: 700 !important;
-  }
-  /* ── ALERTAS DE PROXIMIDADE DE MANUTENÇÃO ── */
-  .cell-cliente-atencao {
-    background: #fef3c7 !important;
-    color: #92400e !important;
-    font-weight: 700 !important;
-  }
-  .cell-cliente-urgente {
-    background: #ffedd5 !important;
-    color: #9a3412 !important;
-    font-weight: 700 !important;
-  }
-  .mn-dias-badge {
-    display: inline-block;
-    font-size: 9px;
-    font-weight: 700;
-    padding: 1px 5px;
-    border-radius: 20px;
-    white-space: nowrap;
-    margin-left: 3px;
-    vertical-align: middle;
-  }
-  .mn-dias-ok      { background: #d1fae5; color: #065f46; }
-  .mn-dias-atencao { background: #fef3c7; color: #92400e; }
-  .mn-dias-urgente { background: #ffedd5; color: #9a3412; }
-  .mn-dias-vencido { background: #fee2e2; color: #b91c1c; }
-  .mn-dias-sem     { background: #f1f5f9; color: #64748b; }
+  .cell-cliente-vencido  { background:#fee2e2!important; color:#b91c1c!important; font-weight:700!important; }
+  .cell-cliente-atencao { background:#fef3c7!important; color:#92400e!important; font-weight:700!important; }
+  .cell-cliente-urgente { background:#ffedd5!important; color:#9a3412!important; font-weight:700!important; }
+  .mn-dias-badge { display:inline-block; font-size:9px; font-weight:700; padding:1px 5px; border-radius:20px; white-space:nowrap; margin-left:2px; vertical-align:middle; }
+  .mn-dias-ok      { background:#d1fae5; color:#065f46; }
+  .mn-dias-atencao { background:#fef3c7; color:#92400e; }
+  .mn-dias-urgente { background:#ffedd5; color:#9a3412; }
+  .mn-dias-vencido { background:#fee2e2; color:#b91c1c; }
+  .mn-dias-sem     { background:#f1f5f9; color:#64748b; }
   .alerta-icon { font-size:13px; margin-right:2px; }
 
   /* ── GRÁFICO MENSAL ── */
@@ -1035,7 +1013,7 @@
   .cell-input {
     width: 100%; border: none; outline: none; background: transparent;
     font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--text);
-    padding: 10px 12px; transition: background 0.1s;
+    padding: 7px 8px; transition: background 0.1s;
     min-width: 0;
   }
   .cell-input:focus { background: #eef2ff; }
@@ -1500,61 +1478,29 @@
   <label style="padding:7px 13px;background:var(--blue);color:white;border-radius:var(--radius-sm);font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap" title="Importar dados de um backup">⬆️ Importar<input type="file" accept=".json" onchange="importarDados(event)" style="display:none"></label>
 </nav>
 
-<!-- =================== DASHBOARD =================== -->
-<div class="page active" id="page-dashboard">
-  <div style="padding:24px">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px">
-      <div>
-        <div style="font-size:20px;font-weight:700;color:var(--text)">Olá! 👋 Bem-vindo ao CRM</div>
-        <div style="font-size:13px;color:var(--text-muted);margin-top:4px" id="dash-subtitle"></div>
-      </div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <button class="btn-primary" onclick="showTab('manutencao')" style="font-size:13px">🔧 Abrir Manutenção</button>
-        <button class="btn-primary" onclick="showTab('faturamento')" style="font-size:13px;background:var(--green)">🧾 Lançar Faturamento</button>
-      </div>
-    </div>
-
-    <!-- KPIs principais -->
-    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;margin-bottom:28px" id="dash-kpis"></div>
-
-    <!-- Linha 2: alertas manutenção + follow-ups vencidos -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px">
-      <div class="metric-card" style="padding:20px 24px">
-        <div class="metric-label" style="margin-bottom:14px">🔧 Manutenção este mês</div>
-        <div id="dash-manut"></div>
-      </div>
-      <div class="metric-card" style="padding:20px 24px">
-        <div class="metric-label" style="margin-bottom:14px">📅 Follow-ups vencidos</div>
-        <div id="dash-followups"></div>
-      </div>
-    </div>
-
-    <!-- Linha 3: pendências + atendimentos abertos -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px">
-      <div class="metric-card" style="padding:20px 24px">
-        <div class="metric-label" style="margin-bottom:14px">📋 Pendências abertas</div>
-        <div id="dash-pends"></div>
-      </div>
-      <div class="metric-card" style="padding:20px 24px">
-        <div class="metric-label" style="margin-bottom:14px">🛠 Atendimentos em aberto</div>
-        <div id="dash-atends"></div>
-      </div>
-    </div>
-
-    <!-- Linha 4: últimas vendas + boletos -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
-      <div class="metric-card" style="padding:20px 24px">
-        <div class="metric-label" style="margin-bottom:14px">💰 Últimas vendas</div>
-        <div id="dash-vendas"></div>
-      </div>
-      <div class="metric-card" style="padding:20px 24px">
-        <div class="metric-label" style="margin-bottom:14px">📄 Boletos em aberto</div>
-        <div id="dash-boletos"></div>
-      </div>
-    </div>
+<!-- DASHBOARD -->
+<div class="page active" id="page-dashboard"><div style="padding:24px">
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px">
+  <div><div style="font-size:20px;font-weight:700">Olá! 👋</div><div style="font-size:13px;color:var(--text-muted);margin-top:4px" id="dash-subtitle"></div></div>
+  <div style="display:flex;gap:8px">
+    <button class="btn-primary" onclick="showTab('manutencao')" style="font-size:13px">🔧 Manutenção</button>
+    <button class="btn-primary" onclick="showTab('faturamento')" style="font-size:13px;background:var(--green)">🧾 Faturamento</button>
   </div>
 </div>
-
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;margin-bottom:28px" id="dash-kpis"></div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px">
+  <div class="metric-card" style="padding:20px 24px"><div class="metric-label" style="margin-bottom:14px">🔧 Manutenção este mês</div><div id="dash-manut"></div></div>
+  <div class="metric-card" style="padding:20px 24px"><div class="metric-label" style="margin-bottom:14px">📅 Follow-ups vencidos</div><div id="dash-followups"></div></div>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px">
+  <div class="metric-card" style="padding:20px 24px"><div class="metric-label" style="margin-bottom:14px">📋 Pendências abertas</div><div id="dash-pends"></div></div>
+  <div class="metric-card" style="padding:20px 24px"><div class="metric-label" style="margin-bottom:14px">🛠 Atendimentos em aberto</div><div id="dash-atends"></div></div>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+  <div class="metric-card" style="padding:20px 24px"><div class="metric-label" style="margin-bottom:14px">💰 Últimas vendas</div><div id="dash-vendas"></div></div>
+  <div class="metric-card" style="padding:20px 24px"><div class="metric-label" style="margin-bottom:14px">📄 Boletos em aberto</div><div id="dash-boletos"></div></div>
+</div>
+</div></div>
 <!-- =================== FUNIL =================== -->
 <div class="page" id="page-funil">
   <div class="metrics-grid">
@@ -1735,7 +1681,7 @@
     <div class="mn-title">🔧 Manutenção — <span id="mn-mes-titulo">Janeiro</span></div>
     <div style="display:flex;gap:8px">
       <button class="btn-novo-atend" style="background:var(--green)" onclick="abrirRelatorioMensal()">📋 Relatório Mensal</button>
-      <label class="btn-novo-atend" style="background:#4285f4;cursor:pointer" title="Importe o .ics do Google Calendar para preencher preventivas automaticamente">
+      <label class="btn-novo-atend" style="background:#4285f4;cursor:pointer" title="Importar preventivas do Google Calendar (.ics)">
         📅 Importar Google Calendar
         <input type="file" accept=".ics" onchange="importarGoogleCalendar(event)" style="display:none">
       </label>
@@ -1827,10 +1773,10 @@
       <thead>
         <tr>
           <th class="th-num">#</th>
-          <th style="min-width:160px">Condomínio / Cliente</th>
-          <th style="min-width:110px;background:#f8f9fb;color:var(--text-muted)" title="Preventiva do mês anterior">📅 Prev. Ant.</th>
-          <th style="min-width:100px">Dt. Preventiva</th>
-          <th style="min-width:160px;padding:0!important">
+          <th style="min-width:140px">Condomínio / Cliente</th>
+          <th style="min-width:82px;background:#f8f9fb;color:var(--text-muted);font-size:10px" title="Preventiva mês anterior">📅 Prev. Ant.</th>
+          <th style="min-width:86px">Dt. Preventiva</th>
+          <th style="min-width:115px;padding:0!important">
             <div style="display:flex;flex-direction:column">
               <div style="padding:4px 6px;text-align:center;font-size:11px;font-weight:700;color:var(--text-muted);border-bottom:1px solid var(--border)">Dt. Corretiva</div>
               <div style="display:flex">
@@ -1839,12 +1785,12 @@
               </div>
             </div>
           </th>
-          <th style="min-width:90px">📅 Periodicidade</th>
-          <th style="min-width:100px">Nº Proposta</th>
-          <th style="min-width:100px">Dt. Relatório</th>
-          <th style="min-width:90px">🧹 Limpeza</th>
-          <th style="min-width:160px">📦 Pedidos</th>
-          <th style="min-width:200px">⚠️ Pendências</th>
+          <th style="min-width:75px;font-size:10px">Period.</th>
+          <th style="min-width:82px">Nº Proposta</th>
+          <th style="min-width:84px">Dt. Relatório</th>
+          <th style="min-width:76px">🧹 Limpeza</th>
+          <th style="min-width:140px">📦 Pedidos</th>
+          <th style="min-width:165px">⚠️ Pendências</th>
           <th style="width:36px"></th>
         </tr>
       </thead>
@@ -2305,7 +2251,7 @@
     </div>
     <div class="at-form-row">
       <div class="at-form-group">
-        <label>Telefone / WhatsApp</label>
+        <label>📲 WhatsApp</label>
         <input id="at-f-tel" placeholder="(11) 99999-9999">
       </div>
     </div>
@@ -2576,7 +2522,7 @@
     </div>
     <div class="form-row">
       <div class="form-group">
-        <label>Telefone / WhatsApp</label>
+        <label>📲 WhatsApp</label>
         <input type="text" id="l-tel" placeholder="(11) 99999-9999">
       </div>
       <div class="form-group">
@@ -2739,19 +2685,19 @@ function renderFunil() {
         card.draggable = true;
         card.dataset.id = lead.id;
         const tagClass   = lead.type === 'Locação' ? 'tag-locacao' : lead.type === 'Manutenção' ? 'tag-manutencao' : 'tag-venda';
-        const hoje = new Date().toISOString().slice(0,10);
-        const fuVencido = lead.followup && lead.followup < hoje;
-        const fuHoje    = lead.followup && lead.followup === hoje;
-        const fuCor     = fuVencido ? 'var(--red)' : fuHoje ? 'var(--orange)' : 'var(--blue)';
-        const fuIcon    = fuVencido ? '🔴' : fuHoje ? '🟠' : '📅';
-        const fuLabel   = fuVencido ? ' ⚠️ VENCIDO' : fuHoje ? ' HOJE!' : '';
-        const followupStr = lead.followup ? `<div style="font-size:11px;color:${fuCor};margin-top:4px;font-weight:700;${fuVencido?'background:#fee2e2;padding:2px 6px;border-radius:4px;':''}">  ${fuIcon} Follow-up: ${fmtDate(lead.followup)}${fuLabel}</div>` : '';
+        const _hs = new Date().toISOString().slice(0,10);
+        const _fv = lead.followup && lead.followup < _hs;
+        const _fhj = lead.followup && lead.followup === _hs;
+        const _fc = _fv ? 'var(--red)' : _fhj ? 'var(--orange)' : 'var(--blue)';
+        const _fi = _fv ? '🔴' : _fhj ? '🟠' : '📅';
+        const _fl = _fv ? ' ⚠️ VENCIDO' : _fhj ? ' HOJE!' : '';
+        const followupStr = lead.followup ? `<div style="font-size:11px;color:${_fc};margin-top:4px;font-weight:700;${_fv?'background:#fee2e2;padding:2px 6px;border-radius:4px;':''}">${_fi} Follow-up: ${fmtDate(lead.followup)}${_fl}</div>` : '';
         const obsStr      = lead.obs ? `<div style="font-size:11px;color:var(--text-muted);margin-top:3px;font-style:italic;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${lead.obs}">${lead.obs}</div>` : '';
         card.innerHTML = `
           <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:4px">
             <div class="lead-name" style="flex:1">${lead.name}</div>
             <button class="btn-edit-lead" onclick="editLead('${lead.id}')" title="Editar">✏️</button>
-            ${lead.tel ? `<a href="https://wa.me/55${lead.tel.replace(/\D/g,'')}" target="_blank" style="background:none;border:none;cursor:pointer;font-size:14px;text-decoration:none;padding:1px 3px;opacity:0.6;transition:opacity 0.15s" title="WhatsApp: ${lead.tel}" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.6">📲</a>` : ''}
+            ${lead.tel ? `<a href="https://wa.me/55${lead.tel.replace(/\D/g,'')}" target="_blank" style="font-size:14px;text-decoration:none;opacity:0.6" title="WhatsApp">📲</a>` : ''}
             <button class="btn-remove"    onclick="removeLead('${lead.id}')">×</button>
           </div>
           <div class="lead-value">${fmt(lead.value || 0)}</div>
@@ -2811,9 +2757,9 @@ function saveLead() {
   const data = {
     name,
     value:    document.getElementById('l-value').value,
+    tel:      document.getElementById('l-tel').value.trim(),
     stage:    document.getElementById('l-stage').value,
     type:     document.getElementById('l-type').value,
-    tel:      document.getElementById('l-tel').value.trim(),
     inicio:   document.getElementById('l-inicio').value,
     followup: document.getElementById('l-followup').value,
     obs:      document.getElementById('l-obs').value.trim(),
@@ -3493,45 +3439,6 @@ function renderVencimentos() {
   }).join('');
 }
 
-
-function prevMesAnterior(clienteNome) {
-  if (!clienteNome || !clienteNome.trim())
-    return '<span style="color:var(--text-light);font-size:12px">—</span>';
-  var mesAnt   = (manutMesAtivo + 11) % 12;
-  var listaAnt = manuts[mesAnt] || [];
-  var entrada  = listaAnt.find(function(x) {
-    return x.cliente && x.cliente.trim().toLowerCase() === clienteNome.trim().toLowerCase();
-  });
-  if (!entrada)
-    return '<span style="color:var(--text-light);font-size:12px">—</span>';
-  if (!entrada.preventiva)
-    return '<span style="background:#fee2e2;color:#b91c1c;padding:2px 7px;border-radius:20px;font-size:10px;font-weight:700">Não feita</span>';
-  return '<span style="background:#d1fae5;color:#065f46;padding:2px 7px;border-radius:20px;font-size:10px;font-weight:700">✓ ' + fmtDate(entrada.preventiva) + '</span>';
-}
-
-function propagarCondominiosParaProximoMes() {
-  var mesAnterior  = (manutMesAtivo + 11) % 12;
-  var listaAnt     = getManutsMes(mesAnterior);
-  var listaAtual   = getManutsMes(manutMesAtivo);
-  var houveMudanca = false;
-  listaAnt.forEach(function(orig) {
-    if (!orig.cliente || !orig.cliente.trim()) return;
-    var jaExiste = listaAtual.some(function(x) {
-      return x.cliente && x.cliente.trim().toLowerCase() === orig.cliente.trim().toLowerCase();
-    });
-    if (!jaExiste) {
-      listaAtual.push({
-        id: 'auto_' + Date.now() + '_' + Math.random().toString(36).slice(2),
-        cliente: orig.cliente,
-        preventiva: '', corretiva: '', corretiva2: '',
-        proposta: '', propostaStatus: '', relatorio: '', limpeza: '', periodicidade: ''
-      });
-      houveMudanca = true;
-    }
-  });
-  if (houveMudanca) save();
-}
-
 function renderManut() {
   const tbody    = document.getElementById('manut-list');
   const searchEl = document.getElementById('mn-search-input');
@@ -3577,20 +3484,18 @@ function renderManut() {
     const diasSemPrev = m.preventiva
       ? Math.floor((hoje - new Date(m.preventiva + 'T00:00:00')) / 86400000)
       : 999;
-    // Níveis: ok (<20d), atenção (20-25d), urgente (26-30d), vencido (>30d), sem data
     const clienteOk      = (m.preventiva && diasSemPrev < 20) ? 'cell-cliente-ok' : '';
     const clienteAtencao = (m.preventiva && diasSemPrev >= 20 && diasSemPrev <= 25) ? 'cell-cliente-atencao' : '';
     const clienteUrgente = (m.preventiva && diasSemPrev >= 26 && diasSemPrev <= 30) ? 'cell-cliente-urgente' : '';
     const alertaVenc     = (m.preventiva && diasSemPrev > 30 && m.cliente) ? 'cell-cliente-vencido' : '';
     const semData        = (!m.preventiva && m.cliente) ? 'cell-cliente-vencido' : '';
     const alertaVencFinal = clienteOk ? '' : (clienteAtencao || clienteUrgente || alertaVenc || semData);
-    // Badge de dias
     const diasBadge = (() => {
       if (!m.cliente) return '';
       if (!m.preventiva) return '<span class="mn-dias-badge mn-dias-sem">sem data</span>';
       if (diasSemPrev > 30) return '<span class="mn-dias-badge mn-dias-vencido">⚠️ ' + diasSemPrev + 'd</span>';
-      if (diasSemPrev >= 26) return '<span class="mn-dias-badge mn-dias-urgente">🟠 ' + diasSemPrev + 'd/' + (30-diasSemPrev) + ' p/vencer</span>';
-      if (diasSemPrev >= 20) return '<span class="mn-dias-badge mn-dias-atencao">🟡 ' + diasSemPrev + 'd/' + (30-diasSemPrev) + ' p/vencer</span>';
+      if (diasSemPrev >= 26) return '<span class="mn-dias-badge mn-dias-urgente">🟠 ' + diasSemPrev + 'd · faltam ' + (30-diasSemPrev) + 'd</span>';
+      if (diasSemPrev >= 20) return '<span class="mn-dias-badge mn-dias-atencao">🟡 ' + diasSemPrev + 'd · faltam ' + (30-diasSemPrev) + 'd</span>';
       return '<span class="mn-dias-badge mn-dias-ok">✓ ' + diasSemPrev + 'd</span>';
     })();
     const relatorioOk = m.relatorio ? 'td-relatorio-ok' : '';
@@ -3599,21 +3504,21 @@ function renderManut() {
     return `
     <tr class="${rowClass}">
       <td class="td-num">${i + 1}</td>
-      <td style="position:relative">
+      <td>
       <input class="cell-input cell-cliente ${clienteOk} ${clienteAtencao} ${clienteUrgente} ${alertaVenc} ${semData}"
             value="${(alertaVenc||semData) ? '⚠️ ' + esc(m.cliente) : esc(m.cliente)}"
             placeholder="Nome do condomínio..."
-            title="${alertaVencFinal ? 'Atenção: ' + diasSemPrev + ' dias desde a última preventiva!' : (m.preventiva ? diasSemPrev + ' dias desde a última preventiva' : '')}"
+            title="${m.preventiva ? diasSemPrev + ' dias desde a última preventiva' : 'Sem preventiva registrada'}"
             oninput="updateManut('${m.id}','cliente',this.value.replace(/^⚠️\s*/,''))">
-      <div style="padding:0 8px 4px;line-height:1">${diasBadge}</div>
+      <div style="padding:0 6px 3px">${diasBadge}</div>
     </td>
-      <td style="background:#f8f9fb;text-align:center;padding:8px 6px">${prevMesAnterior(m.cliente)}</td>
+      <td style="background:#f8f9fb;text-align:center;padding:5px 4px">${prevMesAnterior(m.cliente)}</td>
       <td>
         <div style="display:flex;align-items:center">
           <input class="cell-input"
                  type="date"
                  value="${m.preventiva || ''}"
-                 style="font-size:11px;padding:7px 4px;"
+                 style="font-size:11px;padding:5px 3px;"
                  oninput="updateManut('${m.id}','preventiva',this.value)"
                  title="${m.preventiva ? 'Preventiva realizada em ' + fmtDate(m.preventiva) : 'Sem data'}">
           ${m.preventiva ? '<span style="color:var(--green);font-size:12px;padding-right:4px;flex-shrink:0">✓</span>' : ''}
@@ -3622,11 +3527,11 @@ function renderManut() {
       <td style="padding:0!important;vertical-align:middle">
         <div style="display:flex;flex-direction:column;gap:0">
           <input class="cell-input" type="date" value="${m.corretiva || ''}"
-              style="border-bottom:1px solid var(--border);border-radius:0;margin:0;font-size:11px;padding:7px 4px;"
+              style="border-bottom:1px solid var(--border);border-radius:0;margin:0;font-size:11px;padding:5px 3px;"
               placeholder="1ª corretiva"
               oninput="updateManut('${m.id}','corretiva',this.value)">
           <input class="cell-input" type="date" value="${m.corretiva2 || ''}"
-              style="border-radius:0;margin:0;font-size:11px;padding:7px 4px;"
+              style="border-radius:0;margin:0;font-size:11px;padding:5px 3px;"
               placeholder="2ª corretiva"
               oninput="updateManut('${m.id}','corretiva2',this.value)">
         </div>
@@ -3658,11 +3563,11 @@ function renderManut() {
       </td>
       <td class="${relatorioOk}">
         <input class="cell-input" type="date" value="${m.relatorio || ''}"
-            style="font-size:11px;padding:7px 4px;"
+            style="font-size:11px;padding:5px 3px;"
             oninput="updateManut('${m.id}','relatorio',this.value)"></td>
       <td class="${m.limpeza ? 'td-limpeza-ok' : ''}">
         <input class="cell-input" type="date" value="${m.limpeza || ''}"
-            style="font-size:11px;padding:7px 4px;"
+            style="font-size:11px;padding:5px 3px;"
             title="${m.limpeza ? 'Limpeza realizada em ' + fmtDate(m.limpeza) : 'Sem data'}"
             oninput="updateManut('${m.id}','limpeza',this.value)"></td>
       <td style="padding:6px 8px;vertical-align:top;min-width:180px">
@@ -4229,7 +4134,6 @@ function renderAt(flashId) {
           <div class="at-card-nome">${esc(a.cliente)}</div>
           ${a.equip ? `<div class="at-card-equip">🔩 ${esc(a.equip)}</div>` : ''}
         </div>
-        ${a.tel ? `<a href="https://wa.me/55${a.tel.replace(/\D/g,'')}" target="_blank" onclick="event.stopPropagation()" style="background:none;border:none;cursor:pointer;font-size:15px;text-decoration:none;opacity:0.5;transition:opacity 0.15s" title="WhatsApp" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.5">📲</a>` : ''}
         <button class="at-card-del" onclick="event.stopPropagation();removerAt('${a.id}')" title="Remover">×</button>
       </div>
       <div class="at-card-assunto">${esc(a.assunto)}</div>
@@ -4785,155 +4689,6 @@ function gerarRelatorio() {
       '<td style="padding:10px;text-align:right;color:var(--green);font-family:DM Mono,monospace">' + fmt(totalGasto) + '</td>' +
       '<td style="padding:10px;text-align:right;color:var(--orange);font-family:DM Mono,monospace">' + (mediaKml ? mediaKml.toFixed(2) : '—') + '</td>' +
     '</tr></tbody></table>';
-}
-
-
-// ===== DASHBOARD =====
-function renderDashboard() {
-  const hoje     = new Date();
-  const mesAtual = hoje.getMonth();
-  const hojeStr  = hoje.toISOString().slice(0,10);
-
-  // Subtítulo com data
-  const sub = document.getElementById('dash-subtitle');
-  if (sub) sub.textContent = hoje.toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long',year:'numeric'});
-
-  // ── KPIs ──
-  const listaManutMes  = getManutsMes(mesAtual);
-  const semPreventiva  = listaManutMes.filter(m => m.cliente && !m.preventiva).length;
-  const totalManut     = listaManutMes.filter(m => m.cliente).length;
-  const totalAtAbertos = atendimentos.filter(a => a.status !== 'Concluído').length;
-  const totalLeads     = leads.filter(l => !['Fechado','Perdido'].includes(l.stage)).length;
-  const faturMes       = (faturamentos[mesAtual]||[]).reduce((s,f) => s + (f.valor||0), 0);
-  const pendAbertas    = pendings.filter(p => !p.done).length;
-  const fuVencidos     = leads.filter(l => l.followup && l.followup < hojeStr && !['Fechado','Perdido'].includes(l.stage)).length;
-
-  const kpisEl = document.getElementById('dash-kpis');
-  if (kpisEl) kpisEl.innerHTML = [
-    { icon:'🔧', label:'Condomínios s/ preventiva', val: semPreventiva + ' / ' + totalManut, cor: semPreventiva > 0 ? 'var(--red)' : 'var(--green)', onClick:"showTab('manutencao')" },
-    { icon:'🛠', label:'Atendimentos em aberto',    val: totalAtAbertos, cor: totalAtAbertos > 0 ? 'var(--orange)' : 'var(--green)', onClick:"showTab('atendimentos')" },
-    { icon:'🗂', label:'Leads em andamento',         val: totalLeads,     cor: 'var(--purple)', onClick:"showTab('funil')" },
-    { icon:'🧾', label:'Faturamento do mês',         val: fmt(faturMes),  cor: 'var(--blue)',   onClick:"showTab('faturamento')" },
-    { icon:'📋', label:'Pendências abertas',         val: pendAbertas,    cor: pendAbertas > 0 ? 'var(--orange)' : 'var(--green)', onClick:"showTab('pendencias')" },
-    { icon:'📅', label:'Follow-ups vencidos',        val: fuVencidos,     cor: fuVencidos > 0 ? 'var(--red)' : 'var(--green)', onClick:"showTab('funil')" },
-  ].map(k => `<div class="dash-kpi-card" onclick="${k.onClick}" style="cursor:pointer;border-top:3px solid ${k.cor};transition:box-shadow 0.15s" onmouseover="this.style.boxShadow='var(--shadow)'" onmouseout="this.style.boxShadow='var(--shadow-sm)'">
-    <div class="dash-kpi-label">${k.icon} ${k.label}</div>
-    <div class="dash-kpi-value" style="color:${k.cor};font-size:22px">${k.val}</div>
-  </div>`).join('');
-
-  // ── Manutenção do mês ──
-  const manutEl = document.getElementById('dash-manut');
-  if (manutEl) {
-    const semPrev = listaManutMes.filter(m => m.cliente && !m.preventiva);
-    const comPrev = listaManutMes.filter(m => m.cliente && m.preventiva).length;
-    if (listaManutMes.filter(m=>m.cliente).length === 0) {
-      manutEl.innerHTML = '<div style="color:var(--text-light);font-size:13px">Nenhum condomínio cadastrado em ' + MESES[mesAtual] + '.</div>';
-    } else {
-      manutEl.innerHTML =
-        '<div style="display:flex;gap:12px;margin-bottom:12px">' +
-        '<div style="flex:1;text-align:center;background:var(--green-light);border-radius:8px;padding:10px"><div style="font-size:20px;font-weight:700;color:var(--green)">' + comPrev + '</div><div style="font-size:11px;color:var(--text-muted)">Com preventiva</div></div>' +
-        '<div style="flex:1;text-align:center;background:var(--red-light);border-radius:8px;padding:10px"><div style="font-size:20px;font-weight:700;color:var(--red)">' + semPrev.length + '</div><div style="font-size:11px;color:var(--text-muted)">Sem preventiva</div></div>' +
-        '</div>' +
-        (semPrev.length > 0 ? semPrev.slice(0,5).map(m =>
-          '<div style="padding:5px 8px;border-radius:6px;font-size:12px;border-left:3px solid var(--red);background:var(--bg);margin-bottom:4px">⚠️ ' + esc(m.cliente) + '</div>'
-        ).join('') + (semPrev.length > 5 ? '<div style="font-size:11px;color:var(--text-muted);margin-top:4px">+ ' + (semPrev.length-5) + ' mais...</div>' : '') : '<div style="color:var(--green);font-size:13px;font-weight:600">✅ Todos em dia!</div>');
-    }
-  }
-
-  // ── Follow-ups vencidos ──
-  const fuEl = document.getElementById('dash-followups');
-  if (fuEl) {
-    const vencidos = leads.filter(l => l.followup && l.followup < hojeStr && !['Fechado','Perdido'].includes(l.stage))
-                         .sort((a,b) => a.followup.localeCompare(b.followup));
-    if (vencidos.length === 0) {
-      fuEl.innerHTML = '<div style="color:var(--green);font-size:13px;font-weight:600">✅ Nenhum follow-up vencido!</div>';
-    } else {
-      fuEl.innerHTML = vencidos.slice(0,5).map(l => {
-        const dias = Math.floor((hoje - new Date(l.followup+'T00:00:00')) / 86400000);
-        const tel  = l.tel ? `<a href="https://wa.me/55${l.tel.replace(/\D/g,'')}" target="_blank" style="font-size:12px;text-decoration:none" title="WhatsApp">📲</a>` : '';
-        return `<div style="padding:6px 8px;border-radius:6px;font-size:12px;border-left:3px solid var(--red);background:#fff8f8;margin-bottom:4px;display:flex;align-items:center;justify-content:space-between;gap:6px">
-          <div><strong>${esc(l.name)}</strong><span style="color:var(--red);font-size:10px;margin-left:6px">há ${dias}d</span></div>
-          <div style="display:flex;gap:4px;align-items:center">${tel}<button onclick="showTab('funil')" style="font-size:10px;padding:2px 7px;background:var(--primary);color:white;border:none;border-radius:4px;cursor:pointer;font-family:DM Sans,sans-serif">Ver</button></div>
-        </div>`;
-      }).join('') + (vencidos.length > 5 ? `<div style="font-size:11px;color:var(--text-muted);margin-top:4px">+ ${vencidos.length-5} mais...</div>` : '');
-    }
-  }
-
-  // ── Pendências ──
-  const pendsEl = document.getElementById('dash-pends');
-  if (pendsEl) {
-    const abertas = pendings.filter(p => !p.done).sort((a,b) => {
-      const o = {Alta:0,Média:1,Baixa:2};
-      return (o[a.priority]??1) - (o[b.priority]??1);
-    });
-    if (abertas.length === 0) {
-      pendsEl.innerHTML = '<div style="color:var(--green);font-size:13px;font-weight:600">✅ Nenhuma pendência em aberto!</div>';
-    } else {
-      const corPrio = {Alta:'var(--red)',Média:'var(--orange)',Baixa:'var(--green)'};
-      pendsEl.innerHTML = abertas.slice(0,5).map(p =>
-        `<div style="padding:5px 8px;border-radius:6px;font-size:12px;border-left:3px solid ${corPrio[p.priority]||'var(--border)'};background:var(--bg);margin-bottom:4px;display:flex;justify-content:space-between;align-items:center">
-          <span>${esc(p.desc)}</span>
-          <span style="font-size:10px;color:${corPrio[p.priority]};font-weight:700">${p.priority}</span>
-        </div>`
-      ).join('') + (abertas.length > 5 ? `<div style="font-size:11px;color:var(--text-muted);margin-top:4px">+ ${abertas.length-5} mais</div>` : '');
-    }
-  }
-
-  // ── Atendimentos em aberto ──
-  const atendsEl = document.getElementById('dash-atends');
-  if (atendsEl) {
-    const abertos = atendimentos.filter(a => a.status !== 'Concluído')
-      .sort((a,b) => { const o={Alta:0,Média:1,Baixa:2}; return (o[a.urgencia]??1)-(o[b.urgencia]??1); });
-    if (abertos.length === 0) {
-      atendsEl.innerHTML = '<div style="color:var(--green);font-size:13px;font-weight:600">✅ Nenhum atendimento em aberto!</div>';
-    } else {
-      const corUrg = {Alta:'var(--red)',Média:'var(--orange)',Baixa:'var(--green)'};
-      atendsEl.innerHTML = abertos.slice(0,5).map(a =>
-        `<div style="padding:5px 8px;border-radius:6px;font-size:12px;border-left:3px solid ${corUrg[a.urgencia]||'var(--border)'};background:var(--bg);margin-bottom:4px">
-          <strong>${esc(a.cliente)}</strong> <span style="color:var(--text-muted)">— ${esc(a.assunto.substring(0,40))}${a.assunto.length>40?'...':''}</span>
-        </div>`
-      ).join('') + (abertos.length > 5 ? `<div style="font-size:11px;color:var(--text-muted);margin-top:4px">+ ${abertos.length-5} mais</div>` : '');
-    }
-  }
-
-  // ── Últimas vendas ──
-  const vendasEl = document.getElementById('dash-vendas');
-  if (vendasEl) {
-    const todasVendas = [];
-    for (let m = 0; m < 12; m++) { (sales[m]||[]).forEach(s => todasVendas.push(s)); }
-    todasVendas.sort((a,b) => (b.date||'').localeCompare(a.date||''));
-    if (todasVendas.length === 0) {
-      vendasEl.innerHTML = '<div style="color:var(--text-light);font-size:13px">Nenhuma venda registrada.</div>';
-    } else {
-      vendasEl.innerHTML = todasVendas.slice(0,5).map(s =>
-        `<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid #f5f5f5;font-size:13px">
-          <div><span style="font-weight:600">${esc(s.desc)}</span> <span style="font-size:11px;color:var(--text-muted)">${fmtDate(s.date)}</span></div>
-          <span style="font-weight:700;color:var(--green);font-family:DM Mono,monospace">${fmt(s.value)}</span>
-        </div>`
-      ).join('');
-    }
-  }
-
-  // ── Boletos em aberto ──
-  const boletosEl = document.getElementById('dash-boletos');
-  if (boletosEl) {
-    const boletos = [];
-    for (let m = 0; m < 12; m++) { (sales[m]||[]).filter(s => s.payment==='Boleto' && s.pago==='nao').forEach(s => boletos.push({...s,mes:m})); }
-    boletos.sort((a,b) => (a.date||'').localeCompare(b.date||''));
-    if (boletos.length === 0) {
-      boletosEl.innerHTML = '<div style="color:var(--green);font-size:13px;font-weight:600">✅ Nenhum boleto em aberto!</div>';
-    } else {
-      const total = boletos.reduce((s,b) => s + Number(b.value||0), 0);
-      boletosEl.innerHTML =
-        `<div style="font-size:13px;font-weight:700;color:var(--orange);margin-bottom:8px">Total: ${fmt(total)}</div>` +
-        boletos.slice(0,4).map(s =>
-          `<div style="display:flex;justify-content:space-between;align-items:center;padding:5px 8px;border-radius:6px;background:var(--orange-light);margin-bottom:4px;font-size:12px">
-            <span>${esc(s.desc)}</span>
-            <span style="font-weight:700;color:var(--orange)">${fmt(s.value)}</span>
-          </div>`
-        ).join('') + (boletos.length > 4 ? `<div style="font-size:11px;color:var(--text-muted);margin-top:4px">+ ${boletos.length-4} mais</div>` : '');
-    }
-  }
 }
 
 // ===== INIT =====
@@ -6267,205 +6022,227 @@ function importarDados(event) {
 }
 
 
-// ===== IMPORTAR GOOGLE CALENDAR (.ics) =====
+// ── Prev Mês Anterior ──
+function prevMesAnterior(clienteNome) {
+  if (!clienteNome || !clienteNome.trim()) return '<span style="color:var(--text-light);font-size:11px">—</span>';
+  var mesAnt   = (manutMesAtivo + 11) % 12;
+  var listaAnt = manuts[mesAnt] || [];
+  var entrada  = listaAnt.find(function(x) {
+    return x.cliente && x.cliente.trim().toLowerCase() === clienteNome.trim().toLowerCase();
+  });
+  if (!entrada) return '<span style="color:var(--text-light);font-size:11px">—</span>';
+  if (!entrada.preventiva) return '<span style="background:#fee2e2;color:#b91c1c;padding:2px 6px;border-radius:20px;font-size:10px;font-weight:700">Não feita</span>';
+  return '<span style="background:#d1fae5;color:#065f46;padding:2px 6px;border-radius:20px;font-size:10px;font-weight:700">✓ ' + fmtDate(entrada.preventiva) + '</span>';
+}
+
+// ── Propagação automática ──
+function propagarCondominiosParaProximoMes() {
+  var mesAnterior = (manutMesAtivo + 11) % 12;
+  var listaAnt    = getManutsMes(mesAnterior);
+  var listaAtual  = getManutsMes(manutMesAtivo);
+  var mudou = false;
+  listaAnt.forEach(function(orig) {
+    if (!orig.cliente || !orig.cliente.trim()) return;
+    var existe = listaAtual.some(function(x) {
+      return x.cliente && x.cliente.trim().toLowerCase() === orig.cliente.trim().toLowerCase();
+    });
+    if (!existe) {
+      listaAtual.push({ id:'auto_'+Date.now()+'_'+Math.random().toString(36).slice(2), cliente:orig.cliente, preventiva:'', corretiva:'', corretiva2:'', proposta:'', propostaStatus:'', relatorio:'', limpeza:'', periodicidade:'' });
+      mudou = true;
+    }
+  });
+  if (mudou) save();
+}
+
+// ── Importar Google Calendar .ics ──
 function importarGoogleCalendar(event) {
-  const file = event.target.files[0];
+  var file = event.target.files[0];
   if (!file) return;
   event.target.value = '';
-
-  const reader = new FileReader();
+  var reader = new FileReader();
   reader.onload = function(e) {
-    const texto = e.target.result;
-    const resultado = processarICS(texto);
-    mostrarResultadoCalendar(resultado);
+    var res = processarICS(e.target.result);
+    mostrarResultadoCalendar(res);
   };
   reader.readAsText(file, 'UTF-8');
 }
 
 function processarICS(texto) {
-  const mesAtivo  = manutMesAtivo; // 0-11
-  const anoAtivo  = new Date().getFullYear();
-  const lista     = getManutsMes(mesAtivo);
-
-  // Extrair todos os eventos do .ics
-  const eventos = [];
-  const blocos  = texto.split('BEGIN:VEVENT');
-  blocos.shift(); // remove cabeçalho
-
-  blocos.forEach(bloco => {
-    // Extrair DTSTART
-    const dtMatch = bloco.match(/DTSTART(?:;[^:]*)?:(\d{4})(\d{2})(\d{2})/);
+  var mesAtivo = manutMesAtivo;
+  var anoAtivo = new Date().getFullYear();
+  var lista    = getManutsMes(mesAtivo);
+  var eventos  = [];
+  var blocos   = texto.split('BEGIN:VEVENT');
+  blocos.shift();
+  blocos.forEach(function(bloco) {
+    var dtMatch = bloco.match(/DTSTART(?:;[^:]*)?:(\d{4})(\d{2})(\d{2})/);
     if (!dtMatch) return;
-    const ano  = parseInt(dtMatch[1]);
-    const mes  = parseInt(dtMatch[2]) - 1; // 0-11
-    const dia  = parseInt(dtMatch[3]);
-
-    // Filtrar só o mês ativo
+    var ano = parseInt(dtMatch[1]), mes = parseInt(dtMatch[2])-1, dia = parseInt(dtMatch[3]);
     if (mes !== mesAtivo || ano !== anoAtivo) return;
-
-    // Extrair SUMMARY (título do evento)
-    const sumMatch = bloco.match(/SUMMARY:(.+)/);
+    var sumMatch = bloco.match(/SUMMARY:(.+)/);
     if (!sumMatch) return;
-    let titulo = sumMatch[1]
-      .replace(/\,/g, ',')
-      .replace(/\;/g, ';')
-      .replace(/\n/g, ' ')
-      .trim();
-
-    // Decodificar caracteres especiais do .ics
-    titulo = decodeURIComponent(titulo.replace(/=([0-9A-F]{2})/gi, '%$1')).trim();
-
-    // Extrair nome do condomínio — tudo antes de " - " ou " – "
-    const nomeCondo = titulo.split(/\s*[-–]\s*/)[0].trim();
-
-    const dataISO = `${ano}-${String(mes+1).padStart(2,'0')}-${String(dia).padStart(2,'0')}`;
-    eventos.push({ titulo, nomeCondo, dataISO, dia });
+    var titulo = sumMatch[1].replace(/\\,/g,',').replace(/\\n/g,' ').trim();
+    var nomeCondo = titulo.split(/\s*[-–]\s*/)[0].trim();
+    var dataISO = ano+'-'+String(mes+1).padStart(2,'0')+'-'+String(dia).padStart(2,'0');
+    eventos.push({ titulo:titulo, nomeCondo:nomeCondo, dataISO:dataISO });
   });
-
-  // Cruzar com condomínios cadastrados no mês ativo
-  let preenchidos = 0;
-  let naoEncontrados = [];
-  let jaPreenchidos  = [];
-
-  eventos.forEach(ev => {
-    // Busca por similaridade: nome do evento contém o nome do condomínio ou vice-versa
-    const nomeEvNorm = ev.nomeCondo.toLowerCase().trim();
-    const match = lista.find(m => {
+  var preenchidos=0, naoEncontrados=[], jaPreenchidos=[];
+  eventos.forEach(function(ev) {
+    var nEv = ev.nomeCondo.toLowerCase().trim();
+    var match = lista.find(function(m) {
       if (!m.cliente) return false;
-      const nomeCondNorm = m.cliente.toLowerCase().trim();
-      return nomeCondNorm.includes(nomeEvNorm) ||
-             nomeEvNorm.includes(nomeCondNorm) ||
-             similaridade(nomeEvNorm, nomeCondNorm) >= 0.7;
+      var nC = m.cliente.toLowerCase().trim();
+      return nC.includes(nEv) || nEv.includes(nC) || similaridade(nEv,nC) >= 0.7;
     });
-
     if (match) {
-      if (match.preventiva && match.preventiva !== ev.dataISO) {
-        jaPreenchidos.push({ condo: match.cliente, dataAntiga: match.preventiva, dataNova: ev.dataISO });
-      }
+      if (match.preventiva && match.preventiva !== ev.dataISO) jaPreenchidos.push({ condo:match.cliente, dataAntiga:match.preventiva, dataNova:ev.dataISO });
       match.preventiva = ev.dataISO;
       preenchidos++;
     } else {
       naoEncontrados.push(ev.nomeCondo);
     }
   });
-
   if (preenchidos > 0) save();
-
-  return { preenchidos, naoEncontrados, jaPreenchidos, totalEventos: eventos.length, mes: MESES[mesAtivo] };
+  return { preenchidos:preenchidos, naoEncontrados:naoEncontrados, jaPreenchidos:jaPreenchidos, totalEventos:eventos.length, mes:MESES[mesAtivo] };
 }
 
-// Calcula similaridade entre duas strings (0 a 1)
 function similaridade(a, b) {
-  if (a === b) return 1;
-  if (a.length === 0 || b.length === 0) return 0;
-  const longer  = a.length > b.length ? a : b;
-  const shorter = a.length > b.length ? b : a;
-  if (longer.length === 0) return 1;
-  return (longer.length - editDistance(longer, shorter)) / longer.length;
+  if (a===b) return 1;
+  if (!a.length||!b.length) return 0;
+  var longer=a.length>b.length?a:b, shorter=a.length>b.length?b:a;
+  return (longer.length - editDistance(longer,shorter)) / longer.length;
 }
-
 function editDistance(a, b) {
-  const matrix = [];
-  for (let i = 0; i <= b.length; i++) matrix[i] = [i];
-  for (let j = 0; j <= a.length; j++) matrix[0][j] = j;
-  for (let i = 1; i <= b.length; i++) {
-    for (let j = 1; j <= a.length; j++) {
-      if (b[i-1] === a[j-1]) {
-        matrix[i][j] = matrix[i-1][j-1];
-      } else {
-        matrix[i][j] = Math.min(
-          matrix[i-1][j-1] + 1,
-          matrix[i][j-1]   + 1,
-          matrix[i-1][j]   + 1
-        );
-      }
-    }
-  }
-  return matrix[b.length][a.length];
+  var m=[];
+  for(var i=0;i<=b.length;i++) m[i]=[i];
+  for(var j=0;j<=a.length;j++) m[0][j]=j;
+  for(var i=1;i<=b.length;i++) for(var j=1;j<=a.length;j++)
+    m[i][j]=b[i-1]===a[j-1]?m[i-1][j-1]:Math.min(m[i-1][j-1]+1,m[i][j-1]+1,m[i-1][j]+1);
+  return m[b.length][a.length];
 }
 
 function mostrarResultadoCalendar(res) {
-  renderManut(); // atualiza a tabela
-
-  // Montar mensagem de resultado
-  let msg = '📅 Importação do Google Calendar — ' + res.mes + '\n\n';
-  msg += '✅ ' + res.preenchidos + ' preventiva(s) preenchida(s) automaticamente\n';
-  msg += '📋 ' + res.totalEventos + ' evento(s) encontrado(s) no mês\n';
-
-  if (res.jaPreenchidos.length > 0) {
-    msg += '\n🔄 Datas atualizadas:\n';
-    res.jaPreenchidos.forEach(j => {
-      msg += '  • ' + j.condo + ': ' + fmtDate(j.dataAntiga) + ' → ' + fmtDate(j.dataNova) + '\n';
-    });
-  }
-
-  if (res.naoEncontrados.length > 0) {
-    msg += '\n⚠️ Eventos não cruzados (verifique o nome):\n';
-    res.naoEncontrados.slice(0,5).forEach(n => { msg += '  • ' + n + '\n'; });
-    if (res.naoEncontrados.length > 5) msg += '  ... e mais ' + (res.naoEncontrados.length - 5);
-  }
-
-  if (res.preenchidos === 0) {
-    msg += '\n💡 Dica: verifique se o nome no calendário começa com o nome do condomínio cadastrado.';
-  }
-
-  // Notificação visual bonita
-  const aviso = document.createElement('div');
-  const corFundo = res.preenchidos > 0 ? '#10b981' : '#f59e0b';
-  aviso.innerHTML = `
-    <div style="font-size:14px;font-weight:700;margin-bottom:6px">
-      ${res.preenchidos > 0 ? '✅' : '⚠️'} Importação concluída — ${res.mes}
-    </div>
-    <div style="font-size:12px;opacity:0.9;line-height:1.6">
-      ${res.preenchidos} preventiva(s) preenchida(s) · ${res.totalEventos} evento(s) no mês
-      ${res.naoEncontrados.length > 0 ? '<br>⚠️ ' + res.naoEncontrados.length + ' evento(s) não cruzado(s): ' + res.naoEncontrados.slice(0,3).join(', ') + (res.naoEncontrados.length > 3 ? '...' : '') : ''}
-    </div>
-    <button onclick="this.parentElement.remove()" style="position:absolute;top:8px;right:10px;background:none;border:none;color:white;font-size:18px;cursor:pointer;opacity:0.7">×</button>`;
-  Object.assign(aviso.style, {
-    position: 'fixed', bottom: '24px', left: '50%', transform: 'translateX(-50%)',
-    background: corFundo, color: 'white', padding: '14px 24px 14px 20px',
-    borderRadius: '12px', fontFamily: 'DM Sans, sans-serif',
-    zIndex: '9999', boxShadow: '0 4px 20px rgba(0,0,0,0.2)',
-    minWidth: '340px', maxWidth: '500px', position: 'fixed'
-  });
+  renderManut();
+  var aviso = document.createElement('div');
+  var cor = res.preenchidos > 0 ? '#10b981' : '#f59e0b';
+  var naoStr = res.naoEncontrados.length > 0 ? '<br>⚠️ Não cruzados: ' + res.naoEncontrados.slice(0,3).join(', ') + (res.naoEncontrados.length>3?'...':'') : '';
+  aviso.innerHTML = '<div style="font-size:13px;font-weight:700;margin-bottom:4px">' + (res.preenchidos>0?'✅':'⚠️') + ' Importação — ' + res.mes + '</div><div style="font-size:12px;opacity:0.9">' + res.preenchidos + ' preventiva(s) preenchida(s) · ' + res.totalEventos + ' evento(s)' + naoStr + '</div><button onclick="this.parentElement.remove()" style="position:absolute;top:6px;right:8px;background:none;border:none;color:white;font-size:16px;cursor:pointer">×</button>';
+  Object.assign(aviso.style, { position:'fixed', bottom:'24px', left:'50%', transform:'translateX(-50%)', background:cor, color:'white', padding:'12px 32px 12px 20px', borderRadius:'10px', fontFamily:'DM Sans,sans-serif', zIndex:'9999', boxShadow:'0 4px 20px rgba(0,0,0,0.2)', minWidth:'320px' });
   document.body.appendChild(aviso);
-  setTimeout(() => { if (aviso.parentElement) aviso.remove(); }, 8000);
-
-  // Log detalhado no console
-  console.log('[Google Calendar Import]', msg);
+  setTimeout(function(){ if(aviso.parentElement) aviso.remove(); }, 7000);
 }
 
-document.getElementById('modal-lead').addEventListener('click', function(e) {
-  if (e.target === this) closeModal();
-});
+// ── Dashboard ──
+function renderDashboard() {
+  var hoje = new Date();
+  var mesAtual = hoje.getMonth();
+  var hojeStr  = hoje.toISOString().slice(0,10);
+  var sub = document.getElementById('dash-subtitle');
+  if (sub) sub.textContent = hoje.toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long',year:'numeric'});
 
-// ===== BACKUP AUTOMÁTICO SEMANAL =====
-(function verificarBackupAutomatico() {
-  const ultimo = localStorage.getItem('crm_ultimo_backup');
-  const agora  = Date.now();
-  const seteDias = 7 * 24 * 60 * 60 * 1000;
-  if (!ultimo || (agora - parseInt(ultimo)) > seteDias) {
+  var listaManut   = getManutsMes(mesAtual);
+  var semPrev      = listaManut.filter(function(m){ return m.cliente && !m.preventiva; }).length;
+  var totalManut   = listaManut.filter(function(m){ return m.cliente; }).length;
+  var atAbertos    = atendimentos.filter(function(a){ return a.status !== 'Concluído'; }).length;
+  var totalLeads   = leads.filter(function(l){ return !['Fechado','Perdido'].includes(l.stage); }).length;
+  var fatMes       = (faturamentos[mesAtual]||[]).reduce(function(s,f){ return s+(f.valor||0); }, 0);
+  var pendAbertas  = pendings.filter(function(p){ return !p.done; }).length;
+  var fuVencidos   = leads.filter(function(l){ return l.followup && l.followup < hojeStr && !['Fechado','Perdido'].includes(l.stage); }).length;
+
+  var kpisEl = document.getElementById('dash-kpis');
+  if (kpisEl) kpisEl.innerHTML = [
+    { icon:'🔧', label:'Sem preventiva', val:semPrev+' / '+totalManut, cor:semPrev>0?'var(--red)':'var(--green)', tab:'manutencao' },
+    { icon:'🛠', label:'Atendimentos abertos', val:atAbertos, cor:atAbertos>0?'var(--orange)':'var(--green)', tab:'atendimentos' },
+    { icon:'🗂', label:'Leads em andamento', val:totalLeads, cor:'var(--purple)', tab:'funil' },
+    { icon:'🧾', label:'Faturamento do mês', val:fmt(fatMes), cor:'var(--blue)', tab:'faturamento' },
+    { icon:'📋', label:'Pendências abertas', val:pendAbertas, cor:pendAbertas>0?'var(--orange)':'var(--green)', tab:'pendencias' },
+    { icon:'📅', label:'Follow-ups vencidos', val:fuVencidos, cor:fuVencidos>0?'var(--red)':'var(--green)', tab:'funil' },
+  ].map(function(k){
+    return '<div class="dash-kpi-card" onclick="showTab(\''+k.tab+'\')" style="cursor:pointer;border-top:3px solid '+k.cor+'" onmouseover="this.style.boxShadow=\'var(--shadow)\'" onmouseout="this.style.boxShadow=\'var(--shadow-sm)\'">'
+      +'<div class="dash-kpi-label">'+k.icon+' '+k.label+'</div>'
+      +'<div class="dash-kpi-value" style="color:'+k.cor+';font-size:22px">'+k.val+'</div>'
+      +'</div>';
+  }).join('');
+
+  var manutEl = document.getElementById('dash-manut');
+  if (manutEl) {
+    var semPL = listaManut.filter(function(m){ return m.cliente && !m.preventiva; });
+    var comPL = listaManut.filter(function(m){ return m.cliente && m.preventiva; }).length;
+    manutEl.innerHTML = totalManut === 0
+      ? '<div style="color:var(--text-light);font-size:13px">Nenhum condomínio em '+MESES[mesAtual]+'</div>'
+      : '<div style="display:flex;gap:12px;margin-bottom:10px">'
+        +'<div style="flex:1;text-align:center;background:var(--green-light);border-radius:8px;padding:8px"><div style="font-size:20px;font-weight:700;color:var(--green)">'+comPL+'</div><div style="font-size:11px;color:var(--text-muted)">Com preventiva</div></div>'
+        +'<div style="flex:1;text-align:center;background:var(--red-light);border-radius:8px;padding:8px"><div style="font-size:20px;font-weight:700;color:var(--red)">'+semPL.length+'</div><div style="font-size:11px;color:var(--text-muted)">Sem preventiva</div></div>'
+        +'</div>'
+        +(semPL.length>0 ? semPL.slice(0,5).map(function(m){ return '<div style="padding:4px 8px;border-radius:6px;font-size:12px;border-left:3px solid var(--red);background:var(--bg);margin-bottom:3px">⚠️ '+esc(m.cliente)+'</div>'; }).join('')+(semPL.length>5?'<div style="font-size:11px;color:var(--text-muted)">+ '+(semPL.length-5)+' mais</div>':'') : '<div style="color:var(--green);font-size:13px;font-weight:600">✅ Todos em dia!</div>');
+  }
+
+  var fuEl = document.getElementById('dash-followups');
+  if (fuEl) {
+    var venc = leads.filter(function(l){ return l.followup && l.followup < hojeStr && !['Fechado','Perdido'].includes(l.stage); }).sort(function(a,b){ return a.followup.localeCompare(b.followup); });
+    fuEl.innerHTML = venc.length === 0
+      ? '<div style="color:var(--green);font-size:13px;font-weight:600">✅ Nenhum follow-up vencido!</div>'
+      : venc.slice(0,5).map(function(l){
+          var dias = Math.floor((hoje - new Date(l.followup+'T00:00:00')) / 86400000);
+          var wa = l.tel ? '<a href="https://wa.me/55'+l.tel.replace(/[^0-9]/g,'')+'" target="_blank" style="font-size:12px;text-decoration:none">📲</a>' : '';
+          return '<div style="padding:5px 8px;border-radius:6px;font-size:12px;border-left:3px solid var(--red);background:#fff8f8;margin-bottom:4px;display:flex;align-items:center;justify-content:space-between;gap:6px"><div><strong>'+esc(l.name)+'</strong><span style="color:var(--red);font-size:10px;margin-left:6px">há '+dias+'d</span></div><div style="display:flex;gap:4px">'+wa+'<button onclick="showTab(\'funil\')" style="font-size:10px;padding:2px 7px;background:var(--primary);color:white;border:none;border-radius:4px;cursor:pointer;font-family:DM Sans,sans-serif">Ver</button></div></div>';
+        }).join('')+(venc.length>5?'<div style="font-size:11px;color:var(--text-muted)">+ '+(venc.length-5)+' mais</div>':'');
+  }
+
+  var pendsEl = document.getElementById('dash-pends');
+  if (pendsEl) {
+    var ab = pendings.filter(function(p){ return !p.done; }).sort(function(a,b){ var o={Alta:0,Média:1,Baixa:2}; return (o[a.priority]||1)-(o[b.priority]||1); });
+    pendsEl.innerHTML = ab.length===0 ? '<div style="color:var(--green);font-size:13px;font-weight:600">✅ Nenhuma pendência!</div>'
+      : ab.slice(0,5).map(function(p){ var c={Alta:'var(--red)',Média:'var(--orange)',Baixa:'var(--green)'}[p.priority]||'var(--border)'; return '<div style="padding:4px 8px;border-radius:6px;font-size:12px;border-left:3px solid '+c+';background:var(--bg);margin-bottom:3px;display:flex;justify-content:space-between"><span>'+esc(p.desc)+'</span><span style="font-size:10px;color:'+c+';font-weight:700">'+p.priority+'</span></div>'; }).join('')+(ab.length>5?'<div style="font-size:11px;color:var(--text-muted)">+ '+(ab.length-5)+' mais</div>':'');
+  }
+
+  var atendsEl = document.getElementById('dash-atends');
+  if (atendsEl) {
+    var ab2 = atendimentos.filter(function(a){ return a.status!=='Concluído'; }).sort(function(a,b){ var o={Alta:0,Média:1,Baixa:2}; return (o[a.urgencia]||1)-(o[b.urgencia]||1); });
+    atendsEl.innerHTML = ab2.length===0 ? '<div style="color:var(--green);font-size:13px;font-weight:600">✅ Nenhum em aberto!</div>'
+      : ab2.slice(0,5).map(function(a){ var c={Alta:'var(--red)',Média:'var(--orange)',Baixa:'var(--green)'}[a.urgencia]||'var(--border)'; var ass=a.assunto||''; return '<div style="padding:4px 8px;border-radius:6px;font-size:12px;border-left:3px solid '+c+';background:var(--bg);margin-bottom:3px"><strong>'+esc(a.cliente)+'</strong> <span style="color:var(--text-muted)">— '+esc(ass.substring(0,35))+(ass.length>35?'...':'')+'</span></div>'; }).join('')+(ab2.length>5?'<div style="font-size:11px;color:var(--text-muted)">+ '+(ab2.length-5)+' mais</div>':'');
+  }
+
+  var vendasEl = document.getElementById('dash-vendas');
+  if (vendasEl) {
+    var tv=[];
+    for(var m=0;m<12;m++) (sales[m]||[]).forEach(function(s){ tv.push(s); });
+    tv.sort(function(a,b){ return (b.date||'').localeCompare(a.date||''); });
+    vendasEl.innerHTML = tv.length===0 ? '<div style="color:var(--text-light);font-size:13px">Nenhuma venda ainda.</div>'
+      : tv.slice(0,5).map(function(s){ return '<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #f5f5f5;font-size:12px"><div><strong>'+esc(s.desc)+'</strong> <span style="color:var(--text-muted)">'+fmtDate(s.date)+'</span></div><span style="font-weight:700;color:var(--green)">'+fmt(s.value)+'</span></div>'; }).join('');
+  }
+
+  var boletosEl = document.getElementById('dash-boletos');
+  if (boletosEl) {
+    var bol=[];
+    for(var m=0;m<12;m++) (sales[m]||[]).filter(function(s){ return s.payment==='Boleto'&&s.pago==='nao'; }).forEach(function(s){ bol.push(s); });
+    if (bol.length===0) { boletosEl.innerHTML='<div style="color:var(--green);font-size:13px;font-weight:600">✅ Nenhum boleto em aberto!</div>'; }
+    else {
+      var totBol=bol.reduce(function(s,b){ return s+Number(b.value||0); },0);
+      boletosEl.innerHTML='<div style="font-size:13px;font-weight:700;color:var(--orange);margin-bottom:8px">Total: '+fmt(totBol)+'</div>'+bol.slice(0,4).map(function(s){ return '<div style="display:flex;justify-content:space-between;padding:4px 8px;border-radius:6px;background:var(--orange-light);margin-bottom:3px;font-size:12px"><span>'+esc(s.desc)+'</span><span style="font-weight:700;color:var(--orange)">'+fmt(s.value)+'</span></div>'; }).join('')+(bol.length>4?'<div style="font-size:11px;color:var(--text-muted)">+ '+(bol.length-4)+' mais</div>':'');
+    }
+  }
+}
+
+// ── Backup automático ──
+(function() {
+  var ultimo = localStorage.getItem('crm_ultimo_backup');
+  var agora  = Date.now();
+  if (!ultimo || (agora - parseInt(ultimo)) > 7*24*60*60*1000) {
     setTimeout(function() {
-      const aviso = document.createElement('div');
-      aviso.id = 'backup-aviso';
-      aviso.innerHTML = '💾 <strong>Backup semanal:</strong> Seus dados merecem um backup! <button onclick="fazerBackupAuto()" style="margin-left:10px;padding:4px 12px;background:white;color:#10b981;border:none;border-radius:6px;font-weight:700;cursor:pointer;font-family:DM Sans,sans-serif">⬇️ Baixar agora</button> <button onclick="this.parentElement.remove()" style="margin-left:6px;padding:4px 8px;background:rgba(255,255,255,0.2);color:white;border:none;border-radius:6px;cursor:pointer;font-size:12px">✕</button>';
-      Object.assign(aviso.style, {
-        position:'fixed', bottom:'20px', left:'50%', transform:'translateX(-50%)',
-        background:'#10b981', color:'white', padding:'12px 20px',
-        borderRadius:'10px', fontFamily:'DM Sans,sans-serif', fontSize:'13px',
-        zIndex:'9999', boxShadow:'0 4px 20px rgba(0,0,0,0.2)', whiteSpace:'nowrap'
-      });
+      var aviso = document.createElement('div');
+      aviso.id  = 'backup-aviso';
+      aviso.innerHTML = '💾 <strong>Backup semanal:</strong> Faça um backup dos seus dados! <button onclick="fazerBackupAuto()" style="margin-left:10px;padding:4px 12px;background:white;color:#10b981;border:none;border-radius:6px;font-weight:700;cursor:pointer">⬇️ Baixar</button> <button onclick="this.parentElement.remove()" style="margin-left:6px;padding:4px 8px;background:rgba(255,255,255,0.2);color:white;border:none;border-radius:6px;cursor:pointer">✕</button>';
+      Object.assign(aviso.style, { position:'fixed', bottom:'20px', left:'50%', transform:'translateX(-50%)', background:'#10b981', color:'white', padding:'12px 20px', borderRadius:'10px', fontFamily:'DM Sans,sans-serif', fontSize:'13px', zIndex:'9999', boxShadow:'0 4px 20px rgba(0,0,0,0.2)', whiteSpace:'nowrap' });
       document.body.appendChild(aviso);
     }, 3000);
   }
 })();
+function fazerBackupAuto() { exportarDados(); localStorage.setItem('crm_ultimo_backup', Date.now().toString()); var av=document.getElementById('backup-aviso'); if(av) av.remove(); }
 
-function fazerBackupAuto() {
-  exportarDados();
-  localStorage.setItem('crm_ultimo_backup', Date.now().toString());
-  const av = document.getElementById('backup-aviso');
-  if (av) av.remove();
-}
+document.getElementById('modal-lead').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
 </script>
 </body>
 </html>
