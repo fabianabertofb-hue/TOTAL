@@ -1773,9 +1773,9 @@
       <thead>
         <tr>
           <th class="th-num">#</th>
-          <th style="min-width:115px">Condomínio / Cliente</th>
+          <th style="min-width:115px">Condomínio</th>
           <th style="min-width:82px;background:#f8f9fb;color:var(--text-muted);font-size:10px" title="Preventiva mês anterior">📅 Prev. Ant.</th>
-          <th style="min-width:72px">Dt. Preventiva</th>
+          <th style="min-width:60px">Dt. Prev.</th>
           <th style="min-width:90px;padding:0!important">
             <div style="display:flex;flex-direction:column">
               <div style="padding:4px 6px;text-align:center;font-size:11px;font-weight:700;color:var(--text-muted);border-bottom:1px solid var(--border)">Dt. Corretiva</div>
@@ -1787,11 +1787,10 @@
           </th>
           <th style="min-width:62px;font-size:10px">Period.</th>
           <th style="min-width:82px">Nº Proposta</th>
-          <th style="min-width:84px">Dt. Relatório</th>
-          <th style="min-width:62px">🧹 Limpeza</th>
-          <th style="min-width:90px">📦 Pedidos</th>
-          <th style="min-width:140px">⚠️ Pendências</th>
-          <th style="width:36px"></th>
+          <th style="min-width:68px">Dt. Rel.</th>
+          <th style="min-width:50px;font-size:10px">🧹 Limp.</th>
+          <th style="min-width:72px">📦 Pedidos</th>
+          <th style="min-width:115px">⚠️ Pendências</th>
         </tr>
       </thead>
       <tbody id="manut-list"></tbody>
@@ -3573,18 +3572,19 @@ function renderManut() {
       <td style="padding:6px 8px;vertical-align:top;min-width:180px">
         ${buildPedidosHTML('manut', m.id)}
       </td>
-      <td style="padding:0;vertical-align:top;min-width:220px">
+      <td style="padding:0;vertical-align:top;min-width:115px">
+        <div style="display:flex;align-items:center;justify-content:flex-end;gap:3px;padding:3px 4px 0">
+          <div class="mn-move-wrap">
+            <button class="mn-move-btn" onclick="toggleMoveMenu('${m.id}',this)" title="Mover para outro mês" style="padding:2px 5px;font-size:10px">↗ Mês</button>
+            <div class="mn-move-dropdown" id="move-menu-${m.id}" style="display:none">
+              ${MESES.map((nm,idx) => `<button class="${idx===manutMesAtivo?'active-mes':''}" onclick="moverParaMes('${m.id}',${idx})">${nm}</button>`).join('')}
+            </div>
+          </div>
+          <button class="mn-row-del" onclick="removeManut('${m.id}')" title="Excluir condomínio" style="color:#ef4444;font-size:14px;font-weight:700;width:22px;height:22px" onmouseover="this.style.background='#fee2e2'" onmouseout="this.style.background='none'">🗑</button>
+        </div>
         <div class="mn-pend-wrap" id="mn-pend-wrap-${m.id}"></div>
       </td>
-      <td style="padding:0 4px;display:flex;align-items:center;gap:3px;min-height:38px">
-        <div class="mn-move-wrap">
-          <button class="mn-move-btn" onclick="toggleMoveMenu('${m.id}',this)" title="Mover para outro mês">↗ Mês</button>
-          <div class="mn-move-dropdown" id="move-menu-${m.id}" style="display:none">
-            ${MESES.map((nm,idx) => `<button class="${idx===manutMesAtivo?'active-mes':''}" onclick="moverParaMes('${m.id}',${idx})">${nm}</button>`).join('')}
-          </div>
-        </div>
-        <button class="mn-row-del" onclick="removeManut('${m.id}')" title="Excluir condomínio" style="color:#ef4444;font-size:16px;font-weight:700" onmouseover="this.style.background='#fee2e2'" onmouseout="this.style.background='none'">🗑</button>
-      </td>
+
     </tr>`;
   }).join('');
   // inicializar pedidos de manutenção
