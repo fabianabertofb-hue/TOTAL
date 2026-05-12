@@ -1773,10 +1773,10 @@
       <thead>
         <tr>
           <th class="th-num">#</th>
-          <th style="min-width:140px">Condomínio / Cliente</th>
+          <th style="min-width:115px">Condomínio / Cliente</th>
           <th style="min-width:82px;background:#f8f9fb;color:var(--text-muted);font-size:10px" title="Preventiva mês anterior">📅 Prev. Ant.</th>
-          <th style="min-width:86px">Dt. Preventiva</th>
-          <th style="min-width:115px;padding:0!important">
+          <th style="min-width:72px">Dt. Preventiva</th>
+          <th style="min-width:90px;padding:0!important">
             <div style="display:flex;flex-direction:column">
               <div style="padding:4px 6px;text-align:center;font-size:11px;font-weight:700;color:var(--text-muted);border-bottom:1px solid var(--border)">Dt. Corretiva</div>
               <div style="display:flex">
@@ -1785,12 +1785,12 @@
               </div>
             </div>
           </th>
-          <th style="min-width:75px;font-size:10px">Period.</th>
+          <th style="min-width:62px;font-size:10px">Period.</th>
           <th style="min-width:82px">Nº Proposta</th>
           <th style="min-width:84px">Dt. Relatório</th>
-          <th style="min-width:76px">🧹 Limpeza</th>
-          <th style="min-width:140px">📦 Pedidos</th>
-          <th style="min-width:165px">⚠️ Pendências</th>
+          <th style="min-width:62px">🧹 Limpeza</th>
+          <th style="min-width:90px">📦 Pedidos</th>
+          <th style="min-width:140px">⚠️ Pendências</th>
           <th style="width:36px"></th>
         </tr>
       </thead>
@@ -3583,7 +3583,7 @@ function renderManut() {
             ${MESES.map((nm,idx) => `<button class="${idx===manutMesAtivo?'active-mes':''}" onclick="moverParaMes('${m.id}',${idx})">${nm}</button>`).join('')}
           </div>
         </div>
-        <button class="mn-row-del" onclick="removeManut('${m.id}')" title="Remover linha">×</button>
+        <button class="mn-row-del" onclick="removeManut('${m.id}')" title="Excluir condomínio" style="color:#ef4444;font-size:16px;font-weight:700" onmouseover="this.style.background='#fee2e2'" onmouseout="this.style.background='none'">🗑</button>
       </td>
     </tr>`;
   }).join('');
