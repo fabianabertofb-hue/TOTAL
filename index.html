@@ -1470,8 +1470,7 @@
     <button class="nav-tab" onclick="showTab('manutencao')">🔧 Manutenção</button>
     <button class="nav-tab" onclick="showTab('atendimentos')">🛠 Atendimentos</button>
     <button class="nav-tab" onclick="showTab('entregas')">🚚 Entregas <span class="badge" id="badge-entregas" style="display:none">0</span></button>
-    <button class="nav-tab" onclick="showTab('agenda')">📅 Agenda <span class="badge" id="badge-agenda" style="display:none">0</span></button>
-    <button class="nav-tab" onclick="showTab('clientes')">👥 Clientes</button>
+    <button class="nav-tab" onclick="showTab('pecas')">📦 Peças <span class="badge" id="badge-pecas" style="display:none">0</span></button>
   </div>
   <button class="btn-primary" onclick="openModal()">+ Novo Lead</button>
   <button onclick="exportarDados()" style="padding:7px 13px;background:var(--green);color:white;border:none;border-radius:var(--radius-sm);font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap" title="Exportar todos os dados">⬇️ Exportar</button>
@@ -1617,40 +1616,88 @@
 
 <!-- =================== PENDÊNCIAS =================== -->
 <div class="page" id="page-pendencias">
-  <div class="pending-section">
-    <div class="section-card">
-      <h3>Nova Pendência</h3>
-      <div class="input-row">
-        <div class="form-group" style="flex:2">
-          <label>Descrição</label>
-          <input type="text" id="pend-desc" placeholder="Descreva a pendência...">
-        </div>
-        <div class="form-group">
-          <label>Categoria</label>
-          <select id="pend-category">
-            <option value="Manutenção">Manutenção</option>
-            <option value="Pedido">Pedido</option>
-            <option value="Orçamento">Orçamento</option>
-            <option value="Financeiro">Financeiro</option>
-            <option value="Outro">Outro</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Prioridade</label>
-          <select id="pend-priority">
-            <option value="Alta">Alta</option>
-            <option value="Média">Média</option>
-            <option value="Baixa">Baixa</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Data</label>
-          <input type="date" id="pend-date">
-        </div>
-        <button class="btn-primary" onclick="addPending()">+ Add</button>
+  <div style="padding:24px">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap">
+      <div>
+        <div style="font-size:17px;font-weight:700;color:var(--text);margin-bottom:4px">📋 Pendências</div>
+        <div style="font-size:12px;color:var(--text-muted);margin-bottom:20px">Solicitações de visita e pendências de atendimento</div>
       </div>
+      <button onclick="exportarPendenciasPDF()" style="padding:8px 16px;background:var(--green);color:white;border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer">🖨️ Exportar PDF</button>
     </div>
-    <div id="pending-list"></div>
+
+    <!-- SUB-ABAS -->
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px">
+      <button class="at-filter-btn active" id="pend-sub-visita" onclick="setPendSub('visita')">📍 Solicitação de visita <span id="pend-c-visita" style="opacity:0.7"></span></button>
+      <button class="at-filter-btn" id="pend-sub-atend" onclick="setPendSub('atend')">🔧 Pendências de atendimento <span id="pend-c-atend" style="opacity:0.7"></span></button>
+    </div>
+
+    <!-- ===== SEÇÃO: SOLICITAÇÃO DE VISITA ===== -->
+    <div id="pend-box-visita">
+      <div class="section-card" style="max-width:900px">
+        <h3>Nova solicitação de visita</h3>
+        <div class="input-row">
+          <div class="form-group" style="flex:2">
+            <label>Cliente / Local</label>
+            <input type="text" id="pv-cliente" placeholder="Nome do cliente ou condomínio...">
+          </div>
+          <div class="form-group">
+            <label>Contato</label>
+            <input type="text" id="pv-contato" placeholder="Telefone / responsável">
+          </div>
+          <div class="form-group">
+            <label>Prioridade</label>
+            <select id="pv-prio">
+              <option value="Alta">🔴 Alta</option>
+              <option value="Média" selected>🟡 Média</option>
+              <option value="Baixa">🟢 Baixa</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Data desejada</label>
+            <input type="date" id="pv-data">
+          </div>
+        </div>
+        <div class="input-row" style="margin-top:10px">
+          <div class="form-group" style="flex:3">
+            <label>Motivo / Observação</label>
+            <input type="text" id="pv-obs" placeholder="Descreva o motivo da visita...">
+          </div>
+          <button class="btn-primary" onclick="addVisita()">+ Adicionar</button>
+        </div>
+      </div>
+      <div id="pv-lista"></div>
+    </div>
+
+    <!-- ===== SEÇÃO: PENDÊNCIAS DE ATENDIMENTO ===== -->
+    <div id="pend-box-atend" style="display:none">
+      <div class="section-card" style="max-width:900px">
+        <h3>Nova pendência de atendimento</h3>
+        <div class="input-row">
+          <div class="form-group" style="flex:2">
+            <label>Cliente</label>
+            <input type="text" id="pa-cliente" placeholder="Nome do cliente...">
+          </div>
+          <div class="form-group" style="flex:2">
+            <label>Descrição</label>
+            <input type="text" id="pa-desc" placeholder="O que está pendente...">
+          </div>
+          <div class="form-group">
+            <label>Prioridade</label>
+            <select id="pa-prio">
+              <option value="Alta">🔴 Alta</option>
+              <option value="Média" selected>🟡 Média</option>
+              <option value="Baixa">🟢 Baixa</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Data</label>
+            <input type="date" id="pa-data">
+          </div>
+          <button class="btn-primary" onclick="addPendAtend()">+ Adicionar</button>
+        </div>
+      </div>
+      <div id="pa-lista"></div>
+    </div>
   </div>
 </div>
 
@@ -1929,7 +1976,7 @@
       <div style="display:flex;gap:8px;flex-wrap:wrap">
         <label id="btn-importar-pdf" style="padding:8px 16px;background:var(--orange);color:white;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px" title="Importar PDF da proposta Bling">
           📄 Importar PDF
-          <input type="file" accept=".pdf" onchange="lerPdfEntrega(event)" style="display:none">
+          <input type="file" accept=".pdf" onchange="pdfDestino='entrega';lerPdfEntrega(event)" style="display:none">
         </label>
         <button onclick="abrirColarTextoModal()" style="padding:8px 16px;background:var(--blue);color:white;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px" title="Cole o texto copiado do PDF">📋 Colar Texto do PDF</button>
         <button class="btn-novo-atend" onclick="abrirEntregaModal()">＋ Nova Entrega</button>
@@ -2027,89 +2074,82 @@
   </div>
 </div>
 
-<!-- =================== AGENDA =================== -->
-<div class="page" id="page-agenda">
-  <div class="agenda-header">
-    <div>
-      <div style="font-size:17px;font-weight:700;color:var(--text)">📅 Minha Agenda — <span id="agenda-count" style="color:var(--primary)">0 tarefas</span></div>
-      <div style="font-size:12px;color:var(--text-muted);margin-top:3px">Organize seus compromissos e tarefas</div>
-    </div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
-      <div class="agenda-views">
-        <button class="agenda-view-btn active" onclick="setAgendaView('mes')">Mês</button>
-        <button class="agenda-view-btn" onclick="setAgendaView('lista')">Lista</button>
+<!-- =================== PEÇAS QUE CHEGARAM =================== -->
+<div class="page" id="page-pecas">
+  <div style="padding:24px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px">
+      <div>
+        <div style="font-size:17px;font-weight:700;color:var(--text)">📦 Peças que chegaram — <span id="pc-count" style="color:var(--primary)">0 ativas</span></div>
+        <div style="font-size:12px;color:var(--text-muted);margin-top:3px">Peças recebidas com proposta. Marque cada item para dar baixa.</div>
       </div>
-      <button class="btn-novo-atend" onclick="abrirTarefaModal()">＋ Nova Tarefa</button>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <label id="btn-importar-pdf-pc" style="padding:8px 16px;background:var(--orange);color:white;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px" title="Importar PDF do pedido/proposta">
+          📄 Importar PDF
+          <input type="file" accept=".pdf" onchange="lerPdfPeca(event)" style="display:none">
+        </label>
+        <button onclick="abrirColarTextoModal('peca')" style="padding:8px 16px;background:var(--blue);color:white;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px" title="Cole o texto copiado do PDF">📋 Colar Texto do PDF</button>
+        <button class="btn-novo-atend" onclick="abrirPecaModal()">＋ Nova chegada</button>
+      </div>
     </div>
-  </div>
 
-  <div class="agenda-nav" style="margin-bottom:16px">
-    <button class="agenda-nav-btn" onclick="agendaMesAnterior()">◀</button>
-    <div class="agenda-mes-label" id="agenda-mes-label"></div>
-    <button class="agenda-nav-btn" onclick="agendaMesSeguinte()">▶</button>
-    <button class="agenda-hoje-btn" onclick="agendaHoje()">Hoje</button>
-  </div>
+    <!-- FILTROS -->
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;align-items:center">
+      <button class="at-filter-btn active" onclick="setPcFiltro('ativos')">⚡ Ativas</button>
+      <button class="at-filter-btn" onclick="setPcFiltro('todos')">Todas</button>
+      <button class="at-filter-btn" onclick="setPcFiltro('Aguardando')">📦 Aguardando baixa</button>
+      <button class="at-filter-btn" onclick="setPcFiltro('Concluída')">✅ Baixadas</button>
+    </div>
 
-  <!-- Filtros -->
-  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;align-items:center">
-    <button class="at-filter-btn active" onclick="setAgendaFiltro('todos')">Todas</button>
-    <button class="at-filter-btn" onclick="setAgendaFiltro('pendentes')">⏳ Pendentes</button>
-    <button class="at-filter-btn" onclick="setAgendaFiltro('concluidas')">✅ Concluídas</button>
-    <button class="at-filter-btn urg-alta" onclick="setAgendaFiltro('alta')">🔴 Alta</button>
-    <button class="at-filter-btn urg-media" onclick="setAgendaFiltro('media')">🟡 Média</button>
-    <button class="at-filter-btn urg-baixa" onclick="setAgendaFiltro('baixa')">🟢 Baixa</button>
+    <div id="pc-lista"></div>
   </div>
-
-  <div id="agenda-container"></div>
 </div>
 
-<!-- MODAL TAREFA -->
-<div class="at-modal-overlay hidden" id="tarefa-modal-overlay" onclick="fecharTarefaModal(event)">
-  <div class="at-modal" style="max-width:480px">
-    <h3 id="tarefa-modal-titulo">Nova Tarefa</h3>
-    <div class="at-form-group">
-      <label>Título *</label>
-      <input id="trf-f-titulo" placeholder="Descrição da tarefa...">
+<!-- MODAL PEÇA -->
+<div class="at-modal-overlay hidden" id="pc-modal-overlay" onclick="fecharPecaModal(event)">
+  <div class="at-modal" style="max-width:600px">
+    <h3 id="pc-modal-titulo">Nova chegada de peças</h3>
+
+    <!-- Preview PDF importado -->
+    <div id="pc-pdf-preview" style="display:none;background:var(--primary-light);border:1px solid var(--primary);border-radius:8px;padding:10px 14px;margin-bottom:16px;font-size:12px;color:var(--primary)">
+      📄 <strong id="pc-pdf-info"></strong>
+    </div>
+    <div class="at-form-row">
+      <div class="at-form-group" style="flex:2">
+        <label>Cliente *</label>
+        <input id="pc-f-cliente" placeholder="Nome do cliente...">
+      </div>
+      <div class="at-form-group">
+        <label>Nº Proposta</label>
+        <input id="pc-f-proposta" placeholder="Ex: 2591">
+      </div>
     </div>
     <div class="at-form-row">
       <div class="at-form-group">
-        <label>Data</label>
-        <input type="date" id="trf-f-data">
+        <label>Data de chegada</label>
+        <input type="date" id="pc-f-data">
       </div>
       <div class="at-form-group">
-        <label>Horário</label>
-        <input type="time" id="trf-f-hora">
-      </div>
-    </div>
-    <div class="at-form-row">
-      <div class="at-form-group">
-        <label>Prioridade</label>
-        <select id="trf-f-prioridade">
-          <option value="normal">🔵 Normal</option>
-          <option value="baixa">🟢 Baixa</option>
-          <option value="media">🟡 Média</option>
-          <option value="alta">🔴 Alta</option>
-        </select>
-      </div>
-      <div class="at-form-group">
-        <label>Categoria</label>
-        <select id="trf-f-categoria">
-          <option value="geral">📌 Geral</option>
-          <option value="cliente">👤 Cliente</option>
-          <option value="entrega">🚚 Entrega</option>
-          <option value="manutencao">🔧 Manutenção</option>
-          <option value="financeiro">💰 Financeiro</option>
-          <option value="pessoal">🏠 Pessoal</option>
-        </select>
+        <label>Fornecedor</label>
+        <input id="pc-f-fornecedor" placeholder="Fornecedor / origem">
       </div>
     </div>
     <div class="at-form-group">
-      <label>Observações</label>
-      <textarea id="trf-f-obs" rows="2" placeholder="Detalhes adicionais..."></textarea>
+      <label>Observação</label>
+      <textarea id="pc-f-obs" rows="2" placeholder="Observação sobre a chegada..."></textarea>
     </div>
+
+    <!-- LISTA DE ITENS -->
+    <div style="margin-top:4px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <label style="font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em">Peças recebidas</label>
+        <button onclick="addItemPeca()" style="font-size:11px;font-weight:700;color:var(--primary);background:none;border:none;cursor:pointer;padding:0">＋ Adicionar peça</button>
+      </div>
+      <div id="pc-itens-lista" style="max-height:220px;overflow-y:auto;display:flex;flex-direction:column;gap:4px"></div>
+    </div>
+
     <div class="at-modal-footer">
-      <button class="btn-secondary" onclick="fecharTarefaModal()">Cancelar</button>
-      <button class="btn-primary" onclick="salvarTarefa()">Salvar</button>
+      <button class="btn-secondary" onclick="fecharPecaModal()">Cancelar</button>
+      <button class="btn-primary" onclick="salvarPeca()">Salvar</button>
     </div>
   </div>
 </div>
@@ -2344,145 +2384,6 @@
   </div>
 </div>
 
-<!-- =================== CLIENTES =================== -->
-<div class="page" id="page-clientes">
-  <div style="padding:24px">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px">
-      <div style="font-size:17px;font-weight:700;color:var(--text)">👥 Clientes — <span id="cli-count" style="color:var(--primary)">0 cadastrados</span></div>
-      <button class="btn-novo-atend" onclick="abrirCliModal()">＋ Novo Cliente</button>
-    </div>
-
-    <!-- FILTROS -->
-    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;align-items:center">
-      <div style="position:relative;flex:1;min-width:200px;max-width:320px">
-        <span style="position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:14px;pointer-events:none;color:var(--text-muted)">🔍</span>
-        <input id="cli-search" type="text" placeholder="Buscar cliente..." oninput="renderClientes()"
-          style="width:100%;padding:7px 12px 7px 32px;border:1.5px solid var(--border);border-radius:20px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text);background:var(--white);outline:none">
-      </div>
-      <button class="at-filter-btn active" onclick="setCliFiltro('todos')">Todos</button>
-      <button class="at-filter-btn" onclick="setCliFiltro('Contrato Fixo')">📋 Contrato Fixo</button>
-      <button class="at-filter-btn" onclick="setCliFiltro('Corretivo')">🔧 Corretivo</button>
-      <button class="at-filter-btn" onclick="setCliFiltro('Locação')">📦 Locação</button>
-      <button class="at-filter-btn" onclick="setCliFiltro('Venda')">💰 Venda</button>
-    </div>
-
-    <!-- GRID DE CLIENTES -->
-    <div id="cli-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px"></div>
-  </div>
-</div>
-
-<!-- MODAL CLIENTE -->
-<div class="at-modal-overlay hidden" id="cli-modal-overlay" onclick="fecharCliModal(event)">
-  <div class="at-modal" style="max-width:480px">
-    <h3 id="cli-modal-titulo">Novo Cliente</h3>
-    <div class="at-form-row">
-      <div class="at-form-group" style="flex:2">
-        <label>Nome / Razão Social *</label>
-        <input id="cli-f-nome" placeholder="Nome do cliente...">
-      </div>
-      <div class="at-form-group">
-        <label>Tipo</label>
-        <select id="cli-f-tipo">
-          <option value="Contrato Fixo">📋 Contrato Fixo</option>
-          <option value="Corretivo">🔧 Corretivo</option>
-          <option value="Locação">📦 Locação</option>
-          <option value="Venda">💰 Venda</option>
-        </select>
-      </div>
-    </div>
-    <div class="at-form-row">
-      <div class="at-form-group">
-        <label>Telefone / WhatsApp</label>
-        <input id="cli-f-tel" placeholder="(11) 99999-9999">
-      </div>
-      <div class="at-form-group">
-        <label>Responsável</label>
-        <input id="cli-f-resp" placeholder="Nome do responsável">
-      </div>
-    </div>
-    <div class="at-form-group">
-      <label>Endereço</label>
-      <input id="cli-f-end" placeholder="Rua, número, bairro, cidade">
-    </div>
-    <div class="at-form-group">
-      <label>Observação</label>
-      <textarea id="cli-f-obs" rows="2" placeholder="Ex: só atende de manhã, difícil acesso..."></textarea>
-    </div>
-    <div class="at-modal-footer">
-      <button class="btn-secondary" onclick="fecharCliModal()">Cancelar</button>
-      <button class="btn-primary" onclick="salvarCliente()">Salvar</button>
-    </div>
-  </div>
-</div>
-
-<!-- MODAL DETALHE CLIENTE -->
-<div class="at-modal-overlay hidden" id="cli-detalhe-overlay" onclick="fecharCliDetalhe(event)">
-  <div class="at-modal" style="max-width:680px;max-height:92vh">
-    <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;gap:12px">
-      <div>
-        <div style="font-size:18px;font-weight:700;color:var(--text)" id="cli-det-nome"></div>
-        <div style="font-size:12px;color:var(--text-muted);margin-top:3px" id="cli-det-sub"></div>
-      </div>
-      <div style="display:flex;gap:8px;flex-shrink:0">
-        <button onclick="imprimirCliente()" style="padding:6px 14px;background:var(--green);color:white;border:none;border-radius:7px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;cursor:pointer">🖨️ PDF</button>
-        <button onclick="editarClienteAtual()" style="padding:6px 14px;background:var(--primary);color:white;border:none;border-radius:7px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;cursor:pointer">✏️ Editar</button>
-        <button onclick="fecharCliDetalhe()" style="background:none;border:none;font-size:22px;cursor:pointer;color:var(--text-muted);line-height:1">×</button>
-      </div>
-    </div>
-
-    <!-- KPIs -->
-    <div id="cli-det-kpis" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin-bottom:20px"></div>
-
-    <!-- ABAS INTERNAS -->
-    <div style="display:flex;gap:4px;margin-bottom:16px;border-bottom:1px solid var(--border);padding-bottom:0">
-      <button class="cli-det-tab active" onclick="switchCliTab('atendimentos')" id="cli-tab-at">🔧 Atendimentos</button>
-      <button class="cli-det-tab" onclick="switchCliTab('preventivas')" id="cli-tab-prev">📋 Preventivas</button>
-      <button class="cli-det-tab" onclick="switchCliTab('maquinas')" id="cli-tab-maq">⚙️ Máquinas</button>
-      <button class="cli-det-tab" onclick="switchCliTab('vendas')" id="cli-tab-vd">💰 Vendas</button>
-    </div>
-    <div id="cli-det-conteudo" style="max-height:380px;overflow-y:auto"></div>
-  </div>
-</div>
-
-<!-- MODAL MÁQUINA -->
-<div class="at-modal-overlay hidden" id="maq-modal-overlay" onclick="fecharMaqModal(event)">
-  <div class="at-modal" style="max-width:420px">
-    <h3 id="maq-modal-titulo">Nova Máquina</h3>
-    <div class="at-form-group">
-      <label>Marca *</label>
-      <input id="maq-f-marca" placeholder="Ex: Life Fitness, Technogym...">
-    </div>
-    <div class="at-form-row">
-      <div class="at-form-group">
-        <label>Modelo *</label>
-        <input id="maq-f-modelo" placeholder="Ex: Esteira T5">
-      </div>
-      <div class="at-form-group">
-        <label>Nº Série</label>
-        <input id="maq-f-serie" placeholder="Opcional">
-      </div>
-    </div>
-    <div class="at-form-group">
-      <label>Tipo</label>
-      <select id="maq-f-tipo">
-        <option value="Esteira">🏃 Esteira</option>
-        <option value="Bike">🚴 Bike</option>
-        <option value="Elíptico">⚡ Elíptico</option>
-        <option value="Musculação">💪 Musculação</option>
-        <option value="Outro">📦 Outro</option>
-      </select>
-    </div>
-    <div class="at-form-group">
-      <label>Observação</label>
-      <input id="maq-f-obs" placeholder="Ex: instalada em 01/2024">
-    </div>
-    <div class="at-modal-footer">
-      <button class="btn-secondary" onclick="fecharMaqModal()">Cancelar</button>
-      <button class="btn-primary" onclick="salvarMaquina()">Salvar</button>
-    </div>
-  </div>
-</div>
-
 <!-- MODAL LEAD -->
 <div class="modal-overlay" id="modal-lead">
   <div class="modal" style="width:520px">
@@ -2554,21 +2455,19 @@ let entregas     = JSON.parse(localStorage.getItem('crm_entregas') || '[]');
 let entEditId    = null;
 let entFiltro    = 'ativos';
 let entItensTemp = [];
-// Clientes
-let clientes  = JSON.parse(localStorage.getItem('crm_clientes') || '[]');
-let maquinas  = JSON.parse(localStorage.getItem('crm_maquinas') || '{}');
-let cliEditId = null;
-let cliDetalheId = null;
-let cliDetTab = 'atendimentos';
-let cliFiltroAtivo = 'todos';
-let maqEditId = null;
-// Agenda
-let tarefas   = JSON.parse(localStorage.getItem('crm_tarefas') || '[]');
-let tarefaEditId = null;
-let agendaView   = 'mes';
-let agendaFiltro = 'todos';
-let agendaMesAtual = new Date().getMonth();
-let agendaAnoAtual = new Date().getFullYear();
+
+// Peças que chegaram
+let pecas        = JSON.parse(localStorage.getItem('crm_pecas') || '[]');
+let pcEditId     = null;
+let pcFiltro     = 'ativos';
+let pcItensTemp  = [];
+let pdfDestino   = 'entrega'; // 'entrega' ou 'peca' — define onde o PDF importado é jogado
+
+// Pendências (solicitação de visita + pendências de atendimento)
+let visitas      = JSON.parse(localStorage.getItem('crm_visitas') || '[]');
+let pendAtend    = JSON.parse(localStorage.getItem('crm_pend_atend') || '[]');
+let pendSub      = 'visita';
+
 // sales agora é objeto indexado por mês: { 0: [...], 1: [...], ... }
 let sales = (function() {
   const raw = localStorage.getItem('crm_sales');
@@ -2588,7 +2487,6 @@ let sales = (function() {
     return parsed;
   } catch(e) { return {}; }
 })();
-let pendings = JSON.parse(localStorage.getItem('crm_pendings') || '[]');
 // manuts agora é objeto indexado por mês: { 0: [...], 1: [...], ... }
 let manuts = (function() {
   const raw = localStorage.getItem('crm_manuts');
@@ -2616,9 +2514,12 @@ const STAGES = [
 function save() {
   localStorage.setItem('crm_leads',    JSON.stringify(leads));
   localStorage.setItem('crm_sales',    JSON.stringify(sales));
-  localStorage.setItem('crm_pendings', JSON.stringify(pendings));
   localStorage.setItem('crm_manuts',   JSON.stringify(manuts));
 }
+
+function saveVisitas()   { localStorage.setItem('crm_visitas', JSON.stringify(visitas)); }
+function savePendAtend() { localStorage.setItem('crm_pend_atend', JSON.stringify(pendAtend)); }
+function savePecas()     { localStorage.setItem('crm_pecas', JSON.stringify(pecas)); }
 
 function fmt(v) {
   return 'R$ ' + Number(v).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -2634,7 +2535,7 @@ function showTab(tab) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
   document.getElementById('page-' + tab).classList.add('active');
-  const tabs = ['dashboard','funil','vendas','faturamento','pendencias','manutencao','atendimentos','entregas','agenda','clientes'];
+  const tabs = ['dashboard','funil','vendas','faturamento','pendencias','manutencao','atendimentos','entregas','pecas'];
   const idx = tabs.indexOf(tab);
   if (idx !== -1) document.querySelectorAll('.nav-tab')[idx].classList.add('active');
   if (tab === 'dashboard')    renderDashboard();
@@ -2642,12 +2543,11 @@ function showTab(tab) {
 renderFunil();
   if (tab === 'vendas')       { buildVdTabs(); renderSales(); }
   if (tab === 'faturamento')  { buildFatTabs(); renderFaturamento(); }
-  if (tab === 'pendencias')   renderPendings();
+  if (tab === 'pendencias')   renderPendencias();
   if (tab === 'manutencao')   { propagarCondominiosParaProximoMes(); buildMesesTabs(); renderManut(); renderBoletos(); }
   if (tab === 'atendimentos') renderAt();
   if (tab === 'entregas')     renderEntregas();
-  if (tab === 'agenda')       renderAgenda();
-  if (tab === 'clientes')     renderClientes();
+  if (tab === 'pecas')        renderPecas();
 }
 
 // ===== FUNIL =====
@@ -3102,81 +3002,198 @@ function buildPedidosHTML(tipo, refId) {
   return `<div class="pedidos-wrap" id="pedidos-wrap-${refId}"></div>`;
 }
 
-// ===== PENDÊNCIAS =====
-function addPending() {
-  const desc     = document.getElementById('pend-desc').value.trim();
-  const category = document.getElementById('pend-category').value;
-  const priority = document.getElementById('pend-priority').value;
-  const date     = document.getElementById('pend-date').value;
-  if (!desc) return;
-  pendings.push({ id: Date.now().toString(), desc, category, priority, date: date || new Date().toISOString().slice(0,10), done: false });
-  save(); renderPendings();
-  document.getElementById('pend-desc').value = '';
+// ===== PENDÊNCIAS (Solicitação de visita + Pendências de atendimento) =====
+function setPendSub(sub) {
+  pendSub = sub;
+  document.getElementById('pend-sub-visita').classList.toggle('active', sub === 'visita');
+  document.getElementById('pend-sub-atend').classList.toggle('active', sub === 'atend');
+  document.getElementById('pend-box-visita').style.display = sub === 'visita' ? '' : 'none';
+  document.getElementById('pend-box-atend').style.display  = sub === 'atend'  ? '' : 'none';
 }
 
-function togglePending(id) {
-  const p = pendings.find(x => x.id === id);
-  if (!p || p.done) return;
-  // marca visualmente como feito
-  const itemEl = document.querySelector(`.pending-item[data-pend-id="${id}"]`);
-  if (itemEl) {
-    itemEl.classList.add('done');
-    itemEl.querySelector('.pending-check')?.classList.add('checked');
-    itemEl.querySelector('.pend-name') && (itemEl.querySelector('.pend-name').style.textDecoration = 'line-through');
-  }
-  p.done = true;
-  save();
-  updateBadge();
-  // remove da lista após 3 segundos
-  setTimeout(() => {
-    pendings = pendings.filter(x => x.id !== id);
-    save();
-    renderPendings();
-  }, 3000);
+function renderPendencias() {
+  renderVisitas();
+  renderPendAtend();
+  updatePendBadge();
 }
 
-function removePending(id) {
-  if (!confirm('Remover esta pendência?')) return;
-  pendings = pendings.filter(x => x.id !== id);
-  save(); renderPendings();
+function updatePendBadge() {
+  const total = visitas.filter(v => !v.done).length + pendAtend.filter(p => !p.done).length;
+  const b = document.getElementById('badge-count');
+  if (b) b.textContent = total;
+  const cv = document.getElementById('pend-c-visita');
+  const ca = document.getElementById('pend-c-atend');
+  if (cv) cv.textContent = '(' + visitas.filter(v => !v.done).length + ')';
+  if (ca) ca.textContent = '(' + pendAtend.filter(p => !p.done).length + ')';
 }
 
-function renderPendings() {
-  const open = pendings.filter(p => !p.done).length;
-  document.getElementById('badge-count').textContent = open;
-  document.getElementById('tab-pendencias').querySelector('.badge').textContent = open;
-  const list = document.getElementById('pending-list');
-  const hoje = new Date(); hoje.setHours(0,0,0,0);
-  const priorities = ['Alta','Média','Baixa'];
-  const dotColors  = { Alta: 'dot-red', Média: 'dot-orange', Baixa: 'dot-blue' };
-  // mostra apenas pendências NÃO concluídas
-  list.innerHTML = priorities.map(prio => {
-    const items     = pendings.filter(p => p.priority === prio && !p.done);
-    const catClass  = c => c === 'Manutenção' ? 'cat-manutencao' : c === 'Pedido' ? 'cat-pedido' : c === 'Orçamento' ? 'cat-orcamento' : c === 'Financeiro' ? 'cat-financeiro' : 'cat-outro';
-    if (items.length === 0) return '';
-    return `<div class="priority-group">
-      <div class="priority-header">
-        <span class="dot ${dotColors[prio]}"></span>
-        Prioridade ${prio} <span style="color:var(--text-light);font-weight:500">(${items.length})</span>
-      </div>
-      ${items.map(p => {
-        const dataVenc = p.date ? new Date(p.date + 'T00:00:00') : null;
-        const vencida  = dataVenc && dataVenc < hoje;
-        return `<div class="pending-item ${vencida ? 'vencida' : ''}" data-pend-id="${p.id}">
-          <div class="pending-check" onclick="togglePending('${p.id}')"></div>
-          <div class="pend-info">
-            <div class="pend-name">${p.desc}</div>
-            <div class="pend-meta">
-              <span class="pend-category ${catClass(p.category)}">${p.category}</span>
-              <span class="pend-date" style="${vencida ? 'color:var(--red);font-weight:700;' : ''}">${fmtDate(p.date)}</span>
-              ${vencida ? '<span class="pend-vencida">⚠️ Vencida</span>' : ''}
+const PRIO_DOT = { Alta:'dot-red', 'Média':'dot-orange', Baixa:'dot-green' };
+const PRIO_BADGE = { Alta:'mn-prio-alta', 'Média':'mn-prio-media', Baixa:'mn-prio-baixa' };
+
+// ---- Solicitação de visita ----
+function addVisita() {
+  const cliente = document.getElementById('pv-cliente').value.trim();
+  if (!cliente) { alert('Informe o cliente / local!'); return; }
+  visitas.unshift({
+    id: Date.now().toString(),
+    cliente,
+    contato: document.getElementById('pv-contato').value.trim(),
+    prio:    document.getElementById('pv-prio').value,
+    data:    document.getElementById('pv-data').value || new Date().toISOString().slice(0,10),
+    obs:     document.getElementById('pv-obs').value.trim(),
+    done: false
+  });
+  saveVisitas();
+  ['pv-cliente','pv-contato','pv-obs'].forEach(i => document.getElementById(i).value = '');
+  renderVisitas(); updatePendBadge();
+}
+
+function toggleVisita(id) {
+  const v = visitas.find(x => x.id === id);
+  if (v) { v.done = !v.done; saveVisitas(); renderVisitas(); updatePendBadge(); }
+}
+
+function removerVisita(id) {
+  if (!confirm('Remover esta solicitação?')) return;
+  visitas = visitas.filter(x => x.id !== id);
+  saveVisitas(); renderVisitas(); updatePendBadge();
+}
+
+function renderVisitas() {
+  const wrap = document.getElementById('pv-lista');
+  if (!wrap) return;
+  if (visitas.length === 0) { wrap.innerHTML = '<div class="at-empty">📍 Nenhuma solicitação de visita.</div>'; return; }
+  const ordem = { Alta:0, 'Média':1, Baixa:2 };
+  const lista = [...visitas].sort((a,b) => (a.done - b.done) || (ordem[a.prio] - ordem[b.prio]) || (a.data||'').localeCompare(b.data||''));
+  wrap.innerHTML = lista.map(v => `
+    <div class="ent-card" style="border-left-color:${v.done?'var(--green)':'var(--primary)'};${v.done?'opacity:0.6':''};margin-top:12px">
+      <div class="ent-header">
+        <div style="display:flex;align-items:flex-start;gap:10px">
+          <div class="ent-item-check ${v.done?'ok':''}" onclick="toggleVisita('${v.id}')" style="margin-top:2px"></div>
+          <div>
+            <div class="ent-nome" style="${v.done?'text-decoration:line-through;color:var(--text-muted)':''}">${esc(v.cliente)}</div>
+            <div class="ent-meta">
+              ${v.contato ? `<span>📞 ${esc(v.contato)}</span>` : ''}
+              ${v.data ? `<span>📅 ${fmtDate(v.data)}</span>` : ''}
             </div>
+            ${v.obs ? `<div style="font-size:13px;color:var(--text-muted);margin-top:6px">${esc(v.obs)}</div>` : ''}
           </div>
-          <button class="btn-remove" onclick="removePending('${p.id}')">×</button>
-        </div>`;
-      }).join('')}
-    </div>`;
-  }).filter(Boolean).join('') || '<div class="empty-state" style="padding:24px;text-align:center">🎉 Nenhuma pendência em aberto!</div>';
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
+          <span class="mn-prio ${PRIO_BADGE[v.prio]||''}" style="font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px">${v.prio}</span>
+          <button onclick="removerVisita('${v.id}')" style="background:none;border:none;color:var(--text-light);cursor:pointer;font-size:16px" title="Remover">×</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+// ---- Pendências de atendimento ----
+function addPendAtend() {
+  const cliente = document.getElementById('pa-cliente').value.trim();
+  const desc    = document.getElementById('pa-desc').value.trim();
+  if (!cliente && !desc) { alert('Preencha cliente e/ou descrição!'); return; }
+  pendAtend.unshift({
+    id: Date.now().toString(),
+    cliente,
+    desc,
+    prio: document.getElementById('pa-prio').value,
+    data: document.getElementById('pa-data').value || new Date().toISOString().slice(0,10),
+    done: false
+  });
+  savePendAtend();
+  ['pa-cliente','pa-desc'].forEach(i => document.getElementById(i).value = '');
+  renderPendAtend(); updatePendBadge();
+}
+
+function togglePendAtend(id) {
+  const p = pendAtend.find(x => x.id === id);
+  if (p) { p.done = !p.done; savePendAtend(); renderPendAtend(); updatePendBadge(); }
+}
+
+function removerPendAtend(id) {
+  if (!confirm('Remover esta pendência?')) return;
+  pendAtend = pendAtend.filter(x => x.id !== id);
+  savePendAtend(); renderPendAtend(); updatePendBadge();
+}
+
+function renderPendAtend() {
+  const wrap = document.getElementById('pa-lista');
+  if (!wrap) return;
+  if (pendAtend.length === 0) { wrap.innerHTML = '<div class="at-empty">🔧 Nenhuma pendência de atendimento.</div>'; return; }
+  const ordem = { Alta:0, 'Média':1, Baixa:2 };
+  const lista = [...pendAtend].sort((a,b) => (a.done - b.done) || (ordem[a.prio] - ordem[b.prio]) || (a.data||'').localeCompare(b.data||''));
+  wrap.innerHTML = lista.map(p => `
+    <div class="ent-card" style="border-left-color:${p.done?'var(--green)':'var(--orange)'};${p.done?'opacity:0.6':''};margin-top:12px">
+      <div class="ent-header">
+        <div style="display:flex;align-items:flex-start;gap:10px">
+          <div class="ent-item-check ${p.done?'ok':''}" onclick="togglePendAtend('${p.id}')" style="margin-top:2px"></div>
+          <div>
+            <div class="ent-nome" style="${p.done?'text-decoration:line-through;color:var(--text-muted)':''}">${esc(p.cliente) || '<span style=\"color:var(--text-light)\">(sem cliente)</span>'}</div>
+            ${p.desc ? `<div style="font-size:13px;color:var(--text-muted);margin-top:4px">${esc(p.desc)}</div>` : ''}
+            <div class="ent-meta">${p.data ? `<span>📅 ${fmtDate(p.data)}</span>` : ''}</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
+          <span class="mn-prio ${PRIO_BADGE[p.prio]||''}" style="font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px">${p.prio}</span>
+          <button onclick="removerPendAtend('${p.id}')" style="background:none;border:none;color:var(--text-light);cursor:pointer;font-size:16px" title="Remover">×</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function exportarPendenciasPDF() {
+  const ordem = { Alta:0, 'Média':1, Baixa:2 };
+  const cor = { Alta:'#ef4444', 'Média':'#f59e0b', Baixa:'#10b981' };
+  const sortP = arr => [...arr].sort((a,b) => (a.done - b.done) || (ordem[a.prio] - ordem[b.prio]) || (a.data||'').localeCompare(b.data||''));
+
+  const vis = sortP(visitas);
+  const pat = sortP(pendAtend);
+
+  const linhaVisita = v => `<tr style="${v.done?'opacity:0.5':''}">
+    <td>${v.done ? '✔' : '☐'}</td>
+    <td><strong>${esc(v.cliente)}</strong></td>
+    <td>${esc(v.contato||'—')}</td>
+    <td>${v.data?fmtDate(v.data):'—'}</td>
+    <td><span style="color:${cor[v.prio]};font-weight:700">${v.prio}</span></td>
+    <td>${esc(v.obs||'—')}</td>
+  </tr>`;
+
+  const linhaAtend = p => `<tr style="${p.done?'opacity:0.5':''}">
+    <td>${p.done ? '✔' : '☐'}</td>
+    <td><strong>${esc(p.cliente||'—')}</strong></td>
+    <td>${esc(p.desc||'—')}</td>
+    <td>${p.data?fmtDate(p.data):'—'}</td>
+    <td><span style="color:${cor[p.prio]};font-weight:700">${p.prio}</span></td>
+  </tr>`;
+
+  const html = `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>Pendências</title>
+    <style>
+      body{font-family:Arial,Helvetica,sans-serif;color:#1a1d27;padding:30px;font-size:13px}
+      h1{font-size:20px;margin:0 0 4px}
+      h2{font-size:15px;margin:26px 0 8px;border-bottom:2px solid #4f46e5;padding-bottom:4px;color:#4f46e5}
+      .sub{color:#666;font-size:12px;margin-bottom:8px}
+      table{width:100%;border-collapse:collapse;margin-bottom:10px}
+      th,td{border:1px solid #ddd;padding:6px 8px;text-align:left;vertical-align:top}
+      th{background:#f1f2f6;font-size:11px;text-transform:uppercase;letter-spacing:.04em}
+      .vazio{color:#999;font-style:italic;padding:8px 0}
+      @media print{body{padding:0}}
+    </style></head><body>
+    <h1>📋 Relatório de Pendências</h1>
+    <div class="sub">Gerado em ${new Date().toLocaleString('pt-BR')}</div>
+
+    <h2>📍 Solicitações de visita (${vis.filter(v=>!v.done).length} em aberto)</h2>
+    ${vis.length ? `<table><thead><tr><th></th><th>Cliente / Local</th><th>Contato</th><th>Data</th><th>Prioridade</th><th>Motivo</th></tr></thead><tbody>${vis.map(linhaVisita).join('')}</tbody></table>` : '<div class="vazio">Nenhuma solicitação de visita.</div>'}
+
+    <h2>🔧 Pendências de atendimento (${pat.filter(p=>!p.done).length} em aberto)</h2>
+    ${pat.length ? `<table><thead><tr><th></th><th>Cliente</th><th>Descrição</th><th>Data</th><th>Prioridade</th></tr></thead><tbody>${pat.map(linhaAtend).join('')}</tbody></table>` : '<div class="vazio">Nenhuma pendência de atendimento.</div>'}
+
+    <script>window.onload=function(){window.print();}<\/script>
+    </body></html>`;
+
+  const janela = window.open('', '_blank');
+  if (!janela) { alert('Permita pop-ups para gerar o PDF.'); return; }
+  janela.document.write(html);
+  janela.document.close();
 }
 
 // ===== MANUTENÇÃO — abas por mês, cores, obs automática =====
@@ -4694,11 +4711,10 @@ function gerarRelatorio() {
 // ===== INIT =====
 const today = new Date().toISOString().slice(0,10);
 document.getElementById('sale-date').value    = today;
-document.getElementById('pend-date').value    = today;
 document.getElementById('comb-f-data').value  = today;
 document.getElementById('fat-f-data').value   = today;
 renderFunil();
-updateBadge();
+updatePendBadge();
 buildMesesTabs();
 buildVdTabs();
 buildFatTabs();
@@ -4709,16 +4725,9 @@ renderAt();
 renderBoletos();
 renderVencimentos();
 updateEntBadge();
+updatePcBadge();
 
-function updateBadge() {
-  const hoje = new Date(); hoje.setHours(0,0,0,0);
-  const open    = pendings.filter(p => !p.done).length;
-  const vencidas = pendings.filter(p => !p.done && p.date && new Date(p.date + 'T00:00:00') < hoje).length;
-  const badge = document.getElementById('badge-count');
-  badge.textContent = open;
-  badge.style.background = vencidas > 0 ? 'var(--red)' : '';
-  badge.title = vencidas > 0 ? `${vencidas} vencida${vencidas > 1 ? 's' : ''}` : '';
-}
+function updateBadge() { updatePendBadge(); }
 
 // ===== ENTREGAS =====
 function saveEntregas() { localStorage.setItem('crm_entregas', JSON.stringify(entregas)); }
@@ -4931,7 +4940,8 @@ async function lerPdfEntrega(event) {
   if (!file) return;
   event.target.value = '';
 
-  const btn = document.getElementById('btn-importar-pdf');
+  const btnId = pdfDestino === 'peca' ? 'btn-importar-pdf-pc' : 'btn-importar-pdf';
+  const btn = document.getElementById(btnId);
   const setStatus = (msg) => { if (btn) btn.textContent = msg; };
   setStatus('⏳ Carregando PDF...');
 
@@ -5068,12 +5078,21 @@ async function lerPdfEntrega(event) {
     console.error('[PDF] Erro geral:', err);
     alert('❌ Erro ao ler o PDF.\n' + (err.message || err) + '\n\nDica: Use o botão "📋 Colar Texto do PDF" como alternativa.');
   } finally {
-    if (btn) btn.innerHTML = '📄 Importar PDF<input type="file" accept=".pdf" onchange="lerPdfEntrega(event)" style="display:none">';
+    if (btn) btn.innerHTML = pdfDestino === 'peca'
+      ? '📄 Importar PDF<input type="file" accept=".pdf" onchange="lerPdfPeca(event)" style="display:none">'
+      : '📄 Importar PDF<input type="file" accept=".pdf" onchange="pdfDestino=\'entrega\';lerPdfEntrega(event)" style="display:none">';
   }
 }
 
+// Importar PDF na aba Peças — usa a mesma engine das Entregas
+function lerPdfPeca(event) {
+  pdfDestino = 'peca';
+  return lerPdfEntrega(event);
+}
+
 // ---- Colar Texto do PDF ----
-function abrirColarTextoModal() {
+function abrirColarTextoModal(destino) {
+  pdfDestino = destino || 'entrega';
   document.getElementById('colar-texto-overlay').classList.remove('hidden');
   document.getElementById('colar-texto-area').value = '';
   document.getElementById('colar-texto-area').focus();
@@ -5088,6 +5107,47 @@ function processarTextoPdf() {
   document.getElementById('colar-texto-overlay').classList.add('hidden');
   // Usa a mesma lógica de parsing — chama parsearTextoPdf
   parsearTextoPdf(texto, 'texto colado');
+}
+
+// Extrator robusto de itens de proposta Bling — tolerante a OCR
+// Âncora: a "cauda numérica" de cada linha (Qtd, Preço unit., Preço total).
+function extrairItensBlingRobusto(texto) {
+  const linhas = (texto || '').replace(/\r/g, '').split('\n').map(l => l.trim()).filter(Boolean);
+  const itens = [];
+  let dentro = false, pendente = '';
+  const seen = new Set();
+
+  const add = (desc, qty) => {
+    desc = (desc || '').replace(/\s{2,}/g, ' ').replace(/[|]+/g, '').replace(/^\d+\s+/, '').trim();
+    if (desc.length < 3 || !/[A-Za-zÁÀÂÃÉÈÊÍÌÎÓÒÔÕÚÙÛáàâãéèêíìîóòôõúùûÇç]{3,}/.test(desc)) return;
+    const key = desc.toLowerCase();
+    if (seen.has(key)) return;
+    seen.add(key);
+    itens.push({ desc, qty: String(qty || '1') });
+  };
+
+  const NUM = '\\d[\\d.]*,\\d{2}';                       // 1,00  ou  2.095,50
+  const reFull = new RegExp(`^(.*?)\\s+(\\d{3,6})\\s+\\S{1,3}\\s+(\\d{1,3}),\\d{2}\\s+${NUM}\\s+${NUM}\\s*$`); // DESC COD UN QTD PU PT
+  const re3 = new RegExp(`^(.*?[A-Za-zÁ-ú].*?)\\s+(\\d{1,3}),\\d{2}\\s+${NUM}\\s+${NUM}\\s*$`);                 // DESC QTD PU PT
+  const re2 = new RegExp(`^(.*?[A-Za-zÁ-ú].*?)\\s+${NUM}\\s+${NUM}\\s*$`);                                       // DESC PU PT (qtd perdida)
+
+  for (let i = 0; i < linhas.length; i++) {
+    const l = linhas[i];
+    if (/Itens\s+da\s+proposta/i.test(l)) { dentro = true; continue; }
+    if (/Descri\w*\s+do\s+produto/i.test(l)) { dentro = true; continue; }
+    if (dentro && /N[ºo°]\s*de\s*Itens|Soma\s*das\s*Qtdes|Atenciosamente|Total\s+da\s+proposta/i.test(l)) break;
+    if (!dentro) continue;
+    if (/^(Imagem|C[oó]digo|Un\b|Qtd|Pre[çc]o)/i.test(l)) continue;
+
+    let m;
+    if ((m = l.match(reFull))) { add((pendente ? pendente + ' ' : '') + m[1], m[3]); pendente = ''; continue; }
+    if ((m = l.match(re3)))    { add((pendente ? pendente + ' ' : '') + m[1], m[2]); pendente = ''; continue; }
+    if ((m = l.match(re2)))    { add((pendente ? pendente + ' ' : '') + m[1], '1'); pendente = ''; continue; }
+
+    if (/[A-Za-zÁ-ú]{3,}/.test(l)) pendente = (pendente ? pendente + ' ' : '') + l.replace(/^\d+\s+/, '');
+  }
+  if (pendente) add(pendente, '1');
+  return itens;
 }
 
 // Função central de parsing — usada tanto pelo importar PDF quanto pelo colar texto
@@ -5306,18 +5366,45 @@ function parsearTextoPdf(texto, fonte) {
     }
   }
 
-  // Preenche modal
-  abrirEntregaModal();
-  if (clienteNome) document.getElementById('ent-f-cliente').value = clienteNome;
-  if (numProposta) document.getElementById('ent-f-proposta').value = numProposta;
-  document.getElementById('ent-f-data').value = dataIso;
-  entItensTemp = itens;
-  renderItensModal();
+  // ===== Passada robusta p/ tabelas Bling (especialmente PDFs escaneados via OCR) =====
+  // O extrator robusto ancora na cauda numérica (Qtd/Preço/Total), o que o torna confiável
+  // mesmo com OCR sujo. Se ele achar 2+ itens, priorizamos o resultado dele.
+  try {
+    const robustos = extrairItensBlingRobusto(texto);
+    if (robustos.length >= 2 || robustos.length > itens.length) {
+      itens.length = 0;
+      robustos.forEach(r => itens.push({ id: Date.now().toString() + Math.random(), desc: r.desc, qty: r.qty, ok: false }));
+    }
+  } catch (e) { console.warn('[PDF] extração robusta falhou:', e); }
 
-  const preview = document.getElementById('ent-pdf-preview');
-  document.getElementById('ent-pdf-info').textContent =
-    `✅ ${fonte} — ${clienteNome || '?'} · Proposta ${numProposta || '?'} · ${itens.length} item(s) encontrado(s)`;
-  preview.style.display = 'block';
+  // Preenche modal — destino: 'entrega' (padrão) ou 'peca'
+  if (pdfDestino === 'peca') {
+    abrirPecaModal();
+    if (clienteNome) document.getElementById('pc-f-cliente').value = clienteNome;
+    if (numProposta) document.getElementById('pc-f-proposta').value = numProposta;
+    document.getElementById('pc-f-data').value = dataIso;
+    pcItensTemp = itens;
+    renderItensPecaModal();
+
+    const pv = document.getElementById('pc-pdf-preview');
+    if (pv) {
+      document.getElementById('pc-pdf-info').textContent =
+        `✅ ${fonte} — ${clienteNome || '?'} · Proposta ${numProposta || '?'} · ${itens.length} peça(s) encontrada(s)`;
+      pv.style.display = 'block';
+    }
+  } else {
+    abrirEntregaModal();
+    if (clienteNome) document.getElementById('ent-f-cliente').value = clienteNome;
+    if (numProposta) document.getElementById('ent-f-proposta').value = numProposta;
+    document.getElementById('ent-f-data').value = dataIso;
+    entItensTemp = itens;
+    renderItensModal();
+
+    const preview = document.getElementById('ent-pdf-preview');
+    document.getElementById('ent-pdf-info').textContent =
+      `✅ ${fonte} — ${clienteNome || '?'} · Proposta ${numProposta || '?'} · ${itens.length} item(s) encontrado(s)`;
+    preview.style.display = 'block';
+  }
 
   if (itens.length === 0) {
     const textoPreview = texto.replace(/\s+/g, ' ').trim().substring(0, 300);
@@ -5328,652 +5415,206 @@ function parsearTextoPdf(texto, fonte) {
 }
 
 
-// ===== CLIENTES =====
-function saveClientes() { localStorage.setItem('crm_clientes', JSON.stringify(clientes)); }
-function saveMaquinas() { localStorage.setItem('crm_maquinas', JSON.stringify(maquinas)); }
-function getMaquinasCliente(cliId) { if (!maquinas[cliId]) maquinas[cliId] = []; return maquinas[cliId]; }
 
-// Retorna lista completa de clientes incluindo os da Manutenção (contrato fixo)
-function getClientesCompleto() {
-  const lista = [...clientes];
-  // Adiciona clientes da manutenção que não estejam já cadastrados
-  const nomesExistentes = new Set(lista.map(c => (c.nome||'').toLowerCase().trim()));
-  Object.values(manuts).flat().forEach(m => {
-    if (!m.cliente) return;
-    const nomeNorm = m.cliente.toLowerCase().trim();
-    if (!nomesExistentes.has(nomeNorm)) {
-      nomesExistentes.add(nomeNorm);
-      lista.push({ id: 'manut_' + nomeNorm.replace(/\s+/g,'_'), nome: m.cliente, tipo: 'Contrato Fixo', tel:'', resp:'', end:'', obs:'', _fromManut: true });
-    }
-  });
-  return lista.sort((a,b) => (a.nome||'').localeCompare(b.nome||''));
+// ===== PEÇAS QUE CHEGARAM =====
+function updatePcBadge() {
+  const ativas = pecas.filter(p => (p.itens||[]).some(i => !i.ok)).length;
+  const b = document.getElementById('badge-pecas');
+  if (!b) return;
+  b.textContent = ativas;
+  b.style.display = ativas > 0 ? 'inline-block' : 'none';
 }
 
-function setCliFiltro(filtro) {
-  cliFiltroAtivo = filtro;
-  document.querySelectorAll('#page-clientes .at-filter-btn').forEach(b => b.classList.remove('active'));
-  const mapa = {'todos':0,'Contrato Fixo':1,'Corretivo':2,'Locação':3,'Venda':4};
-  const btns = document.querySelectorAll('#page-clientes .at-filter-btn');
-  if (btns[mapa[filtro]]) btns[mapa[filtro]].classList.add('active');
-  renderClientes();
+function setPcFiltro(filtro) {
+  pcFiltro = filtro;
+  document.querySelectorAll('#page-pecas .at-filter-btn').forEach(b => b.classList.remove('active'));
+  const btns = document.querySelectorAll('#page-pecas .at-filter-btn');
+  const map = { ativos:0, todos:1, 'Aguardando':2, 'Concluída':3 };
+  if (btns[map[filtro]]) btns[map[filtro]].classList.add('active');
+  renderPecas();
 }
 
-function renderClientes() {
-  const grid  = document.getElementById('cli-grid');
-  const count = document.getElementById('cli-count');
-  const query = (document.getElementById('cli-search')?.value || '').toLowerCase().trim();
-  let lista = getClientesCompleto();
-  if (cliFiltroAtivo !== 'todos') lista = lista.filter(c => c.tipo === cliFiltroAtivo);
-  if (query) lista = lista.filter(c => (c.nome+c.tel+c.resp+c.end).toLowerCase().includes(query));
-  count.textContent = lista.length + ' cadastrado' + (lista.length !== 1 ? 's' : '');
-  if (lista.length === 0) { grid.innerHTML = '<div class="at-empty">Nenhum cliente encontrado.</div>'; return; }
+// Status derivado: Concluída se todos os itens baixados (e houver itens), senão Aguardando
+function pcStatus(p) {
+  const itens = p.itens || [];
+  if (itens.length > 0 && itens.every(i => i.ok)) return 'Concluída';
+  return 'Aguardando';
+}
 
-  const tipoCls = { 'Contrato Fixo':'tipo-fixo','Corretivo':'tipo-corretivo','Locação':'tipo-locacao','Venda':'tipo-venda' };
-  const tipoBadge = { 'Contrato Fixo':'cli-fixo-badge','Corretivo':'cli-corret-badge','Locação':'cli-locacao-badge','Venda':'cli-venda-badge' };
-  const tipoLabel = { 'Contrato Fixo':'📋 Contrato Fixo','Corretivo':'🔧 Corretivo','Locação':'📦 Locação','Venda':'💰 Venda' };
+function renderPecas() {
+  const lista_el = document.getElementById('pc-lista');
+  const count_el = document.getElementById('pc-count');
+  if (!lista_el) return;
 
-  grid.innerHTML = lista.map(c => {
-    const atends   = atendimentos.filter(a => a.cliente && a.cliente.toLowerCase().includes((c.nome||'').toLowerCase())).length;
-    const prevs    = Object.values(manuts).flat().filter(m => m.cliente && m.cliente.toLowerCase() === (c.nome||'').toLowerCase() && m.preventiva).length;
-    const maqCount = getMaquinasCliente(c.id).length;
-    return `<div class="cli-card ${tipoCls[c.tipo]||''}" onclick="abrirCliDetalhe('${c.id}')">
-      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px">
+  let lista = [...pecas].sort((a,b) => (b.data||'').localeCompare(a.data||''));
+
+  if (pcFiltro === 'ativos')      lista = lista.filter(p => pcStatus(p) === 'Aguardando');
+  else if (pcFiltro !== 'todos')  lista = lista.filter(p => pcStatus(p) === pcFiltro);
+
+  const ativas = pecas.filter(p => pcStatus(p) === 'Aguardando').length;
+  count_el.textContent = ativas + ' ativa' + (ativas !== 1 ? 's' : '');
+  updatePcBadge();
+
+  if (lista.length === 0) {
+    lista_el.innerHTML = `<div class="at-empty">${pcFiltro === 'ativos' ? '✅ Nenhuma peça aguardando baixa!' : 'Nenhuma chegada encontrada.'}</div>`;
+    return;
+  }
+
+  lista_el.innerHTML = lista.map(p => {
+    const itens     = p.itens || [];
+    const baixados  = itens.filter(i => i.ok).length;
+    const total     = itens.length;
+    const progresso = total > 0 ? Math.round((baixados/total)*100) : 0;
+    const status    = pcStatus(p);
+    const concluida = status === 'Concluída';
+
+    const itensHtml = itens.map(it => `
+      <div class="ent-item ${it.ok ? 'entregue' : ''}">
+        <div class="ent-item-check ${it.ok ? 'ok' : ''}" onclick="toggleItemPeca('${p.id}','${it.id}')"></div>
+        <span class="ent-item-desc">${esc(it.desc)}</span>
+        <span class="ent-item-qty">Qtd: ${it.qty}</span>
+      </div>`).join('');
+
+    return `<div class="ent-card ${concluida ? 'concluida' : 'agendada'}">
+      <div class="ent-header">
         <div>
-          <div class="cli-nome">${esc(c.nome)}</div>
-          <span class="cli-tipo-badge ${tipoBadge[c.tipo]||''}">${tipoLabel[c.tipo]||c.tipo}</span>
+          <div class="ent-nome">${esc(p.cliente)}</div>
+          <div class="ent-meta">
+            ${p.proposta    ? `<span>📋 Proposta ${esc(p.proposta)}</span>` : ''}
+            ${p.data        ? `<span>📅 ${fmtDate(p.data)}</span>` : ''}
+            ${p.fornecedor  ? `<span>🏭 ${esc(p.fornecedor)}</span>` : ''}
+            ${total > 0     ? `<span>${baixados}/${total} peças baixadas</span>` : ''}
+          </div>
         </div>
-        ${!c._fromManut ? `<button onclick="event.stopPropagation();abrirCliModal('${c.id}')" style="background:none;border:none;color:var(--text-light);cursor:pointer;font-size:14px;padding:0 2px" title="Editar">✏️</button>` : ''}
+        <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
+          <span class="ent-status-badge" style="background:${concluida?'var(--green-light)':'var(--orange-light)'};color:${concluida?'var(--green)':'var(--orange)'}">${concluida ? '✅ Baixada' : '📦 Aguardando'}</span>
+          <button onclick="abrirPecaModal('${p.id}')" style="background:none;border:none;color:var(--text-light);cursor:pointer;font-size:14px" title="Editar">✏️</button>
+          <button onclick="removerPeca('${p.id}')" style="background:none;border:none;color:var(--text-light);cursor:pointer;font-size:16px" title="Remover">×</button>
+        </div>
       </div>
-      <div class="cli-info-row">
-        ${c.tel ? `<span>📞 ${esc(c.tel)}</span>` : ''}
-        ${c.resp ? `<span>👤 ${esc(c.resp)}</span>` : ''}
-        ${c.end  ? `<span>📍 ${esc(c.end)}</span>`  : ''}
-      </div>
-      <div style="display:flex;gap:8px;margin-top:10px">
-        <div class="cli-stat"><span class="cli-stat-val" style="color:var(--orange)">${atends}</span><span class="cli-stat-label">Corretivos</span></div>
-        <div class="cli-stat"><span class="cli-stat-val" style="color:var(--green)">${prevs}</span><span class="cli-stat-label">Preventivas</span></div>
-        <div class="cli-stat"><span class="cli-stat-val" style="color:var(--purple)">${maqCount}</span><span class="cli-stat-label">Máquinas</span></div>
-      </div>
+
+      ${total > 0 ? `
+        <div style="margin-bottom:10px">
+          <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-muted);margin-bottom:4px">
+            <span>Baixa de peças</span><span>${progresso}%</span>
+          </div>
+          <div style="background:var(--border);border-radius:20px;height:5px">
+            <div style="background:${progresso===100?'var(--green)':'var(--primary)'};height:5px;border-radius:20px;width:${progresso}%;transition:width 0.3s"></div>
+          </div>
+        </div>
+        <div>${itensHtml}</div>` : '<div style="font-size:12px;color:var(--text-light);padding:6px 0">Nenhuma peça cadastrada nesta chegada.</div>'}
+
+      ${p.obs ? `<div class="ent-pend-box">📝 ${esc(p.obs)}</div>` : ''}
     </div>`;
   }).join('');
 }
 
-// ---- Modal Cadastro Cliente ----
-function abrirCliModal(id) {
-  cliEditId = id || null;
-  const overlay = document.getElementById('cli-modal-overlay');
-  overlay.classList.remove('hidden');
-  document.getElementById('cli-modal-titulo').textContent = id ? 'Editar Cliente' : 'Novo Cliente';
-  if (id) {
-    const c = clientes.find(x => x.id === id);
-    if (c) {
-      document.getElementById('cli-f-nome').value = c.nome || '';
-      document.getElementById('cli-f-tipo').value = c.tipo || 'Corretivo';
-      document.getElementById('cli-f-tel').value  = c.tel  || '';
-      document.getElementById('cli-f-resp').value = c.resp || '';
-      document.getElementById('cli-f-end').value  = c.end  || '';
-      document.getElementById('cli-f-obs').value  = c.obs  || '';
-    }
-  } else {
-    ['cli-f-nome','cli-f-tel','cli-f-resp','cli-f-end','cli-f-obs'].forEach(i => document.getElementById(i).value = '');
-    document.getElementById('cli-f-tipo').value = 'Corretivo';
+function toggleItemPeca(pcId, itemId) {
+  const p = pecas.find(x => x.id === pcId);
+  if (!p || !p.itens) return;
+  const item = p.itens.find(i => i.id === itemId);
+  if (item) {
+    item.ok = !item.ok;
+    savePecas(); renderPecas();
   }
 }
 
-function fecharCliModal(e) {
-  if (e && e.target !== document.getElementById('cli-modal-overlay')) return;
-  document.getElementById('cli-modal-overlay').classList.add('hidden');
-  cliEditId = null;
+function removerPeca(id) {
+  if (!confirm('Remover esta chegada de peças?')) return;
+  pecas = pecas.filter(x => x.id !== id);
+  savePecas(); renderPecas();
 }
 
-function salvarCliente() {
-  const nome = document.getElementById('cli-f-nome').value.trim();
-  if (!nome) { alert('Preencha o nome do cliente!'); return; }
-  const dados = {
-    nome, tipo: document.getElementById('cli-f-tipo').value,
-    tel:  document.getElementById('cli-f-tel').value.trim(),
-    resp: document.getElementById('cli-f-resp').value.trim(),
-    end:  document.getElementById('cli-f-end').value.trim(),
-    obs:  document.getElementById('cli-f-obs').value.trim(),
-  };
-  if (cliEditId) {
-    const idx = clientes.findIndex(x => x.id === cliEditId);
-    if (idx >= 0) clientes[idx] = { ...clientes[idx], ...dados };
-  } else {
-    clientes.push({ id: Date.now().toString(), ...dados });
-  }
-  saveClientes();
-  document.getElementById('cli-modal-overlay').classList.add('hidden');
-  cliEditId = null;
-  renderClientes();
-}
-
-// ---- Detalhe Cliente ----
-function abrirCliDetalhe(id) {
-  cliDetalheId = id;
-  cliDetTab = 'atendimentos';
-  const overlay = document.getElementById('cli-detalhe-overlay');
-  overlay.classList.remove('hidden');
-  const todos = getClientesCompleto();
-  const c = todos.find(x => x.id === id);
-  if (!c) return;
-  document.getElementById('cli-det-nome').textContent = c.nome;
-  const tipoBadge = { 'Contrato Fixo':'📋 Contrato Fixo','Corretivo':'🔧 Corretivo','Locação':'📦 Locação','Venda':'💰 Venda' };
-  let sub = tipoBadge[c.tipo] || c.tipo;
-  if (c.tel)  sub += ' · 📞 ' + c.tel;
-  if (c.resp) sub += ' · 👤 ' + c.resp;
-  if (c.end)  sub += ' · 📍 ' + c.end;
-  document.getElementById('cli-det-sub').textContent = sub;
-  renderCliDetalheKpis(c);
-  renderCliDetTab(c);
-  document.querySelectorAll('.cli-det-tab').forEach(t => t.classList.remove('active'));
-  document.getElementById('cli-tab-at').classList.add('active');
-}
-
-function fecharCliDetalhe(e) {
-  if (e && e.target !== document.getElementById('cli-detalhe-overlay')) return;
-  document.getElementById('cli-detalhe-overlay').classList.add('hidden');
-  cliDetalheId = null;
-}
-
-function editarClienteAtual() {
-  fecharCliDetalhe();
-  abrirCliModal(cliDetalheId);
-}
-
-function switchCliTab(tab) {
-  cliDetTab = tab;
-  document.querySelectorAll('.cli-det-tab').forEach(t => t.classList.remove('active'));
-  const mapa = { atendimentos:'cli-tab-at', preventivas:'cli-tab-prev', maquinas:'cli-tab-maq', vendas:'cli-tab-vd' };
-  if (mapa[tab]) document.getElementById(mapa[tab]).classList.add('active');
-  const todos = getClientesCompleto();
-  const c = todos.find(x => x.id === cliDetalheId);
-  if (c) renderCliDetTab(c);
-}
-
-function renderCliDetalheKpis(c) {
-  const atends = atendimentos.filter(a => a.cliente && a.cliente.toLowerCase().includes((c.nome||'').toLowerCase()));
-  const prevs  = Object.values(manuts).flat().filter(m => m.cliente && m.cliente.toLowerCase() === (c.nome||'').toLowerCase() && m.preventiva);
-  const maqCount = getMaquinasCliente(c.id).length;
-  const vendasCli = [];
-  for (let m = 0; m < 12; m++) { (sales[m]||[]).forEach(s => { if ((s.desc||'').toLowerCase().includes((c.nome||'').toLowerCase())) vendasCli.push(s); }); }
-  document.getElementById('cli-det-kpis').innerHTML = `
-    <div class="dash-kpi-card" style="border-top:3px solid var(--orange)"><div class="dash-kpi-label">🔧 Corretivos</div><div class="dash-kpi-value" style="color:var(--orange);font-size:22px">${atends.length}</div></div>
-    <div class="dash-kpi-card" style="border-top:3px solid var(--green)"><div class="dash-kpi-label">📋 Preventivas</div><div class="dash-kpi-value" style="color:var(--green);font-size:22px">${prevs.length}</div></div>
-    <div class="dash-kpi-card" style="border-top:3px solid var(--purple)"><div class="dash-kpi-label">⚙️ Máquinas</div><div class="dash-kpi-value" style="color:var(--purple);font-size:22px">${maqCount}</div></div>
-    <div class="dash-kpi-card" style="border-top:3px solid var(--blue)"><div class="dash-kpi-label">💰 Vendas</div><div class="dash-kpi-value" style="color:var(--blue);font-size:22px">${vendasCli.length}</div></div>`;
-}
-
-function renderCliDetTab(c) {
-  const cont = document.getElementById('cli-det-conteudo');
-  const nomeN = (c.nome||'').toLowerCase();
-
-  if (cliDetTab === 'atendimentos') {
-    const lista = atendimentos.filter(a => a.cliente && a.cliente.toLowerCase().includes(nomeN)).sort((a,b) => (b.data||'').localeCompare(a.data||''));
-    if (lista.length === 0) { cont.innerHTML = '<div style="color:var(--text-light);font-size:13px;padding:16px 0;text-align:center">Nenhum atendimento registrado.</div>'; return; }
-    const urgCor = { Alta:'var(--red)', Média:'var(--orange)', Baixa:'var(--green)' };
-    cont.innerHTML = lista.map(a => `
-      <div class="cli-hist-item corretivo">
-        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:4px">
-          <span style="font-weight:700;font-size:13px">${esc(a.assunto)}</span>
-          <span style="font-size:11px;color:${urgCor[a.urgencia]||'var(--text-muted)'};font-weight:700">${a.urgencia}</span>
-        </div>
-        <div style="font-size:11px;color:var(--text-muted);display:flex;gap:10px;flex-wrap:wrap">
-          <span>📅 ${fmtDate(a.data)}</span>
-          ${a.equip ? `<span>⚙️ ${esc(a.equip)}</span>` : ''}
-          <span style="font-weight:600;color:var(--text)">${a.status}</span>
-        </div>
-      </div>`).join('');
-  }
-
-  if (cliDetTab === 'preventivas') {
-    const lista = Object.entries(manuts).flatMap(([mes, arr]) =>
-      arr.filter(m => m.cliente && m.cliente.toLowerCase() === nomeN && m.preventiva)
-         .map(m => ({ ...m, mes: parseInt(mes) }))
-    ).sort((a,b) => (b.preventiva||'').localeCompare(a.preventiva||''));
-    if (lista.length === 0) { cont.innerHTML = '<div style="color:var(--text-light);font-size:13px;padding:16px 0;text-align:center">Nenhuma preventiva registrada.</div>'; return; }
-    cont.innerHTML = lista.map(m => `
-      <div class="cli-hist-item preventiva">
-        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
-          <span style="font-weight:700">📋 Preventiva — ${MESES[m.mes]}</span>
-          <span style="font-size:11px;color:var(--text-muted)">📅 ${fmtDate(m.preventiva)}</span>
-        </div>
-        ${m.corretiva ? `<div style="font-size:11px;color:var(--text-muted);margin-top:3px">🔧 Corretiva 1ª: ${fmtDate(m.corretiva)}${m.corretiva2?' · 2ª: '+fmtDate(m.corretiva2):''}</div>` : ''}
-        ${m.relatorio ? `<div style="font-size:11px;color:var(--green);margin-top:2px">📄 Relatório enviado: ${fmtDate(m.relatorio)}</div>` : ''}
-      </div>`).join('');
-  }
-
-  if (cliDetTab === 'maquinas') {
-    const lista = getMaquinasCliente(c.id);
-    const tipoIcon = { Esteira:'🏃', Bike:'🚴', Elíptico:'⚡', Musculação:'💪', Outro:'📦' };
-    cont.innerHTML = `
-      <div style="display:flex;justify-content:flex-end;margin-bottom:10px">
-        <button onclick="abrirMaqModal()" style="padding:6px 14px;background:var(--primary);color:white;border:none;border-radius:7px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;cursor:pointer">＋ Nova Máquina</button>
-      </div>
-      ${lista.length === 0 ? '<div style="color:var(--text-light);font-size:13px;padding:16px 0;text-align:center">Nenhuma máquina cadastrada.</div>' :
-        lista.map(mq => {
-          const problemas = atendimentos.filter(a => a.cliente && a.cliente.toLowerCase().includes(nomeN) && a.equip && a.equip.toLowerCase().includes((mq.modelo||'').toLowerCase())).length;
-          return `<div class="maq-card">
-            <div>
-              <div class="maq-nome">${tipoIcon[mq.tipo]||'📦'} ${esc(mq.marca)} ${esc(mq.modelo)}</div>
-              <div class="maq-sub">${mq.serie ? 'Série: '+esc(mq.serie)+' · ' : ''}${mq.obs||''}</div>
-              ${problemas > 0 ? `<div style="font-size:11px;color:var(--orange);margin-top:3px;font-weight:600">⚠️ ${problemas} ocorrência${problemas>1?'s':''} registrada${problemas>1?'s':''}</div>` : ''}
-            </div>
-            <button onclick="removerMaquina('${c.id}','${mq.id}')" style="background:none;border:none;color:var(--text-light);cursor:pointer;font-size:16px;padding:0 2px" title="Remover">×</button>
-          </div>`;
-        }).join('')
-      }`;
-  }
-
-  if (cliDetTab === 'vendas') {
-    const lista = [];
-    for (let m = 0; m < 12; m++) {
-      (sales[m]||[]).forEach(s => { if ((s.desc||'').toLowerCase().includes(nomeN)) lista.push({ ...s, mes: m }); });
-    }
-    lista.sort((a,b) => (b.date||'').localeCompare(a.date||''));
-    if (lista.length === 0) { cont.innerHTML = '<div style="color:var(--text-light);font-size:13px;padding:16px 0;text-align:center">Nenhuma venda encontrada.</div>'; return; }
-    cont.innerHTML = lista.map(s => `
-      <div class="cli-hist-item venda">
-        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
-          <span style="font-weight:700">${esc(s.desc)}</span>
-          <span style="font-weight:700;color:var(--green);font-family:'DM Mono',monospace">${fmt(s.value)}</span>
-        </div>
-        <div style="font-size:11px;color:var(--text-muted);margin-top:3px;display:flex;gap:10px">
-          <span>📅 ${fmtDate(s.date)}</span>
-          <span>${s.type}</span>
-          <span>${s.payment}</span>
-          <span style="color:${s.pago!=='nao'?'var(--green)':'var(--orange)'}">${s.pago!=='nao'?'✅ Pago':'⏳ Pendente'}</span>
-        </div>
-      </div>`).join('');
-  }
-}
-
-// ---- Máquinas ----
-function abrirMaqModal(id) {
-  maqEditId = id || null;
-  document.getElementById('maq-modal-overlay').classList.remove('hidden');
-  document.getElementById('maq-modal-titulo').textContent = id ? 'Editar Máquina' : 'Nova Máquina';
-  if (id) {
-    const mqs = getMaquinasCliente(cliDetalheId);
-    const mq  = mqs.find(x => x.id === id);
-    if (mq) {
-      document.getElementById('maq-f-marca').value  = mq.marca  || '';
-      document.getElementById('maq-f-modelo').value = mq.modelo || '';
-      document.getElementById('maq-f-serie').value  = mq.serie  || '';
-      document.getElementById('maq-f-tipo').value   = mq.tipo   || 'Outro';
-      document.getElementById('maq-f-obs').value    = mq.obs    || '';
-    }
-  } else {
-    ['maq-f-marca','maq-f-modelo','maq-f-serie','maq-f-obs'].forEach(i => document.getElementById(i).value = '');
-    document.getElementById('maq-f-tipo').value = 'Esteira';
-  }
-}
-
-function fecharMaqModal(e) {
-  if (e && e.target !== document.getElementById('maq-modal-overlay')) return;
-  document.getElementById('maq-modal-overlay').classList.add('hidden');
-  maqEditId = null;
-}
-
-function salvarMaquina() {
-  const marca  = document.getElementById('maq-f-marca').value.trim();
-  const modelo = document.getElementById('maq-f-modelo').value.trim();
-  if (!marca || !modelo) { alert('Preencha marca e modelo!'); return; }
-  const dados = { marca, modelo, serie: document.getElementById('maq-f-serie').value.trim(), tipo: document.getElementById('maq-f-tipo').value, obs: document.getElementById('maq-f-obs').value.trim() };
-  const lista = getMaquinasCliente(cliDetalheId);
-  if (maqEditId) {
-    const idx = lista.findIndex(x => x.id === maqEditId);
-    if (idx >= 0) lista[idx] = { ...lista[idx], ...dados };
-  } else {
-    lista.push({ id: Date.now().toString(), ...dados });
-  }
-  saveMaquinas();
-  document.getElementById('maq-modal-overlay').classList.add('hidden');
-  maqEditId = null;
-  const todos = getClientesCompleto();
-  const c = todos.find(x => x.id === cliDetalheId);
-  if (c) { renderCliDetalheKpis(c); renderCliDetTab(c); }
-}
-
-function removerMaquina(cliId, maqId) {
-  if (!confirm('Remover esta máquina?')) return;
-  maquinas[cliId] = (maquinas[cliId]||[]).filter(x => x.id !== maqId);
-  saveMaquinas();
-  const todos = getClientesCompleto();
-  const c = todos.find(x => x.id === cliId);
-  if (c) { renderCliDetalheKpis(c); renderCliDetTab(c); }
-}
-
-// ---- Sugestão de máquinas no atendimento ----
-function filtrarMaquinasAt() {
-  const nomeCliente = (document.getElementById('at-f-cliente')?.value || '').toLowerCase().trim();
-  const datalist = document.getElementById('at-maq-list');
-  if (!datalist) return;
-  const todos = getClientesCompleto();
-  const c = todos.find(x => x.nome && x.nome.toLowerCase().includes(nomeCliente));
-  if (!c) { datalist.innerHTML = ''; return; }
-  const mqs = getMaquinasCliente(c.id);
-  datalist.innerHTML = mqs.map(mq => `<option value="${esc(mq.marca+' '+mq.modelo)}">`).join('');
-}
-
-// ---- Relatório PDF do cliente ----
-function imprimirCliente() {
-  const todos = getClientesCompleto();
-  const c = todos.find(x => x.id === cliDetalheId);
-  if (!c) return;
-  const nomeN = (c.nome||'').toLowerCase();
-  const atends = atendimentos.filter(a => a.cliente && a.cliente.toLowerCase().includes(nomeN)).sort((a,b) => (b.data||'').localeCompare(a.data||''));
-  const prevs  = Object.entries(manuts).flatMap(([mes,arr]) => arr.filter(m => m.cliente && m.cliente.toLowerCase()===nomeN && m.preventiva).map(m => ({...m,mes:parseInt(mes)}))).sort((a,b)=>(b.preventiva||'').localeCompare(a.preventiva||''));
-  const mqs    = getMaquinasCliente(c.id);
-  const tipoBadge = { 'Contrato Fixo':'📋 Contrato Fixo','Corretivo':'🔧 Corretivo','Locação':'📦 Locação','Venda':'💰 Venda' };
-  const urgCor = { Alta:'#ef4444', Média:'#f59e0b', Baixa:'#10b981' };
-
-  const janela = window.open('', '_blank');
-  janela.document.write(`<!DOCTYPE html><html lang="pt-BR"><head>
-    <meta charset="UTF-8"><title>Ficha do Cliente — ${c.nome}</title>
-    <style>
-      *{box-sizing:border-box;margin:0;padding:0}
-      body{font-family:Arial,sans-serif;font-size:13px;color:#1a1d27;padding:32px}
-      h1{font-size:20px;font-weight:700;margin-bottom:4px}
-      .sub{font-size:12px;color:#8b90a0;margin-bottom:6px}
-      .badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;background:#eef2ff;color:#4f46e5;margin-bottom:16px}
-      .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:24px}
-      .kpi{background:#f8f9fb;border-radius:8px;padding:12px;text-align:center}
-      .kpi-val{font-size:22px;font-weight:700}
-      .kpi-label{font-size:10px;color:#8b90a0;margin-top:2px;text-transform:uppercase}
-      h2{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#8b90a0;margin:20px 0 10px}
-      .item{padding:10px 14px;border-radius:8px;background:#f8f9fb;border-left:3px solid #e8eaef;margin-bottom:8px}
-      .item.corr{border-left-color:#f59e0b}.item.prev{border-left-color:#10b981}.item.maq{border-left-color:#8b5cf6}
-      table{width:100%;border-collapse:collapse;font-size:12px}
-      th{background:#f1f3f8;padding:8px 12px;text-align:left;font-size:10px;font-weight:700;text-transform:uppercase;color:#8b90a0;border-bottom:2px solid #e8eaef}
-      td{padding:8px 12px;border-bottom:1px solid #f0f1f5}
-      .footer{margin-top:28px;font-size:11px;color:#b0b5c3;text-align:center}
-      @media print{body{padding:16px}}
-    </style>
-  </head><body>
-    <h1>${esc(c.nome)}</h1>
-    <div class="sub">${[c.tel?'📞 '+c.tel:'', c.resp?'👤 '+c.resp:'', c.end?'📍 '+c.end:''].filter(Boolean).join(' · ')}</div>
-    <span class="badge">${tipoBadge[c.tipo]||c.tipo}</span>
-    ${c.obs ? `<div style="font-size:12px;color:#8b90a0;margin-bottom:16px;font-style:italic">📝 ${esc(c.obs)}</div>` : ''}
-    <div class="kpis">
-      <div class="kpi"><div class="kpi-val" style="color:#f59e0b">${atends.length}</div><div class="kpi-label">Corretivos</div></div>
-      <div class="kpi"><div class="kpi-val" style="color:#10b981">${prevs.length}</div><div class="kpi-label">Preventivas</div></div>
-      <div class="kpi"><div class="kpi-val" style="color:#8b5cf6">${mqs.length}</div><div class="kpi-label">Máquinas</div></div>
-      <div class="kpi"><div class="kpi-val" style="color:#3b82f6">${atends.filter(a=>a.status==='Concluído').length}</div><div class="kpi-label">Concluídos</div></div>
-    </div>
-    ${mqs.length > 0 ? `<h2>⚙️ Máquinas cadastradas</h2>${mqs.map(mq=>`<div class="item maq"><strong>${esc(mq.marca)} ${esc(mq.modelo)}</strong>${mq.serie?' — Série: '+esc(mq.serie):''}${mq.obs?' · '+esc(mq.obs):''}</div>`).join('')}` : ''}
-    ${atends.length > 0 ? `<h2>🔧 Histórico de atendimentos</h2>
-      <table><thead><tr><th>Data</th><th>Problema</th><th>Equipamento</th><th>Urgência</th><th>Status</th></tr></thead><tbody>
-      ${atends.map(a=>`<tr><td>${fmtDate(a.data)}</td><td>${esc(a.assunto)}</td><td>${esc(a.equip||'—')}</td><td style="color:${urgCor[a.urgencia]||'#888'};font-weight:700">${a.urgencia}</td><td>${a.status}</td></tr>`).join('')}
-      </tbody></table>` : ''}
-    ${prevs.length > 0 ? `<h2>📋 Histórico de preventivas</h2>
-      <table><thead><tr><th>Mês</th><th>Data Preventiva</th><th>Corretiva 1ª</th><th>Relatório</th></tr></thead><tbody>
-      ${prevs.map(m=>`<tr><td>${MESES[m.mes]}</td><td>${fmtDate(m.preventiva)}</td><td>${fmtDate(m.corretiva)||'—'}</td><td>${fmtDate(m.relatorio)||'—'}</td></tr>`).join('')}
-      </tbody></table>` : ''}
-    <div class="footer">Relatório gerado em ${new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'})} — CRM Vendas</div>
-    <script>window.onload=function(){window.print()}<\/script>
-  </body></html>`);
-  janela.document.close();
-}
-
-// ===== AGENDA =====
-const MESES_AGENDA = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
-const DIAS_SEMANA = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
-const CATEG_ICONS = { geral:'📌', cliente:'👤', entrega:'🚚', manutencao:'🔧', financeiro:'💰', pessoal:'🏠' };
-
-function saveTarefas() { localStorage.setItem('crm_tarefas', JSON.stringify(tarefas)); }
-
-function updateAgendaBadge() {
-  const badge = document.getElementById('badge-agenda');
-  if (!badge) return;
+// ---- Modal ----
+function abrirPecaModal(id) {
+  pcEditId = id || null;
+  const pv = document.getElementById('pc-pdf-preview');
+  if (pv) pv.style.display = 'none';
+  pcItensTemp = [];
+  document.getElementById('pc-modal-overlay').classList.remove('hidden');
+  document.getElementById('pc-modal-titulo').textContent = id ? 'Editar chegada de peças' : 'Nova chegada de peças';
   const hoje = new Date().toISOString().slice(0,10);
-  const pendentes = tarefas.filter(t => !t.concluida && t.data <= hoje).length;
-  badge.textContent = pendentes;
-  badge.style.display = pendentes > 0 ? 'inline-block' : 'none';
-  badge.style.background = pendentes > 0 ? 'var(--red)' : '';
-}
-
-function setAgendaView(v) {
-  agendaView = v;
-  document.querySelectorAll('.agenda-view-btn').forEach(b => b.classList.remove('active'));
-  const mapa = { mes:0, lista:1 };
-  const btns = document.querySelectorAll('.agenda-view-btn');
-  if (btns[mapa[v]] !== undefined) btns[mapa[v]].classList.add('active');
-  renderAgenda();
-}
-
-function setAgendaFiltro(f) {
-  agendaFiltro = f;
-  const container = document.getElementById('page-agenda');
-  if (!container) return;
-  const btns = container.querySelectorAll('.at-filter-btn');
-  btns.forEach(b => b.classList.remove('active'));
-  const mapa = { todos:0, pendentes:1, concluidas:2, alta:3, media:4, baixa:5 };
-  if (btns[mapa[f]] !== undefined) btns[mapa[f]].classList.add('active');
-  renderAgenda();
-}
-
-function agendaMesAnterior() {
-  agendaMesAtual--;
-  if (agendaMesAtual < 0) { agendaMesAtual = 11; agendaAnoAtual--; }
-  renderAgenda();
-}
-function agendaMesSeguinte() {
-  agendaMesAtual++;
-  if (agendaMesAtual > 11) { agendaMesAtual = 0; agendaAnoAtual++; }
-  renderAgenda();
-}
-function agendaHoje() {
-  const h = new Date();
-  agendaMesAtual = h.getMonth();
-  agendaAnoAtual = h.getFullYear();
-  renderAgenda();
-}
-
-function filtrarTarefas(lista) {
-  if (agendaFiltro === 'pendentes')  return lista.filter(t => !t.concluida);
-  if (agendaFiltro === 'concluidas') return lista.filter(t => t.concluida);
-  if (agendaFiltro === 'alta')   return lista.filter(t => t.prioridade === 'alta');
-  if (agendaFiltro === 'media')  return lista.filter(t => t.prioridade === 'media');
-  if (agendaFiltro === 'baixa')  return lista.filter(t => t.prioridade === 'baixa');
-  return lista;
-}
-
-function renderAgenda() {
-  const container = document.getElementById('agenda-container');
-  const label = document.getElementById('agenda-mes-label');
-  const countEl = document.getElementById('agenda-count');
-  if (!container) return;
-
-  label.textContent = MESES_AGENDA[agendaMesAtual] + ' ' + agendaAnoAtual;
-
-  const pendentes = tarefas.filter(t => !t.concluida).length;
-  countEl.textContent = pendentes + ' pendente' + (pendentes !== 1 ? 's' : '');
-  updateAgendaBadge();
-
-  if (agendaView === 'mes') renderAgendaMes(container);
-  else renderAgendaLista(container);
-}
-
-function renderAgendaMes(container) {
-  const year = agendaAnoAtual;
-  const month = agendaMesAtual;
-  const firstDay = new Date(year, month, 1).getDay();
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
-  const daysInPrev = new Date(year, month, 0).getDate();
-  const hoje = new Date();
-  const hojeStr = hoje.toISOString().slice(0,10);
-
-  const tarefasFiltradas = filtrarTarefas(tarefas);
-
-  let html = '<div class="agenda-calendar">';
-  html += '<div class="agenda-weekdays">';
-  DIAS_SEMANA.forEach(d => html += `<div class="agenda-weekday">${d}</div>`);
-  html += '</div><div class="agenda-days">';
-
-  // Dias do mês anterior
-  for (let i = firstDay - 1; i >= 0; i--) {
-    const day = daysInPrev - i;
-    html += `<div class="agenda-day other-month"><span class="agenda-day-num">${day}</span></div>`;
-  }
-
-  // Dias do mês atual
-  for (let d = 1; d <= daysInMonth; d++) {
-    const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-    const isToday = dateStr === hojeStr;
-    const dayTasks = tarefasFiltradas.filter(t => t.data === dateStr);
-
-    html += `<div class="agenda-day${isToday ? ' today' : ''}" ondblclick="abrirTarefaModalDia('${dateStr}')">`;
-    html += `<span class="agenda-day-num">${d}</span>`;
-    dayTasks.slice(0, 3).forEach(t => {
-      const priClass = 'pri-' + (t.prioridade || 'normal');
-      const doneClass = t.concluida ? ' concluida' : '';
-      html += `<div class="agenda-evt ${priClass}${doneClass}" onclick="event.stopPropagation();abrirTarefaModal('${t.id}')" title="${esc(t.titulo)}${t.hora ? ' · '+t.hora : ''}">${t.hora ? t.hora+' ' : ''}${CATEG_ICONS[t.categoria]||'📌'} ${esc(t.titulo)}</div>`;
-    });
-    if (dayTasks.length > 3) {
-      html += `<div style="font-size:10px;color:var(--text-muted);padding:1px 5px;cursor:pointer" onclick="event.stopPropagation();setAgendaView('lista')">+${dayTasks.length - 3} mais</div>`;
+  if (id) {
+    const p = pecas.find(x => x.id === id);
+    if (p) {
+      document.getElementById('pc-f-cliente').value    = p.cliente    || '';
+      document.getElementById('pc-f-proposta').value   = p.proposta   || '';
+      document.getElementById('pc-f-data').value       = p.data       || hoje;
+      document.getElementById('pc-f-fornecedor').value = p.fornecedor || '';
+      document.getElementById('pc-f-obs').value        = p.obs        || '';
+      pcItensTemp = (p.itens || []).map(i => ({...i}));
     }
-    html += '</div>';
+  } else {
+    ['pc-f-cliente','pc-f-proposta','pc-f-fornecedor','pc-f-obs'].forEach(i => document.getElementById(i).value = '');
+    document.getElementById('pc-f-data').value = hoje;
+    pcItensTemp = [];
   }
-
-  // Dias do próximo mês (preencher até 42 slots)
-  const totalSlots = firstDay + daysInMonth;
-  const remaining = totalSlots % 7 === 0 ? 0 : 7 - (totalSlots % 7);
-  for (let i = 1; i <= remaining; i++) {
-    html += `<div class="agenda-day other-month"><span class="agenda-day-num">${i}</span></div>`;
-  }
-
-  html += '</div></div>';
-  container.innerHTML = html;
+  renderItensPecaModal();
 }
 
-function renderAgendaLista(container) {
-  const year = agendaAnoAtual;
-  const month = agendaMesAtual;
-  const prefix = `${year}-${String(month+1).padStart(2,'0')}`;
+function fecharPecaModal(e) {
+  if (e && e.target !== document.getElementById('pc-modal-overlay')) return;
+  document.getElementById('pc-modal-overlay').classList.add('hidden');
+  pcEditId = null; pcItensTemp = [];
+}
 
-  let lista = tarefas.filter(t => (t.data || '').startsWith(prefix));
-  lista = filtrarTarefas(lista);
-  lista.sort((a,b) => {
-    const cmpData = (a.data||'').localeCompare(b.data||'');
-    if (cmpData !== 0) return cmpData;
-    return (a.hora||'').localeCompare(b.hora||'');
-  });
-
-  if (lista.length === 0) {
-    container.innerHTML = '<div class="at-empty">Nenhuma tarefa encontrada neste mês.</div>';
+function renderItensPecaModal() {
+  const wrap = document.getElementById('pc-itens-lista');
+  if (!wrap) return;
+  if (pcItensTemp.length === 0) {
+    wrap.innerHTML = '<div style="font-size:12px;color:var(--text-light);padding:8px 0;text-align:center">Nenhuma peça. Clique em + Adicionar peça.</div>';
     return;
   }
-
-  const priLabel = { alta:'🔴 Alta', media:'🟡 Média', baixa:'🟢 Baixa', normal:'🔵 Normal' };
-  let lastDate = '';
-
-  let html = '<div class="agenda-list-view">';
-  lista.forEach(t => {
-    if (t.data !== lastDate) {
-      const [y,m,d] = (t.data||'').split('-');
-      const dateObj = new Date(y, m-1, d);
-      const diaSem = DIAS_SEMANA[dateObj.getDay()];
-      html += `<div style="font-size:12px;font-weight:700;color:var(--text-muted);padding:8px 0 2px;margin-top:8px;border-bottom:1px solid var(--border)">${diaSem}, ${d}/${m}/${y}</div>`;
-      lastDate = t.data;
-    }
-    const priClass = 'pri-' + (t.prioridade || 'normal');
-    const doneClass = t.concluida ? ' concluida' : '';
-    html += `
-      <div class="agenda-list-item ${priClass}${doneClass}">
-        <div class="agenda-list-check ${t.concluida ? 'ok' : ''}" onclick="toggleTarefa('${t.id}')"></div>
-        <div class="agenda-list-info" onclick="abrirTarefaModal('${t.id}')">
-          <div class="agenda-list-title ${t.concluida ? 'done' : ''}">${CATEG_ICONS[t.categoria]||'📌'} ${esc(t.titulo)}</div>
-          <div class="agenda-list-sub">
-            ${t.hora ? '<span>🕐 '+t.hora+'</span>' : ''}
-            <span>${priLabel[t.prioridade]||'Normal'}</span>
-            ${t.obs ? '<span>💬 '+esc(t.obs.substring(0,40))+(t.obs.length>40?'...':'')+'</span>' : ''}
-          </div>
-        </div>
-        <button class="agenda-list-del" onclick="removerTarefa('${t.id}')" title="Remover">×</button>
-      </div>`;
-  });
-  html += '</div>';
-  container.innerHTML = html;
+  wrap.innerHTML = pcItensTemp.map((it, idx) => `
+    <div style="display:flex;align-items:center;gap:6px;padding:5px 8px;background:var(--bg);border-radius:6px;border:1px solid var(--border)">
+      <span style="font-size:12px;flex:1">${esc(it.desc)}</span>
+      <span style="font-size:11px;color:var(--text-muted);font-family:'DM Mono',monospace">Qtd: ${it.qty}</span>
+      <button onclick="removerItemPecaTemp(${idx})" style="background:none;border:none;color:var(--text-light);cursor:pointer;font-size:14px">×</button>
+    </div>`).join('');
 }
 
-function toggleTarefa(id) {
-  const t = tarefas.find(x => x.id === id);
-  if (t) { t.concluida = !t.concluida; saveTarefas(); renderAgenda(); }
+function addItemPeca() {
+  const desc = prompt('Descrição da peça:');
+  if (!desc) return;
+  const qty = prompt('Quantidade:', '1') || '1';
+  pcItensTemp.push({ id: Date.now().toString() + Math.random(), desc: desc.trim(), qty: qty.trim(), ok: false });
+  renderItensPecaModal();
 }
 
-function removerTarefa(id) {
-  if (!confirm('Remover esta tarefa?')) return;
-  tarefas = tarefas.filter(x => x.id !== id);
-  saveTarefas(); renderAgenda();
+function removerItemPecaTemp(idx) {
+  pcItensTemp.splice(idx, 1);
+  renderItensPecaModal();
 }
 
-function abrirTarefaModalDia(dateStr) {
-  abrirTarefaModal();
-  document.getElementById('trf-f-data').value = dateStr;
-}
-
-function abrirTarefaModal(id) {
-  tarefaEditId = id || null;
-  document.getElementById('tarefa-modal-overlay').classList.remove('hidden');
-  document.getElementById('tarefa-modal-titulo').textContent = id ? 'Editar Tarefa' : 'Nova Tarefa';
-  const hoje = new Date().toISOString().slice(0,10);
-  if (id) {
-    const t = tarefas.find(x => x.id === id);
-    if (t) {
-      document.getElementById('trf-f-titulo').value     = t.titulo || '';
-      document.getElementById('trf-f-data').value       = t.data || hoje;
-      document.getElementById('trf-f-hora').value       = t.hora || '';
-      document.getElementById('trf-f-prioridade').value = t.prioridade || 'normal';
-      document.getElementById('trf-f-categoria').value  = t.categoria || 'geral';
-      document.getElementById('trf-f-obs').value        = t.obs || '';
-    }
-  } else {
-    ['trf-f-titulo','trf-f-hora','trf-f-obs'].forEach(i => document.getElementById(i).value = '');
-    document.getElementById('trf-f-data').value = hoje;
-    document.getElementById('trf-f-prioridade').value = 'normal';
-    document.getElementById('trf-f-categoria').value = 'geral';
-  }
-}
-
-function fecharTarefaModal(e) {
-  if (e && e.target !== document.getElementById('tarefa-modal-overlay')) return;
-  document.getElementById('tarefa-modal-overlay').classList.add('hidden');
-  tarefaEditId = null;
-}
-
-function salvarTarefa() {
-  const titulo = document.getElementById('trf-f-titulo').value.trim();
-  if (!titulo) { alert('Preencha o título da tarefa!'); return; }
+function salvarPeca() {
+  const cliente = document.getElementById('pc-f-cliente').value.trim();
+  if (!cliente) { alert('Preencha o nome do cliente!'); return; }
   const dados = {
-    titulo,
-    data:       document.getElementById('trf-f-data').value,
-    hora:       document.getElementById('trf-f-hora').value,
-    prioridade: document.getElementById('trf-f-prioridade').value,
-    categoria:  document.getElementById('trf-f-categoria').value,
-    obs:        document.getElementById('trf-f-obs').value.trim(),
-    concluida:  false,
+    cliente,
+    proposta:   document.getElementById('pc-f-proposta').value.trim(),
+    data:       document.getElementById('pc-f-data').value,
+    fornecedor: document.getElementById('pc-f-fornecedor').value.trim(),
+    obs:        document.getElementById('pc-f-obs').value.trim(),
+    itens:      pcItensTemp,
   };
-  if (tarefaEditId) {
-    const idx = tarefas.findIndex(x => x.id === tarefaEditId);
-    if (idx >= 0) tarefas[idx] = { ...tarefas[idx], ...dados, concluida: tarefas[idx].concluida };
+  if (pcEditId) {
+    const idx = pecas.findIndex(x => x.id === pcEditId);
+    if (idx >= 0) pecas[idx] = { ...pecas[idx], ...dados };
   } else {
-    tarefas.push({ id: Date.now().toString(), ...dados });
+    pecas.unshift({ id: Date.now().toString(), ...dados });
   }
-  saveTarefas();
-  document.getElementById('tarefa-modal-overlay').classList.add('hidden');
-  tarefaEditId = null;
-  renderAgenda();
+  savePecas();
+  document.getElementById('pc-modal-overlay').classList.add('hidden');
+  pcEditId = null; pcItensTemp = [];
+  renderPecas();
 }
 
-// Atualiza badge ao iniciar
-updateAgendaBadge();
 
 // ===== EXPORTAR / IMPORTAR =====
 function exportarDados() {
   const chaves = ['crm_leads','crm_sales','crm_pendings','crm_manuts',
                   'crm_faturamentos','crm_atendimentos','crm_combustiveis',
-                  'crm_pedidos','crm_mn_pends','crm_clientes','crm_maquinas','crm_entregas','crm_tarefas'];
+                  'crm_pedidos','crm_mn_pends','crm_clientes','crm_maquinas','crm_entregas','crm_tarefas','crm_visitas','crm_pend_atend','crm_pecas'];
   const dados = {};
   chaves.forEach(k => {
     const v = localStorage.getItem(k);
@@ -6000,7 +5641,7 @@ function importarDados(event) {
       const dados = JSON.parse(e.target.result);
       const chaves = ['crm_leads','crm_sales','crm_pendings','crm_manuts',
                       'crm_faturamentos','crm_atendimentos','crm_combustiveis',
-                      'crm_pedidos','crm_mn_pends','crm_clientes','crm_maquinas','crm_entregas','crm_tarefas'];
+                      'crm_pedidos','crm_mn_pends','crm_clientes','crm_maquinas','crm_entregas','crm_tarefas','crm_visitas','crm_pend_atend','crm_pecas'];
       let importados = 0;
       chaves.forEach(k => {
         if (dados[k] !== undefined) {
@@ -6146,7 +5787,7 @@ function renderDashboard() {
   var atAbertos    = atendimentos.filter(function(a){ return a.status !== 'Concluído'; }).length;
   var totalLeads   = leads.filter(function(l){ return !['Fechado','Perdido'].includes(l.stage); }).length;
   var fatMes       = (faturamentos[mesAtual]||[]).reduce(function(s,f){ return s+(f.valor||0); }, 0);
-  var pendAbertas  = pendings.filter(function(p){ return !p.done; }).length;
+  var pendAbertas  = visitas.filter(function(p){ return !p.done; }).length + pendAtend.filter(function(p){ return !p.done; }).length;
   var fuVencidos   = leads.filter(function(l){ return l.followup && l.followup < hojeStr && !['Fechado','Perdido'].includes(l.stage); }).length;
 
   var kpisEl = document.getElementById('dash-kpis');
@@ -6191,9 +5832,12 @@ function renderDashboard() {
 
   var pendsEl = document.getElementById('dash-pends');
   if (pendsEl) {
-    var ab = pendings.filter(function(p){ return !p.done; }).sort(function(a,b){ var o={Alta:0,Média:1,Baixa:2}; return (o[a.priority]||1)-(o[b.priority]||1); });
+    var ordp = {Alta:0,'Média':1,Baixa:2};
+    var ab = visitas.filter(function(p){ return !p.done; }).map(function(p){ return {desc:'📍 '+(p.cliente||'Visita'), prio:p.prio}; })
+      .concat(pendAtend.filter(function(p){ return !p.done; }).map(function(p){ return {desc:'🔧 '+(p.cliente||p.desc||'Pendência'), prio:p.prio}; }))
+      .sort(function(a,b){ return (ordp[a.prio]||1)-(ordp[b.prio]||1); });
     pendsEl.innerHTML = ab.length===0 ? '<div style="color:var(--green);font-size:13px;font-weight:600">✅ Nenhuma pendência!</div>'
-      : ab.slice(0,5).map(function(p){ var c={Alta:'var(--red)',Média:'var(--orange)',Baixa:'var(--green)'}[p.priority]||'var(--border)'; return '<div style="padding:4px 8px;border-radius:6px;font-size:12px;border-left:3px solid '+c+';background:var(--bg);margin-bottom:3px;display:flex;justify-content:space-between"><span>'+esc(p.desc)+'</span><span style="font-size:10px;color:'+c+';font-weight:700">'+p.priority+'</span></div>'; }).join('')+(ab.length>5?'<div style="font-size:11px;color:var(--text-muted)">+ '+(ab.length-5)+' mais</div>':'');
+      : ab.slice(0,5).map(function(p){ var c={Alta:'var(--red)','Média':'var(--orange)',Baixa:'var(--green)'}[p.prio]||'var(--border)'; return '<div style="padding:4px 8px;border-radius:6px;font-size:12px;border-left:3px solid '+c+';background:var(--bg);margin-bottom:3px;display:flex;justify-content:space-between"><span>'+esc(p.desc)+'</span><span style="font-size:10px;color:'+c+';font-weight:700">'+p.prio+'</span></div>'; }).join('')+(ab.length>5?'<div style="font-size:11px;color:var(--text-muted)">+ '+(ab.length-5)+' mais</div>':'');
   }
 
   var atendsEl = document.getElementById('dash-atends');
